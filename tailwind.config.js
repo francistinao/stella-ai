@@ -1,14 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       backgroundColor: {
         dark: '#191919',
         dark_g: '#326E29',
+        dirty: '#DAD6D6',
         gray_l: '#333333',
         light_g: '#72FC5E',
         light: '#A5E69C',
@@ -17,6 +15,7 @@ module.exports = {
       textColor: {
         dark: '#191919',
         dark_g: '#326E29',
+        dirty: '#DAD6D6',
         gray_l: '#333333',
         light_g: '#72FC5E',
         light: '#A5E69C',
@@ -25,6 +24,7 @@ module.exports = {
       borderColor: {
         dark: '#191919',
         dark_g: '#326E29',
+        dirty: '#DAD6D6',
         gray_l: '#333333',
         light_g: '#72FC5E',
         light: '#A5E69C',
@@ -33,8 +33,7 @@ module.exports = {
       fontFamily: {
         main: ['Poppins', 'sans-serif']
       }
-    },
+    }
   },
-  plugins: [],
+  plugins: []
 }
-

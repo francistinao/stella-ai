@@ -5,16 +5,23 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 2320,
-    height: 1900,
+    //set the default size to fit to screen
+    focusable: true,
+    width: 2680,
+    height: 2100,
     show: false,
     autoHideMenuBar: true,
-    resizable: false,
+    resizable: true,
+    maxWidth: 2680,
+    maxHeight: 2100,
+    minWidth: 1400,
+    minHeight: 800,
+    fullscreenable: true,
+    icon: join(__dirname, '../assets/logo.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
-    },
-    icon: resolve(__dirname, '../renderer/src/assets/logo.png')
+    }
   })
 
   mainWindow.on('ready-to-show', () => {
@@ -59,6 +66,11 @@ app.whenReady().then(() => {
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
+
+  // Set dock icon (only for macOS)
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(resolve(__dirname, '../assets/logo.png'))
+  }
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -69,6 +81,3 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 })
-
-// In this file you can include the rest of your app"s specific main process
-// code. You can also put them in separate files and require them here.
