@@ -8,7 +8,6 @@
   <!-- <a href="https://github.com/sindresorhus/awesome"> -->
     <img alt="Awesome Badge" src="https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg" height="20">
   <!-- </a> -->
-	<img alt="Vercel Badge Custom" src="assets/vercel_status.svg" height="20">
   </a>
 </p>
 
@@ -50,7 +49,7 @@ Source Repositories:
 
 ## :scroll: Important References
 
-- Any Paper that uses the SpineWeb Dataset 16, must cite the following:
+- Any Paper that uses the Brain CT Scans, must cite the following:
 
   > Not yet identified
 
