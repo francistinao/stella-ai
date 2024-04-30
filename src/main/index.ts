@@ -17,7 +17,7 @@ function createWindow(): void {
     minWidth: 1400,
     minHeight: 800,
     fullscreenable: true,
-    icon: join(__dirname, '../assets/logo.png'),
+    icon: join(__dirname, '../renderer/assets/logo.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       sandbox: false
@@ -27,6 +27,9 @@ function createWindow(): void {
   mainWindow.on('ready-to-show', () => {
     mainWindow.show()
   })
+
+  mainWindow.setMenuBarVisibility(false)
+  mainWindow.setIcon(join(__dirname, '../renderer/assets/logo.png'))
 
   mainWindow.webContents.setWindowOpenHandler((details) => {
     shell.openExternal(details.url)
