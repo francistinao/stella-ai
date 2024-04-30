@@ -75,20 +75,22 @@ app.whenReady().then(() => {
     app.dock.setIcon(resolve(__dirname, '../assets/logo.png'))
   }
 
-  //disable reload shortcuts
-  app.on('browser-window-focus', function () {
-    globalShortcut.register('CommandOrControl+R', () => {
-      console.log('CommandOrControl+R is pressed: Shortcut Disabled')
+  //disable reload shortcuts only if production
+  if (!is.dev) {
+    app.on('browser-window-focus', function () {
+      globalShortcut.register('CommandOrControl+R', () => {
+        console.log('CommandOrControl+R is pressed: Shortcut Disabled')
+      })
+      globalShortcut.register('F5', () => {
+        console.log('F5 is pressed: Shortcut Disabled')
+      })
     })
-    globalShortcut.register('F5', () => {
-      console.log('F5 is pressed: Shortcut Disabled')
-    })
-  })
 
-  app.on('browser-window-blur', function () {
-    globalShortcut.unregister('CommandOrControl+R')
-    globalShortcut.unregister('F5')
-  })
+    app.on('browser-window-blur', function () {
+      globalShortcut.unregister('CommandOrControl+R')
+      globalShortcut.unregister('F5')
+    })
+  }
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common

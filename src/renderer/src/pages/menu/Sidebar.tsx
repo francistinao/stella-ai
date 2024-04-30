@@ -31,7 +31,7 @@ const Sidebar: React.FC<Props> = () => {
               onClick={() => setIsUpload(true)}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className={`w-full border rounded-full py-3 text-center flex items-center text-xs justify-center ${theme === 'dark' ? 'border-white text-white' : 'border-dark text-dark'}`}
+              className={`w-full border rounded-full py-3 text-center flex items-center gap-4 text-xs justify-center ${theme === 'dark' ? 'border-white text-white' : 'border-dark text-dark'}`}
             >
               <motion.div
                 animate={{
