@@ -86,7 +86,10 @@ const Navbar: React.FC = () => {
         <h1
           className={`text-md font-bold ${theme === 'light' ? 'text-dark' : 'text-light_g'} duration-150`}
         >
-          STELLA.ai <span className="font-light text-italic">v1.0</span>
+          STELLA.ai{' '}
+          <span className="font-light text-italic">
+            (Stroke Tomography for Enhanced Lesion Learning Analysis) v1.0
+          </span>
         </h1>
       </div>
       <div

@@ -47,4 +47,10 @@
 body {
   font-family: 'Poppins', sans-serif; /* Specify the font family */
   font-weight: 400; /* Specify the desired weight */
+  /*
+  if the theme is dark set the background to dark
+  put condition
+  */
+
+  background-color: #191919;
 }
