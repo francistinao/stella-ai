@@ -21,7 +21,7 @@ import { styled } from '@mui/material/styles'
  */
 const ImageConfig: React.FC = () => {
   const [isContrastDrop, setIsContrastDrop] = useState(true)
-  const [isHighlightDrop, setIsHighlightDrop] = useState(false)
+  const [isHighlightDrop, setIsHighlightDrop] = useState(true)
   const [isShadowDrop, setIsShadowDrop] = useState(false)
   const { theme } = useThemeStore()
 

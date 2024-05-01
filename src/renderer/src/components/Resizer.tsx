@@ -10,7 +10,7 @@ const Resizer: React.FC<Props> = ({ handleMouseDown }) => {
   const { theme } = useThemeStore()
   return (
     <div
-      className={`border ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'} cursor-col-resize`}
+      className={`border-x ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'} cursor-col-resize`}
       onMouseDown={handleMouseDown}
     ></div>
   )

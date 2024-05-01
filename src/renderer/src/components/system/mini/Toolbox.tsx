@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import React from 'react'
 import logo from '@/assets/logo.png'
@@ -7,7 +8,11 @@ import { Tooltip } from '@chakra-ui/react'
 import { useToolStore } from '@/store/tool'
 import { useToggleSlider } from 'react-toggle-slider'
 
-const Toolbox: React.FC = () => {
+interface ToolboxProps {
+  observeWidth: number
+}
+
+const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
   const { setToolName } = useToolStore()
   const { theme } = useThemeStore()
   /**
@@ -38,7 +43,7 @@ const Toolbox: React.FC = () => {
           <img src={logo} alt="logo" className="w-10 h-10" />
         </div>
         <div
-          className={`flex gap-4 items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-full py-2 pl-4`}
+          className={`w-full flex gap-4 items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-full py-2 pl-4`}
         >
           <div className="h-[20px] w-[5px] bg-light_g" />
           <h1 className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} font-bold text-[13px]`}>
@@ -48,7 +53,7 @@ const Toolbox: React.FC = () => {
       </div>
       {/* Tools */}
       <div
-        className={`grid grid-cols-4 gap-2 rounded-full py-2 px-4 items-center justify-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}
+        className={` ${observeWidth > 290 ? 'flex gap-2' : 'grid grid-cols-4 px-4'} gap-2 rounded-full py-2  items-center justify-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}
       >
         {tools.map((tool, idx) => (
           <Tooltip
@@ -69,10 +74,10 @@ const Toolbox: React.FC = () => {
         ))}
       </div>
       {/*  */}
-      <div className="flex gap-4 items-center">
+      <div className="flex place-content-center gap-4 items-center">
         {toggleSlider}
         <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-          Display Detections
+          Display Segmentation
         </p>
       </div>
     </div>

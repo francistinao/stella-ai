@@ -1,19 +1,58 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Navbar } from '@/components/components'
 import { useToolStore } from '@/store/tool'
-
-//System components
-import { Slider, Tools } from '@/components/system'
+import Resizer from '@/components/Resizer'
+import { CTScanCanvas, Results, Slider, Tools } from '@/components/system'
+import { motion } from 'framer-motion'
 
 const System: React.FC = () => {
-  const { tool_name } = useToolStore()
+  const { tool_name, setToolName } = useToolStore()
+  const [sliderWidth, setSliderWidth] = useState(290)
+  const [toolsWidth, setToolsWidth] = useState(285)
+  const [isResizingTools, setIsResizingTools] = useState(false)
+
+  const minWidth = 290
+  const maxWidth = 350
+
+  const handleToolsMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      setIsResizingTools(true)
+      const startX = e.pageX
+      const initialWidth = toolsWidth
+
+      const handleMouseMove = (event: MouseEvent) => {
+        const newWidth = initialWidth + event.pageX - startX
+        const clampedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth))
+        setToolsWidth(clampedWidth)
+      }
+
+      const handleMouseUp = () => {
+        setIsResizingTools(false)
+        window.removeEventListener('mouseup', handleMouseUp)
+        window.removeEventListener('mousemove', handleMouseMove)
+      }
+
+      window.addEventListener('mousemove', handleMouseMove)
+      window.addEventListener('mouseup', handleMouseUp)
+    },
+    [toolsWidth, minWidth, maxWidth]
+  )
 
   // Need to improve and this will be applied on the CT Scan Canvas component
   //Temporary!
   //if the tool_name is grab then set the cursor to grab
   useEffect(() => {
+    //add keybind for reseting the cursor
+    document.onkeydown = (e) => {
+      if (e.key === 'Escape') {
+        setToolName('')
+        document.body.style.cursor = 'default'
+      }
+    }
+
     if (tool_name === 'Grab') {
       document.body.style.cursor = 'grab'
 
@@ -35,17 +74,21 @@ const System: React.FC = () => {
     <div className="w-full h-screen flex flex-col">
       <Navbar />
       {/* Main layout */}
-      <div className="pb-4 grid grid-cols-12">
+      {/* grid grid-cols-12 */}
+      <div className="pb-4 flex w-full h-screen">
         {/* CT Scan Sliders */}
-        <div className="col-span-2">
+        <motion.div style={{ width: sliderWidth }} transition={{ duration: 0.1 }}>
           <Slider />
-        </div>
+        </motion.div>
         {/* Toolboxes and Image Config */}
-        <div className="col-span-2">
-          <Tools />
-        </div>
+        <motion.div style={{ width: toolsWidth }} transition={{ duration: 0.1 }}>
+          <Tools observeWidth={toolsWidth} />
+        </motion.div>
+        <Resizer handleMouseDown={handleToolsMouseDown} />
         {/* CT Scan Canvas */}
-        {/* Results */}
+        <CTScanCanvas remainingWidth={toolsWidth} />
+        {/* Results Component */}
+        <Results remainingWidth={toolsWidth} />
       </div>
     </div>
   )

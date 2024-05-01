@@ -18,11 +18,9 @@ const Slider: React.FC = () => {
     day: 'numeric'
   })
 
-  console.log(maxHeight)
-
   return (
     <div
-      className={`h-full flex flex-col items-center gap-2 px-5 py-1 border-r ${theme === 'dark' ? 'bg-sys_com border-zinc-700' : 'bg-dirty border-zinc-500'}`}
+      className={`w-72 h-full flex flex-col items-center gap-2 px-5 py-1 border-r ${theme === 'dark' ? 'bg-sys_com border-zinc-700' : 'bg-dirty border-zinc-500'}`}
     >
       <div className="flex gap-4 items-center">
         <h1
