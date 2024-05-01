@@ -5,10 +5,28 @@ import { useThemeStore } from '@/store/theme'
 import { tools } from '@/data/tools'
 import { Tooltip } from '@chakra-ui/react'
 import { useToolStore } from '@/store/tool'
+import { useToggleSlider } from 'react-toggle-slider'
 
 const Toolbox: React.FC = () => {
   const { setToolName } = useToolStore()
   const { theme } = useThemeStore()
+  /**
+   * TODO: The active state will be the main indicator for the detections to be displayed or not
+   *
+   * Create a global hook state later on to manage the state of the detections
+   */
+  const [toggleSlider, active] = useToggleSlider({
+    barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
+    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
+    barWidth: 80,
+    barHeight: 40,
+    handleSize: 30,
+    handleBorderRadius: 100,
+    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
+    handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
+    transitionDuration: '200ms'
+  })
+
   return (
     <div
       className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3`}
@@ -49,6 +67,13 @@ const Toolbox: React.FC = () => {
             </button>
           </Tooltip>
         ))}
+      </div>
+      {/*  */}
+      <div className="flex gap-4 items-center">
+        {toggleSlider}
+        <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
+          Display Detections
+        </p>
       </div>
     </div>
   )

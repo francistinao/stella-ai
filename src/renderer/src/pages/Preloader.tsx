@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
 import { motion, useAnimation } from 'framer-motion'
-import logo from '@/assets/logo.png'
 
 const Preloader: React.FC = () => {
   const [progress, setProgress] = useState(0)
@@ -16,11 +15,11 @@ const Preloader: React.FC = () => {
           clearInterval(interval)
           setLoadingText('Welcome to STELLA.ai')
         } else if (newProgress >= 24) {
-          setLoadingText('Clearing Caches')
+          setLoadingText('Clearing Caches...')
         } else if (newProgress >= 67) {
-          setLoadingText('Unpacking Data and Files')
+          setLoadingText('Unpacking Data and Files...')
         } else if (newProgress >= 89) {
-          setLoadingText('Almost There')
+          setLoadingText('Almost There...')
         }
         return newProgress
       })
@@ -37,15 +36,6 @@ const Preloader: React.FC = () => {
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center">
       <div className="flex flex-col justify-center gap-4 w-full">
-        {progress >= 100 && (
-          <motion.img
-            src={logo}
-            alt="STELLA.ai"
-            className="w-20 h-20 mx-auto"
-            animate={{ scale: [1.1, 1] }}
-            transition={{ duration: 0.5, yoyo: Infinity }}
-          />
-        )}
         <motion.div
           className="text-md text-center text-light_g"
           animate={{ opacity: 1 }}
