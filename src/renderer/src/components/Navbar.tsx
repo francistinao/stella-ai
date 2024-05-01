@@ -79,7 +79,7 @@ const Navbar: React.FC = () => {
 
   return (
     <div
-      className={`flex justify-between items-center py-4 px-10 ${theme === 'light' ? 'bg-white' : 'bg-dark'} duration-150 font-main`}
+      className={`flex justify-between items-center py-2 px-10 border-b ${theme === 'light' ? 'bg-white border-dirty' : 'bg-dark border-gray_l'} duration-150 font-main`}
     >
       <div className="flex gap-4 items-center">
         <img src={logo} alt="STELLA.ai Logo" className="w-7 h-auto" />

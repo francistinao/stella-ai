@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import React, { useState, Dispatch } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useThemeStore } from '@/store/theme'
 import { IoMdClose } from 'react-icons/io'
 import { FaRegImage } from 'react-icons/fa6'
 import { toast, Toaster } from 'sonner'
+import { HiCubeTransparent } from 'react-icons/hi2'
 
 /**
  * TODO: The images must be in array since the user can upload multiple images
@@ -32,6 +34,7 @@ interface UploadModalProps {
 
 const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const { theme } = useThemeStore()
+  const navigate = useNavigate()
   const [selectedFileName, setSelectedFileName] = useState<string>('')
   const [isDragOver, setDragOver] = useState<boolean>(false)
   const [dataOfFile, setDataOfFile] = useState<File | null>(null)
@@ -90,6 +93,11 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const handleFileRead = (file: File) => {
     setDataOfFile(file)
     setSelectedFileName(file.name)
+  }
+
+  //this is temporary remove this later
+  const navigateToSystem = () => {
+    navigate('/system')
   }
 
   return (
@@ -172,6 +180,34 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
                 >
                   Selected Files
                 </h1>
+                {/* Map the files */}
+                {/* 
+                  TODO: The images must be in array since the user can upload multiple images
+
+                  Change the temporary array to the array of objects later
+                */}
+                <div className="max-h-[260px] overflow-y-auto flex flex-col gap-2">
+                  {[1, 2, 3, 4, 5, 6].map((_, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex justify-between items-center gap-4 p-4 rounded-lg border ${theme === 'dark' ? 'bg-zinc-300 border-zinc-600' : 'bg-gray_l border-gray_d'}`}
+                    >
+                      <p className={`${theme === 'dark' ? 'text-dark' : 'text-white'} text-sm`}>
+                        Image {idx + 1}
+                      </p>
+                      <button className="text-xs font-semibold text-red-500">Remove</button>
+                    </div>
+                  ))}
+                </div>
+                {/* Segmentate button */}
+                <button
+                  //this is temporary, remove this later
+                  onClick={navigateToSystem}
+                  className={`flex justify-center gap-4 items-center bg-light text-dark font-semibold py-2 rounded-full w-full text-center text-sm ${dataOfFile && 'relative top-5'}`}
+                >
+                  <HiCubeTransparent size={24} className="rotate-45" />
+                  Segmentate
+                </button>
               </div>
             </div>
           </motion.div>

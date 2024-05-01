@@ -5,6 +5,7 @@ module.exports = {
     extend: {
       backgroundColor: {
         dark: '#191919',
+        sys_com: '#222222',
         dark_g: '#326E29',
         dirty: '#DAD6D6',
         gray_l: '#333333',
@@ -14,6 +15,7 @@ module.exports = {
       },
       textColor: {
         dark: '#191919',
+        sys_com: '#222222',
         dark_g: '#326E29',
         dirty: '#DAD6D6',
         gray_l: '#333333',
@@ -23,6 +25,7 @@ module.exports = {
       },
       borderColor: {
         dark: '#191919',
+        sys_com: '#222222',
         dark_g: '#326E29',
         dirty: '#DAD6D6',
         gray_l: '#333333',

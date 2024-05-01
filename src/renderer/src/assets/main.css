@@ -51,6 +51,19 @@ body {
   if the theme is dark set the background to dark
   put condition
   */
-
+  overflow-y: hidden;
   background-color: #191919;
+}
+
+.customScroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.customScroll::-webkit-scrollbar-track {
+  background-color: #323232;
+}
+
+.customScroll::-webkit-scrollbar-thumb {
+  background-color: #797979;
+  border-radius: 40px;
 }

@@ -1,13 +1,29 @@
+import { useEffect, useState } from 'react'
 import { HashRouter as Router, Routes, Route } from 'react-router-dom'
-import { Menu } from '@/pages/pages.ts'
+import { Menu, System, Preloader } from '@/pages/pages.ts'
 
 function App(): JSX.Element {
+  const [isLoading, setIsLoading] = useState(true) // State to track loading state
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false)
+    }, 12000)
+  }, [])
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Menu />} />
-      </Routes>
-    </Router>
+    <>
+      {isLoading ? (
+        <Preloader />
+      ) : (
+        <Router>
+          <Routes>
+            <Route path="/" element={<Menu />} />
+            <Route path="/system" element={<System />} />
+          </Routes>
+        </Router>
+      )}
+    </>
   )
 }
 
