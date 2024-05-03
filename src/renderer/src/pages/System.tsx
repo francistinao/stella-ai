@@ -56,11 +56,6 @@ const System: React.FC = () => {
     if (tool_name === 'Grab') {
       document.body.style.cursor = 'grab'
 
-      //if mouse is down then set the cursor to grabbing
-      document.body.onmousedown = () => {
-        document.body.style.cursor = 'grabbing'
-      }
-
       //if mouse is up then set the cursor to grab
       document.body.onmouseup = () => {
         document.body.style.cursor = 'grab'
@@ -86,7 +81,7 @@ const System: React.FC = () => {
         </motion.div>
         <Resizer handleMouseDown={handleToolsMouseDown} />
         {/* CT Scan Canvas */}
-        <CTScanCanvas remainingWidth={toolsWidth} />
+        <CTScanCanvas />
         {/* Results Component */}
         <Results remainingWidth={toolsWidth} />
       </div>

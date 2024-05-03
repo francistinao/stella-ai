@@ -3,17 +3,20 @@
 import React from 'react'
 import logo from '@/assets/logo.png'
 import { useThemeStore } from '@/store/theme'
-import { tools } from '@/data/tools'
 import { Tooltip } from '@chakra-ui/react'
 import { useToolStore } from '@/store/tool'
 import { useToggleSlider } from 'react-toggle-slider'
+import { TbLine } from 'react-icons/tb'
+import { PiEye, PiEyeClosed } from 'react-icons/pi'
+import { FaRegHandPaper } from 'react-icons/fa'
+import { BsRulers } from 'react-icons/bs'
 
 interface ToolboxProps {
   observeWidth: number
 }
 
 const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
-  const { setToolName } = useToolStore()
+  const { setToolName, setToolActivity, is_active } = useToolStore()
   const { theme } = useThemeStore()
   /**
    * TODO: The active state will be the main indicator for the detections to be displayed or not
@@ -32,6 +35,33 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
     transitionDuration: '200ms'
   })
+
+  const tools = [
+    {
+      tool_id: 1,
+      tool_name: 'Line',
+      is_active: false,
+      icon: <TbLine size={18} />
+    },
+    {
+      tool_id: 2,
+      tool_name: is_active ? 'Hide CT Scan' : 'Show CT Scan',
+      is_active: false,
+      icon: is_active ? <PiEye size={18} /> : <PiEyeClosed size={18} />
+    },
+    {
+      tool_id: 3,
+      tool_name: 'Grab',
+      is_active: false,
+      icon: <FaRegHandPaper size={18} />
+    },
+    {
+      tool_id: 4,
+      tool_name: 'Ruler',
+      is_active: false,
+      icon: <BsRulers size={18} />
+    }
+  ]
 
   return (
     <div
@@ -65,7 +95,12 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
             className={`${theme === 'dark' ? 'bg-light_g' : 'bg-dirty'} text-dark text-[12px] rounded-md p-1`}
           >
             <button
-              onClick={() => setToolName(tool.tool_name)}
+              onClick={() => {
+                setToolName(tool.tool_name)
+                if (tool.tool_name === 'Show CT Scan' || tool.tool_id === 2) {
+                  setToolActivity(!is_active)
+                }
+              }}
               key={idx}
               className={`flex flex-col items-center gap-2 ${theme === 'dark' ? 'bg-light_g' : 'bg-dirty'}  text-dark py-2 px-4 rounded-md border border-zinc-500`}
             >

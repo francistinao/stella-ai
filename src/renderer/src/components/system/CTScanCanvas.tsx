@@ -11,7 +11,7 @@ const dragInertia = 10
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { tool_name } = useToolStore()
+  const { tool_name, is_active } = useToolStore()
   const { theme } = useThemeStore()
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -51,7 +51,6 @@ const CTScanCanvas: React.FC = () => {
       <div
         style={{
           border: '2px solid white',
-          cursor: 'grab',
           height: canvasSize,
           width: canvasSize,
           backgroundColor: theme === 'dark' ? '#191919' : '#DAD6D6',
@@ -84,16 +83,18 @@ const CTScanCanvas: React.FC = () => {
               setOverflow('hidden')
             }
             if (scale > -1) {
-              setScale(Math.max(scale - zoomBy, 0.5))
+              setScale(Math.max(scale - zoomBy, 0.4))
             }
           } else {
             setScale(scale + zoomBy)
           }
         }}
       >
-        <div className="flex flex-col w-full h-full place-items-center justify-center">
-          <img src={sampleCt} alt="CT Scan" className="w-2/4 h-auto" draggable={false} />
-        </div>
+        {is_active && (
+          <div className="flex flex-col w-full h-full place-items-center justify-center">
+            <img src={sampleCt} alt="CT Scan" className="w-full h-full" draggable={false} />
+          </div>
+        )}
       </div>
     </div>
   )
