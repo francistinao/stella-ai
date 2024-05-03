@@ -10,9 +10,9 @@ import { motion } from 'framer-motion'
 
 const System: React.FC = () => {
   const { tool_name, setToolName } = useToolStore()
-  const [sliderWidth, setSliderWidth] = useState(290)
+  const [sliderWidth] = useState(290)
   const [toolsWidth, setToolsWidth] = useState(285)
-  const [isResizingTools, setIsResizingTools] = useState(false)
+  const [_, setIsResizingTools] = useState(false)
 
   const minWidth = 290
   const maxWidth = 350

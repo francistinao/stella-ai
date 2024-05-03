@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
-import React, { useState, Dispatch } from 'react'
+import React, { useState, Dispatch, DragEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useThemeStore } from '@/store/theme'
@@ -8,6 +9,7 @@ import { IoMdClose } from 'react-icons/io'
 import { FaRegImage } from 'react-icons/fa6'
 import { toast, Toaster } from 'sonner'
 import { HiCubeTransparent } from 'react-icons/hi2'
+import { ChangeEvent } from 'react'
 
 /**
  * TODO: The images must be in array since the user can upload multiple images
@@ -60,7 +62,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
 
     const droppedFiles = Array.from(e.dataTransfer.files)
 
-    droppedFiles.forEach((droppedFile) => {
+    droppedFiles.forEach((droppedFile: any) => {
       const fileExtension = droppedFile.name.split('.').pop()?.toLowerCase()
 
       if (allowedFiles.includes(fileExtension as string)) {

@@ -26,6 +26,7 @@
     "@electron-toolkit/utils": "^3.0.0",
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.1.7",
+    "react-draggable": "^4.4.6",
     "react-router-dom": "^6.23.0",
     "react-toggle-slider": "^0.4.0",
     "sonner": "^1.4.41",

@@ -20,6 +20,7 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
    *
    * Create a global hook state later on to manage the state of the detections
    */
+
   const [toggleSlider, active] = useToggleSlider({
     barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
     barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',

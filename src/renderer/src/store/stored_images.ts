@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { create } from 'zustand'
 
 interface StoredImagesState {
