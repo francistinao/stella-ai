@@ -5,3 +5,22 @@ export interface StoredImagesState {
   setImageName: (imageName: string) => void
   setImage: (imageData: BinaryData) => void
 }
+
+export interface RulerInterface {
+  scroll(scrollPos: number): any;
+  resize(): any;
+}
+
+export interface RulerProps {
+  type?: "horizontal" | "vertical";
+  width?: number;
+  height?: number;
+  unit?: number;
+  zoom?: number;
+  direction?: "start" | "end";
+  style?: IObject<any>;
+  backgroundColor?: string;
+  lineColor?: string;
+  textColor?: string;
+  textFormat?: (scale: number) => string;
+}

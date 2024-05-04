@@ -1,18 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Navbar } from '@/components/components'
 import { useToolStore } from '@/store/tool'
 import Resizer from '@/components/Resizer'
 import { CTScanCanvas, Results, Slider, Tools } from '@/components/system'
 import { motion } from 'framer-motion'
+import Ruler, { RulerProps } from '@scena/react-ruler'
 
 const System: React.FC = () => {
-  const { tool_name, setToolName } = useToolStore()
+  const { tool_name, setToolName, setToolActivity, is_active } = useToolStore()
   const [sliderWidth] = useState(290)
   const [toolsWidth, setToolsWidth] = useState(285)
   const [_, setIsResizingTools] = useState(false)
+  const rulerRef = useRef<HTMLDivElement>(null)
 
   const minWidth = 290
   const maxWidth = 350
@@ -41,6 +43,20 @@ const System: React.FC = () => {
     [toolsWidth, minWidth, maxWidth]
   )
 
+  useEffect(() => {
+    const handleResize = (ev: UIEvent) => {
+      if (rulerRef.current) {
+        rulerRef?.current?.onresize(ev)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   // Need to improve and this will be applied on the CT Scan Canvas component
   //Temporary!
   //if the tool_name is grab then set the cursor to grab
@@ -50,6 +66,11 @@ const System: React.FC = () => {
       if (e.key === 'Escape') {
         setToolName('')
         document.body.style.cursor = 'default'
+      } else if (e.key === 'H' || e.key === 'h') {
+        setToolName('Grab')
+        document.body.style.cursor = 'grab'
+      } else if (e.key === 'C' || e.key === 'c') {
+        setToolActivity(!is_active)
       }
     }
 
@@ -80,8 +101,15 @@ const System: React.FC = () => {
           <Tools observeWidth={toolsWidth} />
         </motion.div>
         <Resizer handleMouseDown={handleToolsMouseDown} />
+
+        <div className="w-14" ref={rulerRef}>
+          <Ruler type="vertical" direction="start" />
+        </div>
         {/* CT Scan Canvas */}
         <CTScanCanvas />
+        <div className="w-14" ref={rulerRef}>
+          <Ruler type="vertical" direction="start" />
+        </div>
         {/* Results Component */}
         <Results remainingWidth={toolsWidth} />
       </div>

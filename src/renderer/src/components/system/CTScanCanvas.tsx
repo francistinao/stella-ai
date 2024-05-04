@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
+import Ruler from '@scena/react-ruler'
 
 // Import test image
 import sampleCt from '@/data/sample_ct.png'

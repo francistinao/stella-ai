@@ -45,13 +45,13 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     },
     {
       tool_id: 2,
-      tool_name: is_active ? 'Hide CT Scan' : 'Show CT Scan',
+      tool_name: is_active ? 'Hide CT Scan (Shortcut: C)' : 'Show CT Scan (Shortcut: C)',
       is_active: false,
       icon: is_active ? <PiEye size={18} /> : <PiEyeClosed size={18} />
     },
     {
       tool_id: 3,
-      tool_name: 'Grab',
+      tool_name: 'Grab (Shortcut: H)',
       is_active: false,
       icon: <FaRegHandPaper size={18} />
     },
