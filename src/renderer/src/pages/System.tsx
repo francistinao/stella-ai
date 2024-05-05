@@ -17,7 +17,7 @@ const System: React.FC = () => {
   const rulerRef = useRef<HTMLDivElement>(null)
 
   const minWidth = 290
-  const maxWidth = 350
+  const maxWidth = 1000
 
   const handleToolsMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -46,7 +46,7 @@ const System: React.FC = () => {
   useEffect(() => {
     const handleResize = (ev: UIEvent) => {
       if (rulerRef.current) {
-        rulerRef?.current?.onresize(ev)
+        rulerRef?.current?.onresize!(ev)
       }
     }
 

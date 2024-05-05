@@ -17,6 +17,7 @@ interface ToolboxProps {
 
 const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
   const { setToolName, setToolActivity, is_active } = useToolStore()
+
   const { theme } = useThemeStore()
   /**
    * TODO: The active state will be the main indicator for the detections to be displayed or not

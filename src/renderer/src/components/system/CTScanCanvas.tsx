@@ -2,18 +2,19 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
-import Ruler from '@scena/react-ruler'
+import { useImageConfigStore } from '@/store/tool'
 
 // Import test image
 import sampleCt from '@/data/sample_ct.png'
 
 const canvasSize = window.innerHeight * 2
-const dragInertia = 10
+const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
   const { tool_name, is_active } = useToolStore()
   const { theme } = useThemeStore()
+  const { contrastLevel, highlightsAmount, sepia, is_invert } = useImageConfigStore()
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -35,6 +36,10 @@ const CTScanCanvas: React.FC = () => {
   })
 
   const [overflow, setOverflow] = useState<string>('scroll')
+
+  const imageStyle = {
+    filter: `contrast(${contrastLevel}) brightness(${highlightsAmount}) sepia(${sepia}) invert(${is_invert})`
+  }
 
   const [{ translateX, translateY }] = useState({
     translateX: 0,
@@ -91,11 +96,19 @@ const CTScanCanvas: React.FC = () => {
           }
         }}
       >
-        {is_active && (
-          <div className="flex flex-col w-full h-full place-items-center justify-center">
-            <img src={sampleCt} alt="CT Scan" className="w-full h-full" draggable={false} />
-          </div>
-        )}
+        <div
+          className={`flex flex-col w-full h-full place-items-center justify-center ${!is_active && 'hidden'}`}
+        >
+          {/* Apply the settings in the image
+           */}
+          <img
+            src={sampleCt}
+            alt="CT Scan"
+            className="w-full h-full"
+            draggable={false}
+            style={imageStyle}
+          />
+        </div>
       </div>
     </div>
   )

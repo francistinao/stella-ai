@@ -76,7 +76,7 @@ const Findings: React.FC = () => {
                 <h1
                   className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
                 >
-                  Hypodense Infarct
+                  20.423
                 </h1>
               </div>
             </div>

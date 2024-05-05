@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
 import { useThemeStore } from '@/store/theme'
@@ -8,6 +9,9 @@ import { MdKeyboardArrowDown } from 'react-icons/md'
 import { HiAdjustmentsHorizontal } from 'react-icons/hi2'
 import Slider from '@mui/material/Slider'
 import { styled } from '@mui/material/styles'
+import { useImageConfigStore } from '@/store/tool'
+import { useToggleSlider } from 'react-toggle-slider'
+import { useEffect } from 'react'
 
 /**
  * TODO: Create a global state for storing the following:
@@ -24,6 +28,27 @@ const ImageConfig: React.FC = () => {
   const [isHighlightDrop, setIsHighlightDrop] = useState(true)
   const [isShadowDrop, setIsShadowDrop] = useState(false)
   const { theme } = useThemeStore()
+  const {
+    contrastLevel,
+    highlightsAmount,
+    sepia,
+    setContrastLevel,
+    setHighlightsAmount,
+    setSepia,
+    setIsInvert
+  } = useImageConfigStore()
+
+  const [toggleSlider, active] = useToggleSlider({
+    barBackgroundColor: theme === 'dark' ? '#333333' : '#72FC5E',
+    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#333333',
+    barWidth: 80,
+    barHeight: 40,
+    handleSize: 30,
+    handleBorderRadius: 100,
+    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#333333',
+    handleBackgroundColorActive: theme === 'dark' ? '#333333' : '#72FC5E',
+    transitionDuration: '200ms'
+  })
 
   const PrettoSlider = styled(Slider)({
     color: theme === 'dark' ? '#72FC5E' : '#191919',
@@ -64,6 +89,26 @@ const ImageConfig: React.FC = () => {
     }
   })
 
+  const handleContrastLevel = (_event: Event, newValue: number | number[]) => {
+    setContrastLevel(newValue as number)
+  }
+
+  const handleHighlightsAmount = (_event: Event, newValue: number | number[]) => {
+    setHighlightsAmount(newValue as number)
+  }
+
+  const handleSepia = (_event: Event, newValue: number | number[]) => {
+    setSepia(newValue as number)
+  }
+
+  useEffect(() => {
+    if (active) {
+      setIsInvert(1)
+    } else {
+      setIsInvert(0)
+    }
+  }, [active])
+
   return (
     <div
       className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3`}
@@ -78,7 +123,7 @@ const ImageConfig: React.FC = () => {
       </div>
       {/* Contrast Component */}
       <div className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-4 rounded-md flex flex-col`}>
-        <div className="flex justify-between items-center ">
+        <div className="flex justify-between items-center">
           <div
             className={`${theme === 'dark' ? 'text-white' : 'text-dark'} flex gap-3 items-center`}
           >
@@ -100,16 +145,22 @@ const ImageConfig: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isContrastDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8"
+          className="overflow-hidden pt-5"
         >
           <div
             className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
           >
             <div className="flex justify-between items-center">
               <h1>Contrast Level</h1>
-              <h1>0%</h1>
+              <h1>{contrastLevel}%</h1>
             </div>
-            <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={10} />
+            <PrettoSlider
+              onChange={handleContrastLevel}
+              valueLabelDisplay="auto"
+              defaultValue={contrastLevel}
+              min={0}
+              max={100}
+            />
           </div>
         </motion.div>
       </div>
@@ -138,25 +189,22 @@ const ImageConfig: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isHighlightDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8"
+          className="overflow-hidden pt-5"
         >
           <div
             className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
           >
             <div className="flex justify-between items-center">
               <h1>Amount</h1>
-              <h1>0%</h1>
+              <h1>{highlightsAmount}%</h1>
             </div>
-            <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={10} />
-          </div>
-          <div
-            className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-          >
-            <div className="flex justify-between items-center">
-              <h1>Tone</h1>
-              <h1>0%</h1>
-            </div>
-            <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={10} />
+            <PrettoSlider
+              onChange={handleHighlightsAmount}
+              valueLabelDisplay="auto"
+              aria-label="pretto slider"
+              defaultValue={highlightsAmount}
+              max={4}
+            />
           </div>
         </motion.div>
       </div>
@@ -185,18 +233,43 @@ const ImageConfig: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isShadowDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8"
+          className="overflow-hidden pt-5"
         >
           <div
             className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
           >
             {/* Need to change the setting for this one, I don't know what to add yet */}
             <div className="flex justify-between items-center">
-              <h1>Amount</h1>
-              <h1>0%</h1>
+              <h1>Sepia</h1>
+              <h1>{sepia}%</h1>
             </div>
-            <PrettoSlider valueLabelDisplay="auto" aria-label="pretto slider" defaultValue={10} />
+            <PrettoSlider
+              onChange={handleSepia}
+              valueLabelDisplay="auto"
+              aria-label="pretto slider"
+              defaultValue={sepia}
+              min={0}
+              max={1}
+            />
           </div>
+          <div className="flex justify-between items-center">
+            {toggleSlider}
+            <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Invert</p>
+          </div>
+          {/* <div
+            className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+          >
+            <div className="flex justify-between items-center">
+              <h1>Tone</h1>
+              <h1>{highlightsTone}%</h1>
+            </div>
+            <PrettoSlider
+              onChange={handleHighlightsTone}
+              valueLabelDisplay="auto"
+              aria-label="pretto slider"
+              defaultValue={highlightsTone}
+            />
+          </div> */}
         </motion.div>
       </div>
     </div>
