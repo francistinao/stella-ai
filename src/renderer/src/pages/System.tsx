@@ -7,7 +7,8 @@ import { useToolStore } from '@/store/tool'
 import Resizer from '@/components/Resizer'
 import { CTScanCanvas, Results, Slider, Tools } from '@/components/system'
 import { motion } from 'framer-motion'
-import Ruler, { RulerProps } from '@scena/react-ruler'
+import Ruler from '@scena/react-ruler'
+import { HiMiniCubeTransparent } from 'react-icons/hi2'
 
 const System: React.FC = () => {
   const { tool_name, setToolName, setToolActivity, is_active } = useToolStore()
@@ -89,6 +90,18 @@ const System: React.FC = () => {
   return (
     <div className="w-full h-screen flex flex-col">
       <Navbar />
+      {/* Description and segmentate button */}
+      <div className="fixed z-50 flex justify-between items-start w-[600px] bottom-6 right-[350px]">
+        <div className="flex flex-col gap-1 text-sm text-white">
+          <h1>Description: Brain CT Scan</h1>
+          <h1>Image: 1/1</h1>
+          <h1>W: 432 H: 426</h1>
+        </div>
+        <button className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black">
+          <HiMiniCubeTransparent size={20} />
+          <h1>Segmentate</h1>
+        </button>
+      </div>
       {/* Main layout */}
       {/* grid grid-cols-12 */}
       <div className="pb-4 flex w-full h-screen">
