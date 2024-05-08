@@ -11,7 +11,7 @@ function createWindow(): void {
     height: 2100,
     show: false,
     autoHideMenuBar: true,
-    resizable: false,
+    resizable: true,
     maxWidth: 2680,
     maxHeight: 2100,
     minWidth: 1400,

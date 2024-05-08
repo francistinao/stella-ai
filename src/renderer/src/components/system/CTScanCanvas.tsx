@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
 import { useImageConfigStore } from '@/store/tool'
+import { HiMiniCubeTransparent } from 'react-icons/hi2'
 
 // Import test image
 import sampleCt from '@/data/sample_ct.png'
@@ -54,6 +55,18 @@ const CTScanCanvas: React.FC = () => {
         overflow
       }}
     >
+      {/* Description and segmentate button */}
+      <div className="fixed z-50 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
+        <div className="flex flex-col gap-1 text-sm text-white">
+          <h1>Description: Brain CT Scan</h1>
+          <h1>Image: 1/1</h1>
+          <h1>W: 432 H: 426</h1>
+        </div>
+        <button className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black">
+          <HiMiniCubeTransparent size={20} />
+          <h1>Segmentate</h1>
+        </button>
+      </div>
       <div
         style={{
           border: '2px solid white',

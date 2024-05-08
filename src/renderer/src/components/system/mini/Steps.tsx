@@ -25,7 +25,7 @@ const Steps: React.FC = () => {
           {[1, 2, 3, 4].map((step) => (
             <div
               key={step}
-              className={`${theme === 'dark' ? 'bg-light_g text-dark' : 'bg-dark text-white'} ${step === 4 && 'bg-transparent border-2 border-light_g text-light_g text-center'} rounded-full text-xs font-semibold py-1 px-[10px]`}
+              className={`text-[8px] ${theme === 'dark' ? 'bg-light_g text-dark' : 'bg-dark text-white'} ${step === 4 && 'bg-transparent border-2 border-light_g text-light_g text-center'} rounded-full font-semibold py-1 px-[8px]`}
             >
               <h1>{step}</h1>
             </div>
