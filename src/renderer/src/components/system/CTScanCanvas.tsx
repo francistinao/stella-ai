@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
@@ -13,23 +14,13 @@ const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { tool_name, is_active } = useToolStore()
+  const { tool_name, is_active, is_draw, setIsDraw } = useToolStore()
+  const [scale, setScale] = useState(1)
   const { theme } = useThemeStore()
   const { contrastLevel, highlightsAmount, sepia, is_invert } = useImageConfigStore()
   const containerRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const { innerHeight, innerWidth } = window
-
-    if (tool_name === 'Grab') {
-      const scrollDown = (canvasSize - innerHeight) / 2
-      const scrollLeft = (canvasSize - innerWidth) / 2
-
-      containerRef?.current?.scroll(scrollLeft, scrollDown)
-    }
-  }, [tool_name])
-
-  const [scale, setScale] = useState(1)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const [drawing, setDrawing] = useState(false)
 
   const [{ clientX, clientY }, setClient] = useState({
     clientX: 0,
@@ -46,6 +37,74 @@ const CTScanCanvas: React.FC = () => {
     translateX: 0,
     translateY: 0
   })
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (e.button !== 0) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    const context = canvas.getContext('2d')
+    if (context) {
+      context.beginPath()
+      context.moveTo(x, y)
+      setDrawing(true)
+    }
+  }
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!drawing) return
+
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+
+    const context = canvas.getContext('2d')
+    if (context) {
+      context.lineTo(x, y)
+      context.stroke()
+    }
+  }
+
+  const handleMouseUp = () => {
+    setDrawing(false)
+  }
+
+  useEffect(() => {
+    const { innerHeight, innerWidth } = window
+
+    if (tool_name === 'Grab') {
+      const scrollDown = (canvasSize - innerHeight) / 2
+      const scrollLeft = (canvasSize - innerWidth) / 2
+
+      containerRef?.current?.scroll(scrollLeft, scrollDown)
+    } else if (tool_name === 'Pencil') {
+      document.body.style.cursor = 'crosshair'
+      setIsDraw(true)
+    }
+  }, [tool_name])
+
+  useEffect(() => {
+    if (is_draw || tool_name === 'Pencil') {
+      const canvas = canvasRef.current
+      if (canvas) {
+        const context = canvas.getContext('2d')
+        if (context) {
+          context.strokeStyle = '#72FC5E'
+          context.lineWidth = 10
+          context.lineCap = 'round'
+          context.lineJoin = 'round'
+        }
+      }
+    }
+  }, [is_draw])
+
   return (
     <div
       ref={containerRef}
@@ -109,11 +168,20 @@ const CTScanCanvas: React.FC = () => {
           }
         }}
       >
+        {is_draw && (
+          <canvas
+            ref={canvasRef}
+            width={canvasSize}
+            height={canvasSize}
+            style={{ position: 'absolute', zIndex: 100 }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+          />
+        )}
         <div
-          className={`flex flex-col w-full h-full place-items-center justify-center ${!is_active && 'hidden'}`}
+          className={`flex flex-col w-full h-full place-items-center justify-center -z-10 ${!is_active && 'hidden'}`}
         >
-          {/* Apply the settings in the image
-           */}
           <img
             src={sampleCt}
             alt="CT Scan"

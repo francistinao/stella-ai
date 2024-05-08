@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // eslint-disable-next-line prettier/prettier
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -11,7 +12,7 @@ import { motion } from 'framer-motion'
 import Ruler from '@scena/react-ruler'
 
 const System: React.FC = () => {
-  const { tool_name, setToolName, setToolActivity, is_active } = useToolStore()
+  const { setToolName, setToolActivity, is_active, is_draw, setIsDraw } = useToolStore()
   const [sliderWidth] = useState(290)
   const [toolsWidth, setToolsWidth] = useState(285)
   const [_, setIsResizingTools] = useState(false)
@@ -62,30 +63,40 @@ const System: React.FC = () => {
   //Temporary!
   //if the tool_name is grab then set the cursor to grab
   useEffect(() => {
-    //add keybind for reseting the cursor
-    document.onkeydown = (e) => {
-      if (e.key === 'Escape') {
-        setToolName('')
-        document.body.style.cursor = 'default'
-      } else if (e.key === 'H' || e.key === 'h') {
-        setToolName('Grab')
-        document.body.style.cursor = 'grab'
-      } else if (e.key === 'C' || e.key === 'c') {
-        setToolActivity(!is_active)
+    const handleKeyDown = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case 'H':
+        case 'h':
+          setToolName('Grab')
+          document.body.style.cursor = 'grab'
+          break
+        case 'C':
+        case 'c':
+          setToolName('CT Scan')
+          setToolActivity(!is_active)
+          break
+        case 'P':
+        case 'p':
+          setToolName('Pencil')
+          setIsDraw(!is_draw)
+          document.body.style.cursor = 'crosshair'
+          break
+        case 'Escape':
+          setToolName('')
+          setIsDraw(false)
+          document.body.style.cursor = 'default'
+          break
+        default:
+          break
       }
     }
 
-    if (tool_name === 'Grab') {
-      document.body.style.cursor = 'grab'
+    document.addEventListener('keydown', handleKeyDown)
 
-      //if mouse is up then set the cursor to grab
-      document.body.onmouseup = () => {
-        document.body.style.cursor = 'grab'
-      }
-    } else {
-      document.body.style.cursor = 'default'
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [tool_name])
+  }, [setToolName, setToolActivity, is_active])
 
   return (
     <div className="w-full h-screen flex flex-col">

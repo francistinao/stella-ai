@@ -6,8 +6,10 @@ interface ToolProps {
   tool_name: string
   tool_id: string
   is_active: boolean
+  is_draw: boolean
   setToolName: (tool_name: string) => void
   setToolActivity: (is_active: boolean) => void
+  setIsDraw: (is_draw: boolean) => void
 }
 
 interface ImageConfigProps {
@@ -25,8 +27,10 @@ export const useToolStore = create<ToolProps>((set) => ({
   tool_name: '',
   tool_id: '',
   is_active: true,
+  is_draw: false,
   setToolName: (tool_name: string) => set({ tool_name }),
-  setToolActivity: (is_active: boolean) => set({ is_active })
+  setToolActivity: (is_active: boolean) => set({ is_active }),
+  setIsDraw: (is_draw: boolean) => set({ is_draw })
 }))
 
 export const useImageConfigStore = create<ImageConfigProps>((set) => ({

@@ -10,7 +10,7 @@ interface ResultProps {
 }
 
 export const useResultStore = create<ResultProps>((set) => ({
-  isLoading: true,
+  isLoading: false,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   isError: false,
   setIsError: (isError: boolean) => set({ isError })

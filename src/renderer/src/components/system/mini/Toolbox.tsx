@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
 import React from 'react'
@@ -6,17 +7,17 @@ import { useThemeStore } from '@/store/theme'
 import { Tooltip } from '@chakra-ui/react'
 import { useToolStore } from '@/store/tool'
 import { useToggleSlider } from 'react-toggle-slider'
-import { TbLine } from 'react-icons/tb'
 import { PiEye, PiEyeClosed } from 'react-icons/pi'
 import { FaRegHandPaper } from 'react-icons/fa'
 import { BsRulers } from 'react-icons/bs'
+import { BiPencil } from 'react-icons/bi'
 
 interface ToolboxProps {
   observeWidth: number
 }
 
 const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
-  const { setToolName, setToolActivity, is_active } = useToolStore()
+  const { tool_name, setToolName, setToolActivity, is_active, setIsDraw, is_draw } = useToolStore()
 
   const { theme } = useThemeStore()
   /**
@@ -40,9 +41,9 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
   const tools = [
     {
       tool_id: 1,
-      tool_name: 'Line',
-      is_active: false,
-      icon: <TbLine size={18} />
+      tool_name: 'Pencil (Shortcut: P)',
+      is_draw: false,
+      icon: <BiPencil size={18} />
     },
     {
       tool_id: 2,
@@ -100,10 +101,12 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
                 setToolName(tool.tool_name)
                 if (tool.tool_name === 'Show CT Scan' || tool.tool_id === 2) {
                   setToolActivity(!is_active)
+                } else if (tool.tool_name === 'Line' || tool.tool_id === 1) {
+                  setIsDraw(!is_draw)
                 }
               }}
               key={idx}
-              className={`flex flex-col items-center gap-2 ${theme === 'dark' ? 'bg-light_g' : 'bg-dirty'}  text-dark py-2 px-4 rounded-md border border-zinc-500`}
+              className={`flex flex-col items-center gap-2 ${theme === 'dark' ? 'bg-light_g' : 'bg-dirty'} ${tool_name.includes(tool.tool_name) && (theme === 'dark' ? 'border-[3.5px] border-[#46856e] duration-50h' : 'border-[3.5px] border-dark duration-50h')} text-dark py-2 px-4 rounded-md `}
             >
               {tool.icon}
             </button>
