@@ -5,6 +5,7 @@ import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
 import { useImageConfigStore } from '@/store/tool'
 import { HiMiniCubeTransparent } from 'react-icons/hi2'
+import { motion } from 'framer-motion'
 
 // Import test image
 import sampleCt from '@/data/sample_ct.png'
@@ -16,6 +17,7 @@ const zoomBy = 0.1
 const CTScanCanvas: React.FC = () => {
   const { tool_name, is_active, is_draw, setIsDraw } = useToolStore()
   const [scale, setScale] = useState(1)
+  const [isHover, setIsHover] = useState(false)
   const { theme } = useThemeStore()
   const { contrastLevel, highlightsAmount, sepia, is_invert } = useImageConfigStore()
   const containerRef = useRef<HTMLDivElement>(null)
@@ -121,8 +123,18 @@ const CTScanCanvas: React.FC = () => {
           <h1>Image: 1/1</h1>
           <h1>W: 432 H: 426</h1>
         </div>
-        <button className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black">
-          <HiMiniCubeTransparent size={20} />
+        <button
+          onMouseEnter={() => setIsHover(true)}
+          onMouseLeave={() => setIsHover(false)}
+          className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black"
+        >
+          <motion.div
+            initial={{ rotate: 0 }}
+            animate={{ rotate: isHover ? 360 : 0 }}
+            transition={{ duration: 1, ease: 'linear' }}
+          >
+            <HiMiniCubeTransparent size={20} />
+          </motion.div>
           <h1>Segmentate</h1>
         </button>
       </div>

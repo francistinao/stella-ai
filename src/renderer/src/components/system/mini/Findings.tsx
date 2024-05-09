@@ -59,7 +59,7 @@ const Findings: React.FC = () => {
                 animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
                 src={mascot}
                 alt="STELLA.ai Mascot"
-                className="w-32 h-auto"
+                className="w-64 h-auto"
               />
               <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
                 Getting results
