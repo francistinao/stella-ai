@@ -26,7 +26,7 @@ In this repo, you can:
 
 ## :book: About
 
-**STELLA.ai** is an Intelligent System to automatically segmentation brain lesions according the the upload CT Scan. We harness the power of computer vision and machine learning to extract the brain lesion segmentation points of stroke, whether if its ischemic or hemorrhagic type of stroke. We built this application from the ground-up to an actual implementation in a usable desktop application.
+**STELLA.ai** is an intelligent system that automatically segments brain lesions using the uploaded CT scan. We harness the power of computer vision and machine learning to extract the brain lesion segmentation points of stroke, whether it's an ischemic or hemorrhagic type of stroke. We built this application from the ground up to an actual implementation in a usable desktop application.
 
 ## :toolbox: Setup Instructions
 
@@ -35,9 +35,9 @@ In this repo, you can:
 Source Repositories:
 
 1. `🎨` [stella-desktop]Not yet released - Front End Repo
-2. `⚡` [stella-api]Not yeat released - Back End Repo
+2. `⚡` [stella-api]Not yet released - Back End Repo
 
-## :ledger: Colab Notebooks
+## :ledger: Repositories
 
 1. [Dataset Preprocessing for U-Net CNN](https://github.com/qarudafxz/stella-ai_preprocessing)
 1. [U-Net CNN Model Training](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
@@ -49,7 +49,7 @@ Source Repositories:
 
 ## :scroll: Important References
 
-- Any Paper that uses the Brain CT Scans, must cite the following:
+- Any Paper that uses Brain CT Scans must cite the following:
 
   > Not yet identified
 
