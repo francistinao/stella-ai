@@ -39,7 +39,7 @@ Source Repositories:
 
 ## :ledger: Colab Notebooks
 
-1. [Dataset Preprocessing for U-Net CNN](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
+1. [Dataset Preprocessing for U-Net CNN](https://github.com/qarudafxz/stella-ai_preprocessing)
 1. [U-Net CNN Model Training](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
 1. [Houndsfield Scale Identification](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
 
