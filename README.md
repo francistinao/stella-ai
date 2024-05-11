@@ -34,8 +34,8 @@ In this repo, you can:
 
 Source Repositories:
 
-1. `🎨` [stella-desktop]Not yet released - Front End Repo
-2. `⚡` [stella-api]Not yet released - Back End Repo
+1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
+2. `⚡` [stella-api] Not yet released - Back End Repo
 
 ## :ledger: Repositories
 
