@@ -36,12 +36,15 @@ Source Repositories:
 
 1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
 2. `⚡` [stella-api] Not yet released - Back End Repo
+3. `⚡` [stella-api-v2_Mask RCNN Api - Back End Repo](https://github.com/qarudafxz/stella-ai_api_v2)
 
-## :ledger: Repositories
+## 📦 Supporting Repositories
 
-1. [Dataset Preprocessing for U-Net CNN](https://github.com/qarudafxz/stella-ai_preprocessing)
-1. [U-Net CNN Model Training](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
-1. [Houndsfield Scale Identification](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
+1. [Dataset Preprocessing for the model](https://github.com/qarudafxz/stella-ai_preprocessing)
+
+## :ledger: Colab Notebooks
+
+1. [Mask RCNN Training (First Version)](https://colab.research.google.com/drive/1-rRZOSM0z7JfGylbBqFI2t3OGoofKyF4?usp=sharing)
 
 ## :brain: Models
 
@@ -61,6 +64,10 @@ Source Repositories:
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [👨‍🏫 James Earl D. Cubillas, MSc.](https://scholar.google.com.ph/citations?user=mxdcIF0AAAAJ&hl=en) | Our ever-supportive Thesis Adviser.                                                                                                                                           |
 | 👩‍⚕️ Dra. Sheen C. Urquiza                                                                    | For her expertise in radiology.                                                                                                                                         |
+
+## 🏆 Milestones
+
+1. STELLA.ai was selected as one of the top 10 teams competing for the Hack4Health Hackathon organized by Department of Health, Philippines, partnered with Development Academy of the Philippines on May 15-17, 2024
 
 ## :writing_hand: Cite Our Project
 
