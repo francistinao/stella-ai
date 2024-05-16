@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
+import { useResultStore } from '@/store/result'
 import { useImageConfigStore } from '@/store/tool'
 import { HiMiniCubeTransparent } from 'react-icons/hi2'
 import { motion } from 'framer-motion'
@@ -10,12 +11,15 @@ import { useStoredImages } from '@/store/stored_images'
 import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
+import { formatJson} from '@/utils/formatJson'
+import { buildUrl } from '@/utils/buildUrl'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
+  const { setResult, result } = useResultStore()
   const { boundaryColor, tool_name, is_active, is_draw, setIsDraw, boundarySize } = useToolStore()
   const { visible } = useVisible()
   const { selectedImage, setIsLoading } = useStoredImages()
@@ -84,13 +88,42 @@ const CTScanCanvas: React.FC = () => {
     setDrawing(false)
   }
 
+  // THE MAIN FUNCTION FOR THE CORE FEATURE
   const handleSegmentate = async () => {
     try {
-      setIsLoading!(true)
+      setIsLoading!(true);
+      if (!selectedImage) {
+        throw new Error('No image selected');
+      }
+  
+      // Await the resolution of the promise to get the image data
+      const imageDataArrayBuffer = await selectedImage.imageData;
+  
+      if (!imageDataArrayBuffer) {
+        throw new Error('Failed to get image data');
+      }
+  
+      const imageData = new FormData();
+      imageData.append('file', new Blob([imageDataArrayBuffer])); // Wrap ArrayBuffer in Blob before appending
+  
+      const response = await fetch('http://127.0.0.1:8000/', {
+        method: 'POST',
+        body: imageData
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error('Error processing the image');
+      }
+      setResult(JSON.parse(formatJson(data)));
     } catch (error) {
-      console.error('Error segmentating image:', error)
+      console.error('Error segmentating image:', error);
+    } finally {
+      setIsLoading!(false);
     }
-  }
+  };
+  
 
   const drawPolygon = () => {
     const canvas = boundaryRef.current;
@@ -98,16 +131,23 @@ const CTScanCanvas: React.FC = () => {
   
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
+    //if the canvas is not empty, clear it
+    ctx.clearRect(0, 0, canvasSize, canvasSize);
   
     ctx.strokeStyle = boundaryColor?.color as string; 
     ctx.lineWidth = 2;
-    
+    //Hemorrhagic examples only
     // Line between boundry points
-    if (tempBoundPts.length > 0) {
+    //@ts-ignore
+    if (result?.hemmoragic?.Lesion_Boundary_Points.length > 0) {
       ctx.beginPath();
-      ctx.moveTo(tempBoundPts[0][0] * 2.4, tempBoundPts[0][1] * 2.4); 
-      for (let i = 1; i < tempBoundPts.length; i++) {
-        ctx.lineTo(tempBoundPts[i][0] * 2.4, tempBoundPts[i][1] * 2.4); 
+      //@ts-ignore
+      ctx.moveTo(result?.hemmoragic?.Lesion_Boundary_Points[0][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[0][1] * 2.4); 
+      //@ts-ignore
+      for (let i = 1; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
+    //@ts-ignore
+        ctx.lineTo(result?.hemmoragic?.Lesion_Boundary_Points[i][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[i][1] * 2.4); 
       }
       ctx.closePath();
       ctx.stroke();
@@ -115,8 +155,10 @@ const CTScanCanvas: React.FC = () => {
   
     // Boundry Points
     ctx.fillStyle = boundaryColor?.color as string; 
-    for (let i = 0; i < tempBoundPts.length; i++) {
-      const [x, y] = tempBoundPts[i];
+    //@ts-ignore
+    for (let i = 0; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
+    //@ts-ignore
+      const [x, y] = result?.hemmoragic?.Lesion_Boundary_Points[i];
       ctx.beginPath();
       ctx.arc(x * 2.4, y * 2.4, boundarySize!, 0, Math.PI * 2);
       ctx.fill();
@@ -125,9 +167,12 @@ const CTScanCanvas: React.FC = () => {
     // Polygon area fill
     ctx.fillStyle = boundaryColor?.rgb_val as string;  //20% opacity
     ctx.beginPath();
-    ctx.moveTo(tempBoundPts[0][0] * 2.4, tempBoundPts[0][1] * 2.4);
-    for (let i = 1; i < tempBoundPts.length; i++) {
-      ctx.lineTo(tempBoundPts[i][0] * 2.4, tempBoundPts[i][1] * 2.4);
+    //@ts-ignore
+    ctx.moveTo(result?.hemmoragic?.Lesion_Boundary_Points[0][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[0][1] * 2.4);
+    //@ts-ignore
+    for (let i = 1; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
+    //@ts-ignore
+      ctx.lineTo(result?.hemmoragic?.Lesion_Boundary_Points[i][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[i][1] * 2.4);
     }
     ctx.closePath();
     ctx.fill();
@@ -187,7 +232,7 @@ const CTScanCanvas: React.FC = () => {
 
   useEffect(() => {
     drawPolygon()
-  }, [tempBoundPts, boundarySize, boundaryColor])
+  }, [tempBoundPts, boundarySize, boundaryColor, result])
 
   return (
     <div

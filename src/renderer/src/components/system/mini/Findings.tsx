@@ -7,12 +7,11 @@ import { motion } from 'framer-motion'
 import { useStoredImages } from '@/store/stored_images'
 import mascot from '@/assets/mascot.png'
 import mascot_head from '@/assets/logo.png'
-
-//Temporary data
-import { tempBoundPts } from '@/data/tempBoundPts'
+import { useResultStore } from '@/store/result'
 
 const Findings: React.FC = () => {
-  const { isLoading, result } = useStoredImages()
+  const { result } = useResultStore()
+  const { isLoading } = useStoredImages()
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
   const { theme } = useThemeStore()
@@ -58,7 +57,8 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-8"
         >
-        {/* {result?.data === undefined && isLoading === undefined && (
+          {/* @ts-ignore */}
+        {result.hemmoragic === undefined || !result.hemmoragic && isLoading === undefined && (
           <div className="flex flex-col gap-4 justify-center place-items-center">
             <motion.img
               animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
@@ -71,7 +71,9 @@ const Findings: React.FC = () => {
             </h1>
           </div>
         )} 
-        {isLoading && result?.data === undefined && (
+          {/* @ts-ignore */}
+
+        {isLoading && result.hemmoragic === undefined && (
           <div className="flex flex-col gap-4 justify-center place-items-center">
             <motion.img
               animate={{ 
@@ -87,13 +89,15 @@ const Findings: React.FC = () => {
               Getting results
             </h1>
           </div>
-        )} */}
-        {/* !isLoading && result?.data !== undefined && result?.data !== null */}
-        {true && (
+        )}
+          {/* @ts-ignore */}
+
+        {!isLoading && result.hemmoragic && (
           <div className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
             <div className="flex flex-col">
               <p className="text-md font-regular font-bold">Hemorrhagic Stroke</p>
-              <p className="text-sm font-regular">Houndsfield Value: <span className='font-bold'>128.4</span></p>
+              {/* @ts-ignore */}
+              <p className="text-sm font-regular">Houndsfield Value: <span className='font-bold'>{result?.hemmoragic?.Mean}</span></p>
             </div>
             <div className="flex flex-col gap-2">
              
@@ -103,7 +107,8 @@ const Findings: React.FC = () => {
                   Lesion Area in pixels:
                 </h1>
                 <h1 className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}>
-                  2468px
+                  {/* @ts-ignore */}
+                  {result?.hemmoragic?.Area}px
                 </h1>
               </div>
             </div>
@@ -146,7 +151,8 @@ const Findings: React.FC = () => {
           >
             {/* map the temp boundary points  */}
             <div className="grid grid-cols-4 gap-2">
-              {tempBoundPts.map((point, idx) => (
+              {/* @ts-ignore */}
+              {result?.hemmoragic?.Lesion_Boundary_Points.map((point, idx) => (
                 <div
                   key={idx}
                   className={` justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}

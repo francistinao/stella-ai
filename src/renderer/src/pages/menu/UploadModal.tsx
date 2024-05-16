@@ -14,8 +14,9 @@
   import { LoadingModal } from '@/components/system/mini'
   import { useLoadingImage, useStoredImages } from '@/store/stored_images'
   import { StoredImagesState } from '@/types/global'
-  import { urlBuffer } from '@/utils/urlBuffer'
+  // import { urlBuffer } from '@/utils/urlBuffer'
   import { byteConverter } from '@/utils/byteConverter'
+  import placeholder from '@/assets/vector.png'
 
   /** 
    * TODO: The images must be in array since the user can upload multiple images
@@ -161,6 +162,8 @@
       setImages!(filesArray);
     }
 
+    console.log("Selected files: ", selectedFiles)
+
     useEffect(() => {
       //@ts-ignore
       const filesArray: StoredImagesState[] = selectedFiles.map((file: File) => ({
@@ -270,7 +273,7 @@
                         <div className="flex gap-4 items-center">
                           {/* Need to solve thumbnail because it wont display */}
                           <img
-                            src={urlBuffer(image) as unknown as string}
+                            src={placeholder}
                             alt={image.name}
                             className="w-20 h-20 object-cover rounded-lg"
                           />

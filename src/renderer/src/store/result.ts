@@ -11,17 +11,22 @@ interface ResultProps {
   setIsLoading: (isLoading: boolean) => void
   isError: boolean
   setIsError: (isError: boolean) => void
+  setResult: (result: any) => void
 }
 
 export const useResultStore = create<ResultProps>((set) => ({
   result: {
     data: {
-      lesion_boundary_points: [
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 0]
-      ]
+      hemmoragic: {
+        Area: 0,  
+        Lesion_Boundary_Points: [],
+        Mean: 0,
+      },
+      ischemic: {
+        Area: 0,
+        Lesion_Boundary_Points: [],
+        Mean: 0,
+      }
     },
     // data: undefined,
     error: null
@@ -29,5 +34,6 @@ export const useResultStore = create<ResultProps>((set) => ({
   isLoading: false,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   isError: false,
-  setIsError: (isError: boolean) => set({ isError })
+  setIsError: (isError: boolean) => set({ isError }),
+  setResult: (result: any) => set({ result })
 }))

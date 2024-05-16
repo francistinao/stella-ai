@@ -9,4 +9,6 @@ export const urlBuffer = async (imageData: any): Promise<string> => {
     } catch (error) {
       console.error('Error loading image data:', error);
     }
+
+    return '';
   };
