@@ -36,6 +36,7 @@ Source Repositories:
 
 1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
 2. `⚡` [stella-api] Not yet released - Back End Repo
+3. `⚡` [stella-api-v2_Mask RCNN Api - Back End Repo](https://github.com/qarudafxz/stella-ai_api_v2)
 
 ## 📦 Supporting Repositories
 
@@ -63,6 +64,10 @@ Source Repositories:
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [👨‍🏫 James Earl D. Cubillas, MSc.](https://scholar.google.com.ph/citations?user=mxdcIF0AAAAJ&hl=en) | Our ever-supportive Thesis Adviser.                                                                                                                                           |
 | 👩‍⚕️ Dra. Sheen C. Urquiza                                                                    | For her expertise in radiology.                                                                                                                                         |
+
+## 🏆 Milestones
+
+1. STELLA.ai was selected as one of the top 10 teams competing for the Hack4Health Hackathon organized by Department of Health, Philippines, partnered with Development Academy of the Philippines on May 15-17, 2024
 
 ## :writing_hand: Cite Our Project
 
