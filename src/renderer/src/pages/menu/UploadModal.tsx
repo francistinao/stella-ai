@@ -1,7 +1,7 @@
   /* eslint-disable @typescript-eslint/no-explicit-any */
   /* eslint-disable @typescript-eslint/explicit-function-return-type */
   /* eslint-disable prettier/prettier */
-  /* ts-nocheck */
+
   import React, { useState, Dispatch, DragEvent, useEffect } from 'react'
   import { useNavigate } from 'react-router-dom'
   import { motion, AnimatePresence } from 'framer-motion'
@@ -101,6 +101,7 @@
     const handleFileRead = (file: File) => {
       setSelectedFiles((prevFiles) => [...prevFiles, file]);
       
+      //@ts-ignore
       const filesArray: StoredImagesState[] = Array.from(selectedFiles).map((file: File) => ({
         imageName: file.name,
         size: file.size,
@@ -112,6 +113,7 @@
         imageTimeframe: '', 
       }));
 
+      //@ts-ignore
       setImages!(filesArray)
     };
 
@@ -144,6 +146,7 @@
     const removeSpecificFile = (name: string) => {
       const newFiles = selectedFiles.filter((file) => file.name !== name);
       setSelectedFiles(newFiles);
+      //@ts-ignore
       const filesArray: StoredImagesState[] = newFiles.map((file: File) => ({
         imageName: file.name,
         size: file.size,
@@ -154,10 +157,12 @@
         imageData: file.arrayBuffer(), 
         imageTimeframe: '',
       }));
+      //@ts-ignore
       setImages!(filesArray);
     }
 
     useEffect(() => {
+      //@ts-ignore
       const filesArray: StoredImagesState[] = selectedFiles.map((file: File) => ({
         imageName: file.name,
         size: file.size,
@@ -168,6 +173,7 @@
         imageData: file.arrayBuffer(),
         imageTimeframe: '',
       }));
+      //@ts-ignore
       setImages!(filesArray);
     }, [selectedFiles, setImages]);
 

@@ -7,6 +7,13 @@ interface ToolProps {
   tool_id: string
   is_active: boolean
   is_draw: boolean
+  boundarySize?: number
+  boundaryColor?: {
+    color: string;
+    rgb_val: string;
+  }
+  setBoundaryColor?: (boundaryColor: { color: string; rgb_val: string }) => void
+  setBoundarySize?: (boundarySize: number) => void
   setToolName: (tool_name: string) => void
   setToolActivity: (is_active: boolean) => void
   setIsDraw: (is_draw: boolean) => void
@@ -28,6 +35,13 @@ export const useToolStore = create<ToolProps>((set) => ({
   tool_id: '',
   is_active: true,
   is_draw: false,
+  boundarySize: 3,
+  boundaryColor: {
+    color: '#FF0000',
+    rgb_val:  'rgba(255, 0, 0, 0.2)'
+  },
+  setBoundaryColor: (boundaryColor: { color: string, rgb_val: string }) => set({ boundaryColor }),
+  setBoundarySize: (boundarySize: number) => set({ boundarySize }),
   setToolName: (tool_name: string) => set({ tool_name }),
   setToolActivity: (is_active: boolean) => set({ is_active }),
   setIsDraw: (is_draw: boolean) => set({ is_draw })

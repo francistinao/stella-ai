@@ -15,15 +15,15 @@ interface ResultProps {
 
 export const useResultStore = create<ResultProps>((set) => ({
   result: {
-    // data: {
-    //   lesion_boundary_points: [
-    //     [0, 0],
-    //     [0, 0],
-    //     [0, 0],
-    //     [0, 0]
-    //   ]
-    // },
-    data: undefined,
+    data: {
+      lesion_boundary_points: [
+        [0, 0],
+        [0, 0],
+        [0, 0],
+        [0, 0]
+      ]
+    },
+    // data: undefined,
     error: null
   },
   isLoading: false,

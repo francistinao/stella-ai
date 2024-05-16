@@ -46,7 +46,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
   }, [imageData]);
 
   useEffect(() => {
-    console.log(image)
+    console.log(file_name, selectedImage?.imageName, file_name === selectedImage?.imageName, 'file_name')
   }, [image])
   const { theme } = useThemeStore()
   return (

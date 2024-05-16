@@ -8,14 +8,16 @@ import { HiMiniCubeTransparent } from 'react-icons/hi2'
 import { motion } from 'framer-motion'
 import { useStoredImages } from '@/store/stored_images'
 import { byteConverter } from '@/utils/byteConverter'
-
+import { tempBoundPts } from '@/data/tempBoundPts'
+import { useVisible } from '@/store/visible'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { tool_name, is_active, is_draw, setIsDraw } = useToolStore()
+  const { boundaryColor, tool_name, is_active, is_draw, setIsDraw, boundarySize } = useToolStore()
+  const { visible } = useVisible()
   const { selectedImage, setIsLoading } = useStoredImages()
   const [image, setImage] = useState('')
   const [scale, setScale] = useState(1)
@@ -24,6 +26,7 @@ const CTScanCanvas: React.FC = () => {
   const { contrastLevel, highlightsAmount, sepia, is_invert } = useImageConfigStore()
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const boundaryRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
 
   const [{ clientX, clientY }, setClient] = useState({
@@ -31,6 +34,7 @@ const CTScanCanvas: React.FC = () => {
     clientY: 0
   })
 
+  console.log(visible)
   const [overflow, setOverflow] = useState<string>('scroll')
 
   const imageStyle = {
@@ -80,7 +84,6 @@ const CTScanCanvas: React.FC = () => {
     setDrawing(false)
   }
 
-
   const handleSegmentate = async () => {
     try {
       setIsLoading!(true)
@@ -88,6 +91,47 @@ const CTScanCanvas: React.FC = () => {
       console.error('Error segmentating image:', error)
     }
   }
+
+  const drawPolygon = () => {
+    const canvas = boundaryRef.current;
+    if (!canvas) return;
+  
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+  
+    ctx.strokeStyle = boundaryColor?.color as string; 
+    ctx.lineWidth = 2;
+    
+    // Line between boundry points
+    if (tempBoundPts.length > 0) {
+      ctx.beginPath();
+      ctx.moveTo(tempBoundPts[0][0] * 2.4, tempBoundPts[0][1] * 2.4); 
+      for (let i = 1; i < tempBoundPts.length; i++) {
+        ctx.lineTo(tempBoundPts[i][0] * 2.4, tempBoundPts[i][1] * 2.4); 
+      }
+      ctx.closePath();
+      ctx.stroke();
+    }
+  
+    // Boundry Points
+    ctx.fillStyle = boundaryColor?.color as string; 
+    for (let i = 0; i < tempBoundPts.length; i++) {
+      const [x, y] = tempBoundPts[i];
+      ctx.beginPath();
+      ctx.arc(x * 2.4, y * 2.4, boundarySize!, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // Polygon area fill
+    ctx.fillStyle = boundaryColor?.rgb_val as string;  //20% opacity
+    ctx.beginPath();
+    ctx.moveTo(tempBoundPts[0][0] * 2.4, tempBoundPts[0][1] * 2.4);
+    for (let i = 1; i < tempBoundPts.length; i++) {
+      ctx.lineTo(tempBoundPts[i][0] * 2.4, tempBoundPts[i][1] * 2.4);
+    }
+    ctx.closePath();
+    ctx.fill();
+  };
 
   useEffect(() => {
     const { innerHeight, innerWidth } = window
@@ -140,6 +184,10 @@ const CTScanCanvas: React.FC = () => {
       }
     }
   }, [is_draw])
+
+  useEffect(() => {
+    drawPolygon()
+  }, [tempBoundPts, boundarySize, boundaryColor])
 
   return (
     <div
@@ -216,6 +264,21 @@ const CTScanCanvas: React.FC = () => {
           }
         }}
       >
+        {/* Change this later with the actual boundery point */}
+         <div className={`${!visible && 'hidden'}`}>
+         {boundaryRef && (
+            <canvas
+              ref={boundaryRef}
+              width={canvasSize}
+              height={canvasSize}
+              style={{ position: 'absolute', zIndex: 100 }}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+            />
+          )}
+         </div>
+
         {is_draw && (
           <canvas
             ref={canvasRef}

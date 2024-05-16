@@ -111,7 +111,7 @@ const ImageConfig: React.FC = () => {
 
   return (
     <div
-      className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3`}
+      className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3 max-h-[350px] overflow-y-auto customScroll`}
     >
       <div
         className={`flex gap-4 items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-full py-2 pl-4`}
@@ -128,7 +128,7 @@ const ImageConfig: React.FC = () => {
             className={`${theme === 'dark' ? 'text-white' : 'text-dark'} flex gap-3 items-center`}
           >
             <IoMdContrast size={20} />
-            <h1 className="font-semibold">Contrast</h1>
+            <h1 className="font-semibold text-sm">Contrast</h1>
           </div>
           <motion.button
             initial={{ rotate: 0 }}
@@ -172,7 +172,7 @@ const ImageConfig: React.FC = () => {
             className={`${theme === 'dark' ? 'text-white' : 'text-dark'} flex gap-3 items-center`}
           >
             <IoMdSunny size={20} />
-            <h1 className="font-semibold">Highlights</h1>
+            <h1 className="font-semibold text-sm">Highlights</h1>
           </div>
           <motion.button
             initial={{ rotate: 0 }}
@@ -216,7 +216,7 @@ const ImageConfig: React.FC = () => {
             className={`${theme === 'dark' ? 'text-white' : 'text-dark'} flex gap-3 items-center`}
           >
             <HiAdjustmentsHorizontal size={20} />
-            <h1 className="font-semibold">Adjustments</h1>
+            <h1 className="font-semibold text-sm">Adjustments</h1>
           </div>
           <motion.button
             initial={{ rotate: 0 }}
@@ -256,20 +256,6 @@ const ImageConfig: React.FC = () => {
             {toggleSlider}
             <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Invert</p>
           </div>
-          {/* <div
-            className={`flex flex-col text-xs gap-2 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-          >
-            <div className="flex justify-between items-center">
-              <h1>Tone</h1>
-              <h1>{highlightsTone}%</h1>
-            </div>
-            <PrettoSlider
-              onChange={handleHighlightsTone}
-              valueLabelDisplay="auto"
-              aria-label="pretto slider"
-              defaultValue={highlightsTone}
-            />
-          </div> */}
         </motion.div>
       </div>
     </div>

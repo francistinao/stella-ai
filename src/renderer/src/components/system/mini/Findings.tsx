@@ -8,6 +8,9 @@ import { useStoredImages } from '@/store/stored_images'
 import mascot from '@/assets/mascot.png'
 import mascot_head from '@/assets/logo.png'
 
+//Temporary data
+import { tempBoundPts } from '@/data/tempBoundPts'
+
 const Findings: React.FC = () => {
   const { isLoading, result } = useStoredImages()
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
@@ -55,7 +58,7 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-8"
         >
-        {result?.data === undefined && isLoading === undefined && (
+        {/* {result?.data === undefined && isLoading === undefined && (
           <div className="flex flex-col gap-4 justify-center place-items-center">
             <motion.img
               animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
@@ -84,29 +87,23 @@ const Findings: React.FC = () => {
               Getting results
             </h1>
           </div>
-        )}
-        {!isLoading && result?.data !== undefined && result?.data !== null && (
+        )} */}
+        {/* !isLoading && result?.data !== undefined && result?.data !== null */}
+        {true && (
           <div className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
             <div className="flex flex-col">
-              <h1 className="font-bold text-6xl">93%</h1>
-              <p className="text-md font-regular">ischemic stroke</p>
+              <p className="text-md font-regular font-bold">Hemorrhagic Stroke</p>
+              <p className="text-sm font-regular">Houndsfield Value: <span className='font-bold'>128.4</span></p>
             </div>
             <div className="flex flex-col gap-2">
-              <div className="flex flex-col">
-                <h1 className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}>
-                  Label
-                </h1>
-                <h1 className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}>
-                  Hypodense Infarct
-                </h1>
-              </div>
+             
               {/* Density value */}
               <div className="flex flex-col">
                 <h1 className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}>
-                  Density Value
+                  Lesion Area in pixels:
                 </h1>
                 <h1 className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}>
-                  20.423
+                  2468px
                 </h1>
               </div>
             </div>
@@ -142,11 +139,23 @@ const Findings: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8"
+          className="overflow-hidden pt-8 max-h-[200px] overflow-y-auto customScroll" 
         >
           <div
-            className={`flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-          ></div>
+            className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+          >
+            {/* map the temp boundary points  */}
+            <div className="grid grid-cols-4 gap-2">
+              {tempBoundPts.map((point, idx) => (
+                <div
+                  key={idx}
+                  className={` justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
+                >
+                  <h1 className="text-xs font-regular">X: {point[0]}, Y: {point[1]}</h1>
+                </div>
+              ))}
+            </div>
+          </div>
         </motion.div>
       </div>
     </div>
