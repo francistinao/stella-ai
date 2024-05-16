@@ -95,12 +95,13 @@ const Navbar: React.FC = () => {
       <div
         className={`flex gap-4 items-center rounded-full py-2 px-3 ${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'}`}
       >
-        <div>
-          <Tooltip
-            label="STELLA.ai is an undergraduate project
+        {/* STELLA.ai is an undergraduate project
             made by students from Caraga State
             University to aid Radiologist for automated stroke lesion segmentation
-            and classification."
+            and classification. */}
+        <div>
+          <Tooltip
+            label="STELLA.ai is an entry project for Hack4Health 2024. It is made by Team STELLA.ai from CarSU to aid Radiologist for automated stroke lesion segmentation and classification."
             placement="bottom"
             className={`rounded-md p-6 w-56 text-xs text-center ${theme === 'dark' ? 'bg-light_g text-dark' : 'bg-dark text-light_g'}`}
           >

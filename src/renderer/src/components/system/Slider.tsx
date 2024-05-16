@@ -1,8 +1,9 @@
 /* eslint-disable prettier/prettier */
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { SlCalender } from 'react-icons/sl'
 import { IoMdAdd } from 'react-icons/io'
+import { useStoredImages} from '@/store/stored_images'
 import data from '@/data/sample.json'
 import { getMaxHeight } from '@/utils/maxHeight'
 
@@ -10,6 +11,7 @@ import { getMaxHeight } from '@/utils/maxHeight'
 import { Cards } from '@/components/system/mini/index'
 
 const Slider: React.FC = () => {
+  const { images } = useStoredImages()
   const { theme } = useThemeStore()
   const maxHeight = getMaxHeight()
   const dateToday = new Date().toLocaleDateString('en-US', {
@@ -17,6 +19,10 @@ const Slider: React.FC = () => {
     month: 'long',
     day: 'numeric'
   })
+  
+  useEffect(() => {
+    console.log(images)
+  }, [images])
 
   return (
     <div
@@ -46,13 +52,13 @@ const Slider: React.FC = () => {
         style={{ maxHeight: maxHeight }}
         className={`mt-8 flex flex-col gap-6 overflow-y-auto w-full p-2 customScroll`}
       >
-        {data.map((item, idx) => (
+        {images?.map((image, idx) => (
           <Cards
             key={idx}
-            sliceNumber={item.sliceNumber}
-            width={item.width}
-            height={item.height}
-            file_name={item.file_name}
+            sliceNumber={idx + 1}
+            size={image.size}
+            file_name={image.imageName}
+            imageData={image.imageData}
           />
         ))}
       </div>

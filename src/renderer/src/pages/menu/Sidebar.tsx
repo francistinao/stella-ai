@@ -41,7 +41,7 @@ const Sidebar: React.FC<Props> = () => {
               >
                 <IoMdAdd size={20} />
               </motion.div>
-              Upload DICOM Images
+              Upload CT Scan Images
             </button>
           </div>
         </div>

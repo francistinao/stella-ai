@@ -24,3 +24,14 @@ export interface RulerProps {
   textColor?: string;
   textFormat?: (scale: number) => string;
 }
+
+export interface StoredImagesState {
+  imageName: string;
+  size: number;
+  type: string;
+  lastModified: number;
+  lastModifiedDate: Date;
+  path?: string; 
+  imageData: BinaryData;
+  imageTimeframe: string;
+}
