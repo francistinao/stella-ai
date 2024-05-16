@@ -37,11 +37,13 @@ Source Repositories:
 1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
 2. `⚡` [stella-api] Not yet released - Back End Repo
 
-## :ledger: Repositories
+## 📦 Supporting Repositories
 
-1. [Dataset Preprocessing for U-Net CNN](https://github.com/qarudafxz/stella-ai_preprocessing)
-1. [U-Net CNN Model Training](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
-1. [Houndsfield Scale Identification](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
+1. [Dataset Preprocessing for the model](https://github.com/qarudafxz/stella-ai_preprocessing)
+
+## :ledger: Colab Notebooks
+
+1. [Mask RCNN Training (First Version)](https://colab.research.google.com/drive/1-rRZOSM0z7JfGylbBqFI2t3OGoofKyF4?usp=sharing)
 
 ## :brain: Models
 
