@@ -4,7 +4,6 @@ import { useThemeStore } from '@/store/theme'
 import { SlCalender } from 'react-icons/sl'
 import { IoMdAdd } from 'react-icons/io'
 import { useStoredImages} from '@/store/stored_images'
-import data from '@/data/sample.json'
 import { getMaxHeight } from '@/utils/maxHeight'
 
 // Slider components
@@ -43,6 +42,7 @@ const Slider: React.FC = () => {
         </h1>
       </div>
       <button
+        
         className={`mt-2 flex justify-center gap-4 items-center bg-light_g text-dark font-semibold py-2 rounded-full w-full text-center text-sm`}
       >
         <IoMdAdd size={15} />

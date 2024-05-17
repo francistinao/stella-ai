@@ -17,6 +17,8 @@ interface ToolProps {
   setToolName: (tool_name: string) => void
   setToolActivity: (is_active: boolean) => void
   setIsDraw: (is_draw: boolean) => void
+  isAddImage?: boolean
+  setIsAddImage?: (isAddImage: boolean) => void
 }
 
 interface ImageConfigProps {
@@ -44,7 +46,9 @@ export const useToolStore = create<ToolProps>((set) => ({
   setBoundarySize: (boundarySize: number) => set({ boundarySize }),
   setToolName: (tool_name: string) => set({ tool_name }),
   setToolActivity: (is_active: boolean) => set({ is_active }),
-  setIsDraw: (is_draw: boolean) => set({ is_draw })
+  setIsDraw: (is_draw: boolean) => set({ is_draw }),
+  isAddImage: false,
+  setIsAddImage: (isAddImage: boolean) => set({ isAddImage })
 }))
 
 export const useImageConfigStore = create<ImageConfigProps>((set) => ({

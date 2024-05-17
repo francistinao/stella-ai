@@ -80,6 +80,10 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     {
       color: "#92ea8e",
       rgb_val: "rgb(146, 234, 142, 0.2)"
+    },
+    {
+      color: "#f2d34c",
+      rgb_val: "rgb(242, 211, 76, 0.2)"
     }
   ]
 
@@ -177,7 +181,7 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
       </div>
       <div className="flex flex-col gap-2">
         <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}>Boundary Points Color</h1>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-5 gap-2">
           {colorChoices.map((color, idx) => (
             <button
               onClick={() => setBoundaryColor!(color)}

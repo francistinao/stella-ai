@@ -33,12 +33,13 @@ const CTScanCanvas: React.FC = () => {
   const boundaryRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
 
+  const nameForChecking = selectedImage?.imageName?.split('_')
+
   const [{ clientX, clientY }, setClient] = useState({
     clientX: 0,
     clientY: 0
   })
 
-  console.log(visible)
   const [overflow, setOverflow] = useState<string>('scroll')
 
   const imageStyle = {
@@ -128,54 +129,54 @@ const CTScanCanvas: React.FC = () => {
   const drawPolygon = () => {
     const canvas = boundaryRef.current;
     if (!canvas) return;
-  
+    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-
-    //if the canvas is not empty, clear it
+  
+    // Clear the canvas
     ctx.clearRect(0, 0, canvasSize, canvasSize);
   
-    ctx.strokeStyle = boundaryColor?.color as string; 
-    ctx.lineWidth = 2;
-    //Hemorrhagic examples only
-    // Line between boundry points
+    // Determine which result to use based on nameForChecking
     //@ts-ignore
-    if (result?.hemmoragic?.Lesion_Boundary_Points.length > 0) {
+    const resultToUse = nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic;
+  
+    // Check if resultToUse and relevant properties exist
+    if (resultToUse?.Lesion_Boundary_Points?.length > 0) {
+      // Draw lines between boundary points
+      ctx.strokeStyle = boundaryColor?.color as string;
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      //@ts-ignore
-      ctx.moveTo(result?.hemmoragic?.Lesion_Boundary_Points[0][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[0][1] * 2.4); 
-      //@ts-ignore
-      for (let i = 1; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
     //@ts-ignore
-        ctx.lineTo(result?.hemmoragic?.Lesion_Boundary_Points[i][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[i][1] * 2.4); 
+      ctx.moveTo(resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+      for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+    //@ts-ignore
+        ctx.lineTo(resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
       }
       ctx.closePath();
       ctx.stroke();
-    }
   
-    // Boundry Points
-    ctx.fillStyle = boundaryColor?.color as string; 
-    //@ts-ignore
-    for (let i = 0; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
-    //@ts-ignore
-      const [x, y] = result?.hemmoragic?.Lesion_Boundary_Points[i];
+      // Draw boundary points
+      ctx.fillStyle = boundaryColor?.color as string;
+      for (let i = 0; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+        const [x, y] = resultToUse.Lesion_Boundary_Points[i];
+        ctx.beginPath();
+        //@ts-ignore
+        ctx.arc(x * (resultToUse === result?.ischemic ? 3.1 : 2.4), y * (resultToUse === result?.ischemic ? 3.1 : 2.4), boundarySize!, 0, Math.PI * 2);
+        ctx.fill();
+      }
+  
+      // Fill polygon area
+      ctx.fillStyle = boundaryColor?.rgb_val as string; // 20% opacity
       ctx.beginPath();
-      ctx.arc(x * 2.4, y * 2.4, boundarySize!, 0, Math.PI * 2);
+        //@ts-ignore
+      ctx.moveTo(resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+      for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+        //@ts-ignore
+        ctx.lineTo(resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+      }
+      ctx.closePath();
       ctx.fill();
     }
-
-    // Polygon area fill
-    ctx.fillStyle = boundaryColor?.rgb_val as string;  //20% opacity
-    ctx.beginPath();
-    //@ts-ignore
-    ctx.moveTo(result?.hemmoragic?.Lesion_Boundary_Points[0][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[0][1] * 2.4);
-    //@ts-ignore
-    for (let i = 1; i < result?.hemmoragic?.Lesion_Boundary_Points.length; i++) {
-    //@ts-ignore
-      ctx.lineTo(result?.hemmoragic?.Lesion_Boundary_Points[i][0] * 2.4, result?.hemmoragic?.Lesion_Boundary_Points[i][1] * 2.4);
-    }
-    ctx.closePath();
-    ctx.fill();
   };
 
   useEffect(() => {
