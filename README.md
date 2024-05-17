@@ -92,6 +92,7 @@ Hemorraghic Stroke Datasets:
 | 👨‍🏫 Dr. Gabriel Borlongan                                                                    | For sharing his available information of the status of radiology, finilazing the systems' potential                                                                                                         revenue model, and distribution channels.
 | 👨‍🏫 Mr. Kenneth Quijalvo                                                                     | For defining the best protocol to be implemented.
 
+
 ## 🏆 Milestones
 
 1. STELLA.ai was selected as one of the top 10 teams competing for the Hack4Health Hackathon organized by Department of Health, Philippines, partnered with Development Academy of the Philippines on May 15-17, 2024
