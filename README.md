@@ -86,12 +86,10 @@ Hemorraghic Stroke Datasets:
 
 | Name                                                                                        | Contributions                                                                                                                                                                 |
 | ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [👨‍🏫 James Earl D. Cubillas, MSc.](https://scholar.google.com.ph/citations?user=mxdcIF0AAAAJ&hl=en) | Our ever-supportive Thesis Adviser.                                                                                                                                           |
-| 👩‍⚕️ Dra. Sheen C. Urquiza                                                                    | For her expertise in neuro-radiology.                                                                                                                                       |
+| [👨‍🏫 James Earl D. Cubillas, MSc.](https://scholar.google.com.ph/citations?user=mxdcIF0AAAAJ&hl=en) | Our ever-supportive Thesis Adviser.                                                                  
+| 👩‍⚕️ Dra. Sheen C. Urquiza                                                                    | For her expertise in neuro-radiology.                                                                       
 | 👨‍🏫 Ms. Angel G. Mutia (WIPO)                                                                | For her assistance in IP Rights and Novelty Related.
-                                                              |
 | 👨‍🏫 Dr. Gabriel Borlongan                                                                    | For sharing his available information of the status of radiology, finilazing the systems' potential                                                                                                         revenue model, and distribution channels.
-                                                              |
 | 👨‍🏫 Mr. Kenneth Quijalvo                                                                     | For defining the best protocol to be implemented.
 
 ## 🏆 Milestones
