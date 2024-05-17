@@ -40,6 +40,8 @@ We're strategizing to train two models to align with the system's goals: the U-N
 
 In classifying strokes, we're utilizing the Hounsfield Scale, a linear transformation of the original linear attenuation coefficient measurement. Here, the radiodensity of distilled water at standard pressure and temperature (STP) is set as 0 Hounsfield units (HU), while air at STP is defined as -1000 HU. This approach aids in determining the density value of lesion tissue by calculating the mean of the segmented area through the summation of all pixel values.
 
+![202405172144-ezgif com-video-to-gif-converter](https://github.com/qarudafxz/stella-ai_frontend/assets/70809588/9da7053f-b5df-4a9b-9328-a1022c9a1fc1)
+
 ## :toolbox: Setup Instructions
 
 👉 Go to [/src](/src) for detailed instructions on how to setup this project on your machine.
