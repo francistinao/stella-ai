@@ -104,10 +104,10 @@ Hemorraghic Stroke Datasets:
   @article{article,
   type={Bachelor's Thesis},
   author = {Bete, Rhea and Tin-ao, Francis},
-  title = {STELLA.ai (Stroke Tomography for Enhanced Lesion Learning Analysis): Smart Brain CT Scan Screening System for Automated Stroke Detection using CV and U-Net CNN/Mask RCNN},
+  title = {STELLA.ai (Stroke Tomography for Enhanced Lesion Learning Analysis): Smart Brain CT Scan Screening System for Automated Stroke Detection using CV and U-Net CNN},
   journal = {Caraga State University College of Computing and Information Sciences},
   address = {Ampayon, Butuan City, Philippines},
-  year = {2023}
+  year = {2024}
 }
 ```
 
