@@ -3,12 +3,18 @@
 import React from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useNavigate } from 'react-router-dom'
+import { useResultStore } from '@/store/result'
+import { useStoredImages } from '@/store/stored_images'
 
 const SettingsBar: React.FC = () => {
   const navigate = useNavigate()
   const { theme } = useThemeStore()
+  const { setResult } = useResultStore()
+  const { setSelectedImage } = useStoredImages()
 
   const reset = () => {
+    setResult(null)
+    setSelectedImage!(null)
     navigate('/')
   }
   return (

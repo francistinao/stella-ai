@@ -2,39 +2,39 @@
 import { create } from 'zustand'
 
 interface LoadingImage {
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
+  isLoading: boolean
+  setIsLoading: (isLoading: boolean) => void
 }
 
 interface StoredImagesState {
-  imageName?: string;
-  name: string;
-  size: number;
-  type: string;
-  lastModified: number;
-  lastModifiedDate: Date;
-  path?: string; 
-  imageData: BinaryData;
-  imageTimeframe: string;
-  setImages?: (images: StoredImagesState[]) => void;
-  addImage?: (image: StoredImagesState) => void;
-  images?: StoredImagesState[];
-  setSelectedImage?: (image: StoredImagesState) => void;
-  selectedImage?: StoredImagesState;
+  imageName?: string
+  name: string
+  size: number
+  type: string
+  lastModified: number
+  lastModifiedDate: Date
+  path?: string
+  imageData: BinaryData
+  imageTimeframe: string
+  setImages?: (images: StoredImagesState[]) => void
+  addImage?: (image: StoredImagesState) => void
+  images?: StoredImagesState[]
+  setSelectedImage?: (image: StoredImagesState | null) => void
+  selectedImage?: StoredImagesState
 
   // this corresponds to the segmentation result for the selected image
-  isLoading?: boolean | undefined;
-  setIsLoading?: (isLoading: boolean) => void;
+  isLoading?: boolean | undefined
+  setIsLoading?: (isLoading: boolean) => void
   result?: {
-    data: any;
-    error: any;
+    data: any
+    error: any
   }
-  setResults?: (result: { data: any; error: any }) => void;
+  setResults?: (result: { data: any; error: any }) => void
 }
 
 export const useLoadingImage = create<LoadingImage>((set) => ({
   isLoading: false,
-  setIsLoading: (isLoading: boolean) => set({ isLoading }),
+  setIsLoading: (isLoading: boolean) => set({ isLoading })
 }))
 
 export const useStoredImages = create<StoredImagesState>((set) => ({

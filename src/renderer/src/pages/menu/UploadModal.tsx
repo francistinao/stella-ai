@@ -128,26 +128,13 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   }
 
   const handleUploadImage = async () => {
-    const tempImages: string[] = []
-    if (selectedFiles.length === 0) {
-      toast.error('Please upload CT Scans images before uploading.')
-      return
-    }
-
     try {
+      if (selectedFiles.length === 0) {
+        toast.error('Please upload CT Scans images before uploading.')
+        return
+      }
+
       setIsLoading(true)
-
-      /* 
-          TODO: Persist the images in Local Storage
-
-          The local storage must contain all the images being uploaded
-
-          The images will be grouped based on the date and time of the upload 
-
-          example content inside the Local Storage will be:
-
-          Sunday, 19 May, 2024, 6:33 PM -> then the images
-        */
 
       const dateAndTime = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -159,26 +146,28 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
         second: '2-digit'
       })
 
-      for (const file of selectedFiles) {
-        const base64Image = await toBase64File(file)
-        tempImages.push(base64Image as unknown as string)
-      }
+      const tempImages = await Promise.all(
+        selectedFiles.map(async (file) => {
+          const base64Image = await toBase64File(file)
+          return base64Image as string
+        })
+      )
 
-      const storedImages = JSON.parse(localStorage?.getItem('images') || '') || {}
+      const storedImagesJSON = localStorage.getItem('images')
+      const storedImages = storedImagesJSON ? JSON.parse(storedImagesJSON) : {}
 
       storedImages[dateAndTime] = tempImages
       localStorage.setItem('images', JSON.stringify(storedImages))
 
-      if (isLoading === false) {
-        setTimeout(() => {
-          navigate('/system')
-        }, 5000)
-      }
+      setTimeout(() => {
+        navigate('/system')
+      }, 5000)
     } catch (err) {
       console.error(err)
-      throw new Error('Failed to upload the image. Please try again.')
+      toast.error('Failed to upload the image. Please try again.')
+    } finally {
+      setIsLoading(false)
     }
-    console.log('Stored files in cache: ', images)
   }
 
   const removeSpecificFile = (name: string) => {

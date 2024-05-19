@@ -7,7 +7,7 @@ interface ResultProps {
   result: {
     data: any
     error: any
-  }
+  } | null
   isLoading: boolean | undefined
   setIsLoading: (isLoading: boolean) => void
   isError: boolean

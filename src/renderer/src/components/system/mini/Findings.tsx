@@ -63,67 +63,71 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-8"
         >
-          { /* eslint-disable-next-line*/}
+          {/* eslint-disable-next-line*/}
           {/* @ts-ignore */}
-          {(nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic === undefined : result?.hemmoragic === undefined) || (nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic) && isLoading === undefined && (
-          <div className="flex flex-col gap-4 justify-center place-items-center">
-            <motion.img
-              animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
-              src={mascot}
-              alt="STELLA.ai Mascot"  
-              className="w-64 h-auto" 
-            />
-            <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
-              Start Segmentate
-            </h1>
-          </div>
-        )} 
-         { /* eslint-disable-next-line*/}
-            {/* @ts-ignore */}
-        {isLoading && (nameForChecking[0] && nameForChecking[0]?.length >= 6 ? result?.ischemic === "undefined" : result?.hemmoragic === "undefined") && (
-          <div className="flex flex-col gap-4 justify-center place-items-center">
-            <motion.img
-              animate={{ 
-                x: [0, 50, 0, -50, 0], 
-                y: [0, 10, 20, 10, 0], 
-                transition: { duration: 2.5, repeat: Infinity } 
-              }}
-              src={mascot_head}
-              alt="STELLA.ai Mascot"
-              className="w-24 h-auto"
-            />
-            <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
-              Getting results
-            </h1>
-          </div>
-        )}
-       { /* eslint-disable-next-line*/}
-          {/* @ts-ignore */}
-          {!isLoading && (nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic) && (
-          <div className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
-            <div className="flex flex-col">
-              <p className="text-md font-regular font-bold">{nameForChecking![0] && nameForChecking![0]?.length >= 6 ? "Ishemic" : "Hemorrhagic"} Stroke</p>
-              { /* eslint-disable-next-line*/}
-          {/* @ts-ignore */}
-              <p className="text-sm font-regular">Houndsfield Value: <span className='font-bold'>{nameForChecking![0] && nameForChecking[0]?.length >= 6 ? result?.ischemic?.Mean : result?.hemmoragic?.Mean}</span></p>
+          {!isLoading && (!result?.ischemic || !result?.hemmoragic) && (
+            <div className="flex flex-col gap-4 justify-center place-items-center">
+              <motion.img
+                animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
+                src={mascot}
+                alt="STELLA.ai Mascot"
+                className="w-64 h-auto"
+              />
+              <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
+                Start Segmentate
+              </h1>
             </div>
-            <div className="flex flex-col gap-2">
+          )}
 
-              {/* Density value */}
+          {isLoading && (
+            <div className="flex flex-col gap-4 justify-center place-items-center">
+              <motion.img
+                animate={{
+                  x: [0, 50, 0, -50, 0],
+                  y: [0, 10, 20, 10, 0],
+                  transition: { duration: 2.5, repeat: Infinity }
+                }}
+                src={mascot_head}
+                alt="STELLA.ai Mascot"
+                className="w-24 h-auto"
+              />
+              <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
+                Getting results
+              </h1>
+            </div>
+          )}
+
+          {!isLoading && (result?.ischemic || result?.hemmoragic) && (
+            <div
+              className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+            >
               <div className="flex flex-col">
-                <h1 className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}>
-                  Lesion Area in pixels:
-                </h1>
-                <h1 className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}>
-                { /* eslint-disable-next-line*/}
-          {/* @ts-ignore */}
-                  {nameForChecking[0] && nameForChecking[0]?.length >= 6 ? result?.ischemic?.Area : result?.hemmoragic?.Area}px
-                </h1>
+                <p className="text-md font-regular font-bold">
+                  {nameForChecking && nameForChecking[0]?.length >= 6 ? 'Ischemic' : 'Hemorrhagic'}{' '}
+                  Stroke
+                </p>
+                <p className="text-sm font-regular">
+                  Houndsfield Value:{' '}
+                  <span className="font-bold">
+                    {result?.ischemic?.Mean || result?.hemmoragic?.Mean}
+                  </span>
+                </p>
+              </div>
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col">
+                  <h1 className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}>
+                    Lesion Area in pixels:
+                  </h1>
+                  <h1
+                    className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
+                  >
+                    {result?.ischemic?.Area || result?.hemmoragic?.Area}px
+                  </h1>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </motion.div>
+          )}
+        </motion.div>
       </div>
       {/* End of stroke findings */}
       {/* Lesion boundary points */}
@@ -153,33 +157,36 @@ const Findings: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8 max-h-[200px] overflow-y-auto customScroll" 
+          className="overflow-hidden pt-8 max-h-[200px] overflow-y-auto customScroll"
         >
           <div
             className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
           >
             {/* map the temp boundary points  */}
             <div className="grid grid-cols-4 gap-2">
-        
-              {(nameForChecking && nameForChecking[0]?.length >= 6) ? (
-                result?.ischemic?.Lesion_Boundary_Points && result?.ischemic?.Lesion_Boundary_Points?.map((point, idx) => (
+              {nameForChecking && nameForChecking[0]?.length >= 6
+                ? result?.ischemic?.Lesion_Boundary_Points &&
+                  result?.ischemic?.Lesion_Boundary_Points?.map((point, idx) => (
                     <div
-                        key={idx}
-                        className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
+                      key={idx}
+                      className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
                     >
-                        <h1 className="text-xs font-regular">X: {point[0]}, Y: {point[1]}</h1>
+                      <h1 className="text-xs font-regular">
+                        X: {point[0]}, Y: {point[1]}
+                      </h1>
                     </div>
-                ))
-              ) : (
-                  result?.hemmoragic?.Lesion_Boundary_Points && result?.hemmoragic?.Lesion_Boundary_Points?.map((point, idx) => (
-                      <div
-                          key={idx}
-                          className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
-                      >
-                          <h1 className="text-xs font-regular">X: {point[0]}, Y: {point[1]}</h1>
-                      </div>
                   ))
-              )}
+                : result?.hemmoragic?.Lesion_Boundary_Points &&
+                  result?.hemmoragic?.Lesion_Boundary_Points?.map((point, idx) => (
+                    <div
+                      key={idx}
+                      className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
+                    >
+                      <h1 className="text-xs font-regular">
+                        X: {point[0]}, Y: {point[1]}
+                      </h1>
+                    </div>
+                  ))}
             </div>
           </div>
         </motion.div>
