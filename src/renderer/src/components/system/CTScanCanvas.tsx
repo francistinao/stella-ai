@@ -11,7 +11,7 @@ import { useStoredImages } from '@/store/stored_images'
 import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
-import { formatJson} from '@/utils/formatJson'
+import { formatJson } from '@/utils/formatJson'
 import { buildUrl } from '@/utils/buildUrl'
 
 const canvasSize = window.innerHeight * 2
@@ -92,92 +92,116 @@ const CTScanCanvas: React.FC = () => {
   // THE MAIN FUNCTION FOR THE CORE FEATURE
   const handleSegmentate = async () => {
     try {
-      setIsLoading!(true);
+      setIsLoading!(true)
       if (!selectedImage) {
-        throw new Error('No image selected');
+        throw new Error('No image selected')
       }
-  
+
       // Await the resolution of the promise to get the image data
-      const imageDataArrayBuffer = await selectedImage.imageData;
-  
+      const imageDataArrayBuffer = await selectedImage.imageData
+
       if (!imageDataArrayBuffer) {
-        throw new Error('Failed to get image data');
+        throw new Error('Failed to get image data')
       }
-  
-      const imageData = new FormData();
-      imageData.append('file', new Blob([imageDataArrayBuffer])); // Wrap ArrayBuffer in Blob before appending
-  
+
+      const imageData = new FormData()
+      imageData.append('file', new Blob([imageDataArrayBuffer])) // Wrap ArrayBuffer in Blob before appending
+
       const response = await fetch('http://127.0.0.1:8000/', {
         method: 'POST',
         body: imageData
-      });
-  
-      const data = await response.json();
-  
+      })
+
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error('Error processing the image');
+        throw new Error('Error processing the image')
       }
-      setResult(JSON.parse(formatJson(data)));
+      setResult(JSON.parse(formatJson(data)))
     } catch (error) {
-      console.error('Error segmentating image:', error);
+      console.error('Error segmentating image:', error)
     } finally {
-      setIsLoading!(false);
+      setIsLoading!(false)
     }
-  };
-  
+  }
 
   const drawPolygon = () => {
-    const canvas = boundaryRef.current;
-    if (!canvas) return;
-    
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-  
+    const canvas = boundaryRef.current
+    if (!canvas) return
+
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
     // Clear the canvas
-    ctx.clearRect(0, 0, canvasSize, canvasSize);
-  
+    ctx.clearRect(0, 0, canvasSize, canvasSize)
+
     // Determine which result to use based on nameForChecking
+    //eslint-disable-next-line
     //@ts-ignore
-    const resultToUse = nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic;
-  
+    const resultToUse =
+      nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic
+
     // Check if resultToUse and relevant properties exist
     if (resultToUse?.Lesion_Boundary_Points?.length > 0) {
       // Draw lines between boundary points
-      ctx.strokeStyle = boundaryColor?.color as string;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-    //@ts-ignore
-      ctx.moveTo(resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+      ctx.strokeStyle = boundaryColor?.color as string
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      //eslint-disable-next-line
+      //@ts-ignore
+      ctx.moveTo(
+        resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+        resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+      )
       for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
-    //@ts-ignore
-        ctx.lineTo(resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+        //eslint-disable-next-line
+        //@ts-ignore
+        ctx.lineTo(
+          resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+        )
       }
-      ctx.closePath();
-      ctx.stroke();
-  
+      ctx.closePath()
+      ctx.stroke()
+
       // Draw boundary points
-      ctx.fillStyle = boundaryColor?.color as string;
+      ctx.fillStyle = boundaryColor?.color as string
       for (let i = 0; i < resultToUse.Lesion_Boundary_Points.length; i++) {
-        const [x, y] = resultToUse.Lesion_Boundary_Points[i];
-        ctx.beginPath();
+        const [x, y] = resultToUse.Lesion_Boundary_Points[i]
+        ctx.beginPath()
+        //eslint-disable-next-line
         //@ts-ignore
-        ctx.arc(x * (resultToUse === result?.ischemic ? 3.1 : 2.4), y * (resultToUse === result?.ischemic ? 3.1 : 2.4), boundarySize!, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.arc(
+          x * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          y * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          boundarySize!,
+          0,
+          Math.PI * 2
+        )
+        ctx.fill()
       }
-  
+
       // Fill polygon area
-      ctx.fillStyle = boundaryColor?.rgb_val as string; // 20% opacity
-      ctx.beginPath();
-        //@ts-ignore
-      ctx.moveTo(resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+      ctx.fillStyle = boundaryColor?.rgb_val as string // 20% opacity
+      ctx.beginPath()
+      //eslint-disable-next-line
+      //@ts-ignore
+      ctx.moveTo(
+        resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+        resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+      )
       for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+        //eslint-disable-next-line
         //@ts-ignore
-        ctx.lineTo(resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4), resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4));
+        ctx.lineTo(
+          resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+        )
       }
-      ctx.closePath();
-      ctx.fill();
+      ctx.closePath()
+      ctx.fill()
     }
-  };
+  }
 
   useEffect(() => {
     const { innerHeight, innerWidth } = window
@@ -196,25 +220,25 @@ const CTScanCanvas: React.FC = () => {
   useEffect(() => {
     const createImageURL = async () => {
       try {
-        const imageDataArrayBuffer = await selectedImage?.imageData; 
+        const imageDataArrayBuffer = await selectedImage?.imageData
         if (imageDataArrayBuffer) {
-          const blob = new Blob([imageDataArrayBuffer], { type: 'image/jpeg' }); 
-          const url = URL.createObjectURL(blob);
-          setImage(url);
-        } 
+          const blob = new Blob([imageDataArrayBuffer], { type: 'image/jpeg' })
+          const url = URL.createObjectURL(blob)
+          setImage(url)
+        }
       } catch (error) {
-        console.error('Error loading image data:', error);
+        console.error('Error loading image data:', error)
       }
-    };
-  
-    createImageURL();
-  
+    }
+
+    createImageURL()
+
     return () => {
       if (image) {
-        URL.revokeObjectURL(image);
+        URL.revokeObjectURL(image)
       }
-    };
-  }, [selectedImage?.imageData]);
+    }
+  }, [selectedImage?.imageData])
 
   useEffect(() => {
     if (is_draw || tool_name === 'Pencil') {
@@ -245,7 +269,7 @@ const CTScanCanvas: React.FC = () => {
       }}
     >
       {/* Description and segmentate button */}
-      <div className="fixed z-50 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
+      <div className="fixed z-30 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
         <div className="flex flex-col gap-1 text-sm text-white">
           <h1>Description: Brain CT Scan</h1>
           <h1>Image: 1/1</h1>
@@ -311,8 +335,8 @@ const CTScanCanvas: React.FC = () => {
         }}
       >
         {/* Change this later with the actual boundery point */}
-         <div className={`${!visible && 'hidden'}`}>
-         {boundaryRef && (
+        <div className={`${!visible && 'hidden'}`}>
+          {boundaryRef && (
             <canvas
               ref={boundaryRef}
               width={canvasSize}
@@ -323,7 +347,7 @@ const CTScanCanvas: React.FC = () => {
               onMouseUp={handleMouseUp}
             />
           )}
-         </div>
+        </div>
 
         {is_draw && (
           <canvas
@@ -339,19 +363,23 @@ const CTScanCanvas: React.FC = () => {
         <div
           className={`flex flex-col w-full h-full place-items-center justify-center -z-10 ${!is_active && 'hidden'}`}
         >
-         {image ? (
-           <img
-           src={image}
-           alt="CT Scan"
-           className="w-full h-full"
-           draggable={false}
-           style={imageStyle}
-         />
-         ) : (
-          <div className="">
-            <h1 className={`${theme === 'dark' ? "text-light_g": "text-dark"} font-bold text-[150px] text-center`}>Select CT Scan Image</h1>
-          </div>
-         )}
+          {image ? (
+            <img
+              src={image}
+              alt="CT Scan"
+              className="w-full h-full"
+              draggable={false}
+              style={imageStyle}
+            />
+          ) : (
+            <div className="">
+              <h1
+                className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-bold text-[150px] text-center`}
+              >
+                Select CT Scan Image
+              </h1>
+            </div>
+          )}
         </div>
       </div>
     </div>

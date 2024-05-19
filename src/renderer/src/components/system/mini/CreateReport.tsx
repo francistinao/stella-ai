@@ -2,6 +2,7 @@
 import React from 'react'
 import { useThemeStore } from '@/store/theme'
 import { HiOutlinePencilSquare } from 'react-icons/hi2'
+import { useResultStore } from '@/store/result'
 
 /**
  * TODO: Create a modal that will allow the user to create a report based on the findings
@@ -17,6 +18,7 @@ import { HiOutlinePencilSquare } from 'react-icons/hi2'
 
 const CreateReport: React.FC = () => {
   const { theme } = useThemeStore()
+  const { setIsAddFindings } = useResultStore()
   return (
     <div
       className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-lg flex flex-col gap-4 p-3`}
@@ -34,6 +36,7 @@ const CreateReport: React.FC = () => {
         findings based on the segmentation results.
       </p>
       <button
+        onClick={() => setIsAddFindings!(true)}
         className={`py-2 rounded-lg text-center font-bold flex gap-4 place-content-center text-sm ${theme === 'dark' ? 'bg-light_g text-dark' : 'bg-dark text-light_g'}`}
       >
         <HiOutlinePencilSquare size={20} />

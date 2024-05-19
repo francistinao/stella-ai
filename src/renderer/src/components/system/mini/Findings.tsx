@@ -63,6 +63,7 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-8"
         >
+          { /* eslint-disable-next-line*/}
           {/* @ts-ignore */}
           {(nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic === undefined : result?.hemmoragic === undefined) || (nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic) && isLoading === undefined && (
           <div className="flex flex-col gap-4 justify-center place-items-center">
@@ -77,7 +78,8 @@ const Findings: React.FC = () => {
             </h1>
           </div>
         )} 
-        {/* @ts-ignore */}
+         { /* eslint-disable-next-line*/}
+            {/* @ts-ignore */}
         {isLoading && (nameForChecking[0] && nameForChecking[0]?.length >= 6 ? result?.ischemic === "undefined" : result?.hemmoragic === "undefined") && (
           <div className="flex flex-col gap-4 justify-center place-items-center">
             <motion.img
@@ -95,13 +97,14 @@ const Findings: React.FC = () => {
             </h1>
           </div>
         )}
+       { /* eslint-disable-next-line*/}
           {/* @ts-ignore */}
-
           {!isLoading && (nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic) && (
           <div className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
             <div className="flex flex-col">
               <p className="text-md font-regular font-bold">{nameForChecking![0] && nameForChecking![0]?.length >= 6 ? "Ishemic" : "Hemorrhagic"} Stroke</p>
-              {/* @ts-ignore */}
+              { /* eslint-disable-next-line*/}
+          {/* @ts-ignore */}
               <p className="text-sm font-regular">Houndsfield Value: <span className='font-bold'>{nameForChecking![0] && nameForChecking[0]?.length >= 6 ? result?.ischemic?.Mean : result?.hemmoragic?.Mean}</span></p>
             </div>
             <div className="flex flex-col gap-2">
@@ -112,7 +115,8 @@ const Findings: React.FC = () => {
                   Lesion Area in pixels:
                 </h1>
                 <h1 className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}>
-                  {/* @ts-ignore */}
+                { /* eslint-disable-next-line*/}
+          {/* @ts-ignore */}
                   {nameForChecking[0] && nameForChecking[0]?.length >= 6 ? result?.ischemic?.Area : result?.hemmoragic?.Area}px
                 </h1>
               </div>
@@ -156,7 +160,7 @@ const Findings: React.FC = () => {
           >
             {/* map the temp boundary points  */}
             <div className="grid grid-cols-4 gap-2">
-              {/* @ts-ignore */}
+        
               {(nameForChecking && nameForChecking[0]?.length >= 6) ? (
                 result?.ischemic?.Lesion_Boundary_Points && result?.ischemic?.Lesion_Boundary_Points?.map((point, idx) => (
                     <div

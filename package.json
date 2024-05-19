@@ -25,6 +25,7 @@
     "@electron-toolkit/preload": "^3.0.0",
     "@electron-toolkit/utils": "^3.0.0",
     "@scena/react-ruler": "^0.19.0",
+    "dayjs": "^1.11.11",
     "electron-updater": "^6.1.7",
     "framer-motion": "^11.1.7",
     "react-draggable": "^4.4.6",

@@ -34,7 +34,7 @@ interface StoredImagesState {
 
 export const useLoadingImage = create<LoadingImage>((set) => ({
   isLoading: false,
-  setIsLoading: (isLoading) => set({ isLoading }),
+  setIsLoading: (isLoading: boolean) => set({ isLoading }),
 }))
 
 export const useStoredImages = create<StoredImagesState>((set) => ({

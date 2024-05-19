@@ -10,6 +10,8 @@ import Resizer from '@/components/Resizer'
 import { CTScanCanvas, Results, Slider, Tools } from '@/components/system'
 import { motion } from 'framer-motion'
 import Ruler from '@scena/react-ruler'
+import { AddFindingsModal } from '@/components/system/mini/index'
+import SettingsBar from '@/components/system/SettingsBar'
 
 const System: React.FC = () => {
   const { setToolName, setToolActivity, is_active, is_draw, setIsDraw } = useToolStore()
@@ -101,7 +103,8 @@ const System: React.FC = () => {
   return (
     <div className="w-full h-screen flex flex-col">
       <Navbar />
-
+      <SettingsBar />
+      <AddFindingsModal />
       {/* Main layout */}
       {/* grid grid-cols-12 */}
       <div className="pb-4 flex w-full h-screen">
