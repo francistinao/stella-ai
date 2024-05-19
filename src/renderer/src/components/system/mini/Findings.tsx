@@ -1,4 +1,7 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable-next-line */
+/* @ts-nocheck */
+
 import React, { useEffect, useState } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { MdKeyboardArrowDown } from 'react-icons/md'
@@ -17,10 +20,6 @@ const Findings: React.FC = () => {
   const { theme } = useThemeStore()
 
   const nameForChecking = selectedImage?.imageName?.split('_')
-
-  useEffect(() => {
-    console.log(result)
-  }, [result])
 
   return (
     <div
@@ -96,7 +95,6 @@ const Findings: React.FC = () => {
               </h1>
             </div>
           )}
-
           {!isLoading && (result?.ischemic || result?.hemmoragic) && (
             <div
               className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}

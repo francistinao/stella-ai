@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useThemeStore } from '@/store/theme'
 import { RiLayoutRowFill } from 'react-icons/ri'
 import { IoGridOutline } from 'react-icons/io5'
+import { useStoredImages } from '@/store/stored_images'
 
 interface Props {
   sidebarWidth: number
@@ -11,15 +14,46 @@ interface Props {
 const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
   const { theme } = useThemeStore()
   const [layout, setLayout] = useState('stacked')
-  const [images, setImages] = useState({})
+  const [images, setUploadedImages] = useState({})
+  const { setImages } = useStoredImages()
+  const navigate = useNavigate()
 
   const remainingWidth = `calc(100vw - ${sidebarWidth}px)`
+
+  const openCtScan = (images) => {
+    const imageToData = []
+    images.map((image) => {
+      const byteString = atob(image.split(',')[1])
+      const ab = new ArrayBuffer(byteString.length)
+      const ia = new Uint8Array(ab)
+      for (let i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i)
+      }
+
+      const blob = new Blob([ab], { type: 'image/jpeg' })
+      const url = URL.createObjectURL(blob)
+      //eslint-disable-next-line
+      //@ts-ignore
+      imageToData.push({
+        imageName: 'test',
+        size: blob.size,
+        type: blob.type,
+        lastModified: '',
+        lastModifiedDate: '',
+        path: url,
+        imageData: blob, 
+        imageTimeframe: '' 
+      })
+    })
+    setImages!(imageToData)
+    navigate('/system')
+  }
 
   useEffect(() => {
     const images = localStorage.getItem('images')
 
     if (images) {
-      setImages(JSON.parse(images))
+      setUploadedImages(JSON.parse(images))
     }
   }, [])
 
@@ -66,13 +100,14 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
           className={`${layout === 'stacked' ? 'flex flex-col gap-4' : 'grid grid-cols-5 gap-8'} max-h-[540px] overflow-y-auto customScroll`}
         >
           {Object.keys(images).map((key) => (
-            <div
+            <button
+              onClick={() => openCtScan(images[key])}
               key={key}
               className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
             >
               <div className="flex gap-2 items-center">
                 <img src={images[key][0]} alt={key} className="w-20 h-20" />
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 items-start">
                   <h1
                     className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-regular text-sm`}
                   >
@@ -83,7 +118,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                   </p>
                 </div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </div>

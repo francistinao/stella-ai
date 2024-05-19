@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { join, resolve } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
@@ -20,7 +21,7 @@ function createWindow(): void {
     icon: join(__dirname, '../renderer/assets/logo.png'),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false,
+      sandbox: false
     }
   })
 
@@ -75,20 +76,34 @@ app.whenReady().then(() => {
     app.dock.setIcon(resolve(__dirname, '../assets/logo.png'))
   }
 
-  //disable reload shortcuts only if production
-  if (!is.dev) {
+  //disable reload shortcuts both development and production mode
+  if (is.dev || !is.dev) {
     app.on('browser-window-focus', function () {
+      // Disable reload shortcuts
       globalShortcut.register('CommandOrControl+R', () => {
         console.log('CommandOrControl+R is pressed: Shortcut Disabled')
       })
       globalShortcut.register('F5', () => {
         console.log('F5 is pressed: Shortcut Disabled')
       })
+
+      // Disable inspect element shortcuts
+      globalShortcut.register('CommandOrControl+Shift+I', () => {
+        console.log('CommandOrControl+Shift+I is pressed: Shortcut Disabled')
+      })
+      globalShortcut.register('I', () => {
+        console.log('I is pressed: Shortcut Disabled')
+      })
     })
 
     app.on('browser-window-blur', function () {
+      // Enable reload shortcuts when the window loses focus
       globalShortcut.unregister('CommandOrControl+R')
       globalShortcut.unregister('F5')
+
+      // Enable inspect element shortcuts when the window loses focus
+      globalShortcut.unregister('CommandOrControl+Shift+I')
+      globalShortcut.unregister('I')
     })
   }
 })
