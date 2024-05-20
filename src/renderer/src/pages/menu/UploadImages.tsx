@@ -6,6 +6,7 @@ import { useThemeStore } from '@/store/theme'
 import { RiLayoutRowFill } from 'react-icons/ri'
 import { IoGridOutline } from 'react-icons/io5'
 import { useStoredImages } from '@/store/stored_images'
+import { AnimatePresence, motion } from 'framer-motion'
 
 interface Props {
   sidebarWidth: number
@@ -17,6 +18,10 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
   const [images, setUploadedImages] = useState({})
   const { setImages } = useStoredImages()
   const navigate = useNavigate()
+
+  const [modalVisible, setModalVisible] = useState(false)
+  const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 })
+  const [selectedImage, setSelectedImage] = useState(null)
 
   const remainingWidth = `calc(100vw - ${sidebarWidth}px)`
 
@@ -35,14 +40,14 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
       //eslint-disable-next-line
       //@ts-ignore
       imageToData.push({
-        imageName: 'test',
+        imageName: 'CT Scan Slice',
         size: blob.size,
         type: blob.type,
         lastModified: '',
         lastModifiedDate: '',
         path: url,
-        imageData: blob, 
-        imageTimeframe: '' 
+        imageData: blob,
+        imageTimeframe: ''
       })
     })
     setImages!(imageToData)
@@ -57,8 +62,28 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
     }
   }, [])
 
+  const handleRightClick = (e, key) => {
+    e.preventDefault()
+    setSelectedImage(key)
+    setModalPosition({ x: e.clientX, y: e.clientY })
+    setModalVisible(true)
+  }
+
+  const handleDelete = () => {
+    const updatedImages = { ...images }
+    delete updatedImages[selectedImage!]
+    setUploadedImages(updatedImages)
+    localStorage.setItem('images', JSON.stringify(updatedImages))
+    setModalVisible(false)
+  }
+
   return (
     <div
+      onClick={() => {
+        if (modalVisible) {
+          setModalVisible(false)
+        }
+      }}
       style={{ width: remainingWidth, transition: 'width 0.3s ease' }}
       className={`h-full ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}
     >
@@ -102,6 +127,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
           {Object.keys(images).map((key) => (
             <button
               onClick={() => openCtScan(images[key])}
+              onContextMenu={(e) => handleRightClick(e, key)}
               key={key}
               className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
             >
@@ -109,7 +135,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                 <img src={images[key][0]} alt={key} className="w-20 h-20" />
                 <div className="flex flex-col gap-2 items-start">
                   <h1
-                    className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-regular text-sm`}
+                    className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}
                   >
                     {key}
                   </h1>
@@ -122,6 +148,25 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
           ))}
         </div>
       </div>
+      <AnimatePresence>
+        {modalVisible && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.1, ease: 'easeInOut' }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            style={{ top: modalPosition.y, left: modalPosition.x }}
+            className={`fixed shadow-md rounded p-2 ${theme === 'dark' ? 'bg-gray_l' : 'bg-white'}`}
+          >
+            <button
+              onClick={handleDelete}
+              className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}
+            >
+              Delete Image
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
