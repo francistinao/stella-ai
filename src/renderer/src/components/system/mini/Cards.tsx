@@ -6,6 +6,7 @@ import { PiMagnifyingGlassPlusBold } from 'react-icons/pi'
 import { byteConverter } from '@/utils/byteConverter'
 import { useStoredImages } from '@/store/stored_images'
 import { Tooltip } from '@mui/material'
+import { useResultStore } from '@/store/result'
 
 interface CardProps {
   sliceNumber: number
@@ -16,9 +17,14 @@ interface CardProps {
 
 const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData }) => {
   const { setSelectedImage, selectedImage } = useStoredImages()
+  const { setResult, result } = useResultStore()
   const [image, setImage] = React.useState('')
 
   const handleSelectImageToView = () => {
+    if (result?.ischemic || result?.hemmoragic) {
+      setResult(undefined)
+    }
+
     setSelectedImage!({
       imageName: file_name,
       imageData,
@@ -63,7 +69,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
         <h1 className={`font-bold ${theme === 'dark' ? 'text-white' : 'text-dark'} text-sm`}>
           Slice {sliceNumber}
         </h1>
-        <Tooltip title="Select CT Scan Image" placement="right">
+        <Tooltip title="View Image" placement="right">
           <button onClick={handleSelectImageToView}>
             <PiMagnifyingGlassPlusBold
               size={40}

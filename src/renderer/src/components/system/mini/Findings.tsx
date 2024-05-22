@@ -91,7 +91,7 @@ const Findings: React.FC = () => {
                 className="w-24 h-auto"
               />
               <h1 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-semibold`}>
-                Getting results
+                Detecting Lesions...
               </h1>
             </div>
           )}

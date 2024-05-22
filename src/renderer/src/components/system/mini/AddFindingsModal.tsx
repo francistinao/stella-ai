@@ -3,10 +3,11 @@ import React from 'react'
 import { useResultStore } from '@/store/result'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useThemeStore } from '@/store/theme'
+import { IoMdClose } from 'react-icons/io'
 
 const AddFindingsModal: React.FC = () => {
   const { theme } = useThemeStore()
-  const { isAddFindings } = useResultStore()
+  const { isAddFindings, setIsAddFindings } = useResultStore()
   return (
     <AnimatePresence>
       {isAddFindings && (
@@ -22,9 +23,14 @@ const AddFindingsModal: React.FC = () => {
               type: 'spring',
               ease: [0, 0.71, 0.2, 0]
             }}
-            className={`p-10 flex flex-col gap-4 absolute z-10 left-62 top-42 bg-blend-overlay shadow-2xl rounded-lg border ${theme === 'dark' ? 'bg-white text-dark border-dirty' : 'bg-dark text-white border-zinc-500'}`}
+            className={`p-10 flex flex-col gap-4 absolute z-10 left-62 top-42 bg-blend-overlay shadow-2xl rounded-lg w-[600px] border ${theme === 'dark' ? 'bg-white text-dark border-dirty' : 'bg-dark text-white border-zinc-500'}`}
           >
-            <h1>Hello</h1>
+            <div className="flex justify-between items-center">
+              <h1>Create Findings</h1>
+              <button onClick={() => setIsAddFindings!(false)}>
+                <IoMdClose size={25} />
+              </button>
+            </div>
           </motion.div>
         </div>
       )}

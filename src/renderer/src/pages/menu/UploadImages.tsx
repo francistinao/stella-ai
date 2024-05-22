@@ -140,7 +140,8 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                     {key}
                   </h1>
                   <p className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} text-xs`}>
-                    {images[key].length} {images[key].length > 1 ? 'files' : 'file'}
+                    {images[key].length}{' '}
+                    {images[key].length > 1 ? 'ct scan images' : 'ct scan image'}
                   </p>
                 </div>
               </div>
