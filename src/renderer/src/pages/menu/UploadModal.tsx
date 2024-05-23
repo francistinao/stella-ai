@@ -44,7 +44,7 @@ interface UploadModalProps {
 const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const { theme } = useThemeStore()
   const navigate = useNavigate()
-  const { setIsLoading, isLoading } = useLoadingImage()
+  const { isImageUploadLoading, setIsImageUploadLoading } = useLoadingImage()
   const { setImages, images } = useStoredImages()
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [isDragOver, setDragOver] = useState<boolean>(false)
@@ -134,7 +134,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
         return
       }
 
-      setIsLoading(true)
+      setIsImageUploadLoading(true)
 
       const dateAndTime = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -165,8 +165,6 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     } catch (err) {
       console.error(err)
       toast.error('Failed to upload the image. Please try again.')
-    } finally {
-      setIsLoading(false)
     }
   }
 
@@ -323,9 +321,11 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-left w-full">
-                  <LoadingModal />
-                </div>
+                {isImageUploadLoading && (
+                  <div className="flex justify-left w-full">
+                    <LoadingModal />
+                  </div>
+                )}
                 {/* Segmentate button */}
                 <button
                   onClick={handleUploadImage}

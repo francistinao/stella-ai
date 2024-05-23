@@ -86,14 +86,13 @@ app.whenReady().then(() => {
       globalShortcut.register('F5', () => {
         console.log('F5 is pressed: Shortcut Disabled')
       })
-
       // Disable inspect element shortcuts
-      // globalShortcut.register('CommandOrControl+Shift+I', () => {
-      //   console.log('CommandOrControl+Shift+I is pressed: Shortcut Disabled')
-      // })
-      // globalShortcut.register('I', () => {
-      //   console.log('I is pressed: Shortcut Disabled')
-      // })
+      globalShortcut.register('CommandOrControl+Shift+I', () => {
+        console.log('CommandOrControl+Shift+I is pressed: Shortcut Disabled')
+      })
+      globalShortcut.register('I', () => {
+        console.log('I is pressed: Shortcut Disabled')
+      })
     })
 
     app.on('browser-window-blur', function () {

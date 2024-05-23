@@ -150,6 +150,8 @@ const CTScanCanvas: React.FC = () => {
       //eslint-disable-next-line
       //@ts-ignore
       ctx.moveTo(
+        //ischemic original: 3.1
+        //hemorrhagic origina: 2.4
         resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
         resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
       )

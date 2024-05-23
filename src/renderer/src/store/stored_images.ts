@@ -4,8 +4,8 @@
 import { create } from 'zustand'
 
 interface LoadingImage {
-  isLoading: boolean
-  setIsLoading: (isLoading: boolean) => void
+  isImageUploadLoading: boolean
+  setIsImageUploadLoading: (isLoading: boolean) => void
 }
 
 interface StoredImagesState {
@@ -35,8 +35,8 @@ interface StoredImagesState {
 }
 
 export const useLoadingImage = create<LoadingImage>((set) => ({
-  isLoading: false,
-  setIsLoading: (isLoading: boolean) => set({ isLoading })
+  isImageUploadLoading: false,
+  setIsImageUploadLoading: (isImageUploadLoading: boolean) => set({ isImageUploadLoading })
 }))
 
 export const useStoredImages = create<StoredImagesState>((set) => ({
