@@ -7,6 +7,7 @@ import { RiLayoutRowFill } from 'react-icons/ri'
 import { IoGridOutline } from 'react-icons/io5'
 import { useStoredImages } from '@/store/stored_images'
 import { AnimatePresence, motion } from 'framer-motion'
+import { moment } from '@/utils/moment'
 
 interface Props {
   sidebarWidth: number
@@ -131,19 +132,28 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
               key={key}
               className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
             >
-              <div className="flex gap-2 items-center">
-                <img src={images[key][0]} alt={key} className="w-20 h-20" />
-                <div className="flex flex-col gap-2 items-start">
-                  <h1
-                    className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}
-                  >
-                    {key}
-                  </h1>
-                  <p className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} text-xs`}>
-                    {images[key].length}{' '}
-                    {images[key].length > 1 ? 'ct scan images' : 'ct scan image'}
-                  </p>
+              <div
+                className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-full`}
+              >
+                <div className="flex gap-2 items-center">
+                  <img src={images[key][0]} alt={key} className="w-20 h-20" />
+                  <div className="flex flex-col gap-2 items-start">
+                    <h1
+                      className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}
+                    >
+                      {key}
+                    </h1>
+                    <p className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} text-xs`}>
+                      {images[key].length}{' '}
+                      {images[key].length > 1 ? 'ct scan images' : 'ct scan image'}
+                    </p>
+                  </div>
                 </div>
+                <p
+                  className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-regular text-xs`}
+                >
+                  {moment(key)}
+                </p>
               </div>
             </button>
           ))}
