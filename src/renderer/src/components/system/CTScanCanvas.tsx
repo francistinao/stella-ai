@@ -12,7 +12,6 @@ import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
 import { formatJson } from '@/utils/formatJson'
-import { buildUrl } from '@/utils/buildUrl'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
@@ -136,9 +135,9 @@ const CTScanCanvas: React.FC = () => {
     ctx.clearRect(0, 0, canvasSize, canvasSize)
 
     // Determine which result to use based on nameForChecking
-    //eslint-disable-next-line
-    //@ts-ignore
     const resultToUse =
+      //eslint-disable-next-line
+      //@ts-ignore
       nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic
 
     // Check if resultToUse and relevant properties exist
@@ -147,19 +146,23 @@ const CTScanCanvas: React.FC = () => {
       ctx.strokeStyle = boundaryColor?.color as string
       ctx.lineWidth = 2
       ctx.beginPath()
-      //eslint-disable-next-line
-      //@ts-ignore
       ctx.moveTo(
         //ischemic original: 3.1
         //hemorrhagic origina: 2.4
+        //eslint-disable-next-line
+        //@ts-ignore
         resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+        //eslint-disable-next-line
+        //@ts-ignore
         resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
       )
       for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
-        //eslint-disable-next-line
-        //@ts-ignore
         ctx.lineTo(
+          //eslint-disable-next-line
+          //@ts-ignore
           resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          //eslint-disable-next-line
+          //@ts-ignore
           resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
         )
       }
@@ -171,10 +174,12 @@ const CTScanCanvas: React.FC = () => {
       for (let i = 0; i < resultToUse.Lesion_Boundary_Points.length; i++) {
         const [x, y] = resultToUse.Lesion_Boundary_Points[i]
         ctx.beginPath()
-        //eslint-disable-next-line
-        //@ts-ignore
         ctx.arc(
+          //eslint-disable-next-line
+          //@ts-ignore
           x * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          //eslint-disable-next-line
+          //@ts-ignore
           y * (resultToUse === result?.ischemic ? 3.1 : 2.4),
           boundarySize!,
           0,
@@ -186,17 +191,21 @@ const CTScanCanvas: React.FC = () => {
       // Fill polygon area
       ctx.fillStyle = boundaryColor?.rgb_val as string // 20% opacity
       ctx.beginPath()
-      //eslint-disable-next-line
-      //@ts-ignore
       ctx.moveTo(
+        //eslint-disable-next-line
+        //@ts-ignore
         resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+        //eslint-disable-next-line
+        //@ts-ignore
         resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
       )
       for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
-        //eslint-disable-next-line
-        //@ts-ignore
         ctx.lineTo(
+          //eslint-disable-next-line
+          //@ts-ignore
           resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
+          //eslint-disable-next-line
+          //@ts-ignore
           resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
         )
       }

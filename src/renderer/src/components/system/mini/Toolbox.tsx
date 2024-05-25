@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react'
+import React from 'react'
 import logo from '@/assets/logo.png'
 import { useThemeStore } from '@/store/theme'
 import { Tooltip } from '@chakra-ui/react'
@@ -20,7 +20,17 @@ interface ToolboxProps {
 }
 
 const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
-  const { setBoundaryColor, setBoundarySize, boundarySize, tool_name, setToolName, setToolActivity, is_active, setIsDraw, is_draw } = useToolStore()
+  const {
+    setBoundaryColor,
+    setBoundarySize,
+    boundarySize,
+    tool_name,
+    setToolName,
+    setToolActivity,
+    is_active,
+    setIsDraw,
+    is_draw
+  } = useToolStore()
   const { setVisible, visible } = useVisible()
 
   const { theme } = useThemeStore()
@@ -66,40 +76,39 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
 
   const colorChoices = [
     {
-      color: "#78b6f2",
-      rgb_val: "rgb(120, 182, 242, 0.2)"
+      color: '#78b6f2',
+      rgb_val: 'rgb(120, 182, 242, 0.2)'
     },
     {
-      color:  "#b365e8",
-      rgb_val: "rgb(179, 101, 232, 0.2)"
+      color: '#b365e8',
+      rgb_val: 'rgb(179, 101, 232, 0.2)'
     },
     {
-      color: "#72e3d1",
-      rgb_val: "rgb(114, 227, 209, 0.2)"
+      color: '#72e3d1',
+      rgb_val: 'rgb(114, 227, 209, 0.2)'
     },
     {
-      color: "#92ea8e",
-      rgb_val: "rgb(146, 234, 142, 0.2)"
+      color: '#92ea8e',
+      rgb_val: 'rgb(146, 234, 142, 0.2)'
     },
     {
-      color: "#f2d34c",
-      rgb_val: "rgb(242, 211, 76, 0.2)"
+      color: '#f2d34c',
+      rgb_val: 'rgb(242, 211, 76, 0.2)'
     }
   ]
 
-  const [toggleSlider, active] = useToggleSlider({
-      barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
-      barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
-      barWidth: 80,
-      barHeight: 40,
-      handleSize: 30,
-      handleBorderRadius: 100,
-      handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
-      handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
-      transitionDuration: '200ms',
-      active: visible
-    },
-  )
+  const [toggleSlider] = useToggleSlider({
+    barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
+    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
+    barWidth: 80,
+    barHeight: 40,
+    handleSize: 30,
+    handleBorderRadius: 100,
+    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
+    handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
+    transitionDuration: '200ms',
+    active: visible
+  })
 
   const tools = [
     {
@@ -128,6 +137,7 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     }
   ]
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleBoundaryPointsSize = (_event: Event, newValue: number | number[]) => {
     setBoundarySize!(newValue as number)
   }
@@ -180,7 +190,9 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
         ))}
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}>Boundary Points Color</h1>
+        <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}>
+          Boundary Points Color
+        </h1>
         <div className="grid grid-cols-5 gap-2">
           {colorChoices.map((color, idx) => (
             <button
@@ -190,10 +202,12 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
               style={{ backgroundColor: color.color }}
             />
           ))}
-       </div>
+        </div>
       </div>
       <div className="flex flex-col gap-2">
-        <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}>Boundary Points Size</h1>
+        <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-xs`}>
+          Boundary Points Size
+        </h1>
         <PrettoSlider
           onChange={handleBoundaryPointsSize}
           valueLabelDisplay="auto"
@@ -203,10 +217,7 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
         />
       </div>
       <div className="flex place-content-center gap-4 items-center">
-        <button 
-          onClick={() => setVisible(!visible)}>
-          {toggleSlider}
-        </button>
+        <button onClick={() => setVisible(!visible)}>{toggleSlider}</button>
         <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>
           Display Segmentation
         </p>

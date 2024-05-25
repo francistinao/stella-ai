@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
@@ -45,7 +46,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const { theme } = useThemeStore()
   const navigate = useNavigate()
   const { isImageUploadLoading, setIsImageUploadLoading } = useLoadingImage()
-  const { setImages, images } = useStoredImages()
+  const { setImages } = useStoredImages()
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [isDragOver, setDragOver] = useState<boolean>(false)
   const fileInput = React.createRef<HTMLInputElement>()

@@ -133,7 +133,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
               className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
             >
               <div
-                className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-full`}
+                className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-[480px] justify-between`}
               >
                 <div className="flex gap-2 items-center">
                   <img src={images[key][0]} alt={key} className="w-20 h-20" />

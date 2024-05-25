@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useThemeStore } from '@/store/theme'
 import { SlCalender } from 'react-icons/sl'
 import { IoMdAdd } from 'react-icons/io'

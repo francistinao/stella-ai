@@ -27,6 +27,8 @@ const LoadingModal: React.FC = () => {
       }, 500)
 
       return () => clearInterval(interval)
+    } else {
+      return () => {}
     }
   }, [isImageUploadLoading])
 

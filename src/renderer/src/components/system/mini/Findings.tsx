@@ -1,8 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable-next-line */
-/* @ts-nocheck */
-
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import logo from '@/assets/logo.png'
@@ -62,8 +60,6 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-8"
         >
-          {/* eslint-disable-next-line*/}
-          {/* @ts-ignore */}
           {!isLoading && (!result?.ischemic || !result?.hemmoragic) && (
             <div className="flex flex-col gap-4 justify-center place-items-center">
               <motion.img
@@ -170,6 +166,8 @@ const Findings: React.FC = () => {
                       className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
                     >
                       <h1 className="text-xs font-regular">
+                        {/* eslint-disable-next-line */}
+                        {/* @ts-ignore */}
                         X: {point[0]}, Y: {point[1]}
                       </h1>
                     </div>
