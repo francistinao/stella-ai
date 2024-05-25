@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
@@ -5,9 +6,10 @@ import { create } from 'zustand'
 
 interface ResultProps {
   result: {
-    data: any
+    ischemic: any
+    hemmoragic: any
     error: any
-  } | null
+  }
   isLoading: boolean | undefined
   setIsLoading: (isLoading: boolean) => void
   isError: boolean
@@ -19,19 +21,8 @@ interface ResultProps {
 
 export const useResultStore = create<ResultProps>((set) => ({
   result: {
-    // data: {
-    //   hemmoragic: {
-    //     Area: 0,
-    //     Lesion_Boundary_Points: [],
-    //     Mean: 0
-    //   },
-    //   ischemic: {
-    //     Area: 0,
-    //     Lesion_Boundary_Points: [],
-    //     Mean: 0
-    //   }
-    // },
-    data: undefined,
+    hemmoragic: null,
+    ischemic: null,
     error: null
   },
   isLoading: false,

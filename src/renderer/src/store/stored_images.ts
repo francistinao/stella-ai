@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable prettier/prettier */
@@ -22,7 +23,7 @@ interface StoredImagesState {
   addImage?: (image: StoredImagesState) => void
   images?: StoredImagesState[]
   setSelectedImage?: (image: StoredImagesState | null) => void
-  selectedImage?: StoredImagesState
+  selectedImage?: StoredImagesState | null
 
   // this corresponds to the segmentation result for the selected image
   isLoading?: boolean | undefined
@@ -51,7 +52,7 @@ export const useStoredImages = create<StoredImagesState>((set) => ({
   setImages: (images) => set({ images }),
   addImage: (image) => set((state) => ({ images: [...(state.images ?? []), image] })),
   images: [],
-  setSelectedImage: (image) => set({ selectedImage: image }),
+  setSelectedImage: (image: StoredImagesState | null) => set({ selectedImage: image }),
   selectedImage: undefined,
   isLoading: undefined,
   setIsLoading: (isLoading) => set({ isLoading }),
