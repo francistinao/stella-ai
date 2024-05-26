@@ -30,7 +30,7 @@ In this repo, you can:
 - [:scroll: Important References](#scroll-important-references)
 - [:trophy: Milestones](#trophy-acknowledgements)
 - [:trophy: Acknowledgements](#trophy-acknowledgements)
-- [:writing_hand: Cite our Project](#writing_hand-cite-our-project)
+- [:writing_hand: Cite our Study](#writing_hand-cite-our-project)
 
 ## :book: About
 
@@ -91,16 +91,18 @@ Hemorraghic Stroke Datasets:
 | [👨‍🏫 James Earl D. Cubillas, MSc.](https://scholar.google.com.ph/citations?user=mxdcIF0AAAAJ&hl=en) | Our ever-supportive Thesis Adviser.                                                                  
 | 👩‍⚕️ Dra. Sheen C. Urquiza                                                                    | For her expertise in neuro-radiology.                                                                       
 | 👨‍🏫 Ms. Angel G. Mutia (WIPO)                                                                | For her assistance in IP Rights and Novelty Related.
-| 👨‍🏫 Dr. Gabriel Borlongan                                                                    | For sharing his available information of the status of radiology, finilazing the systems' potential                                                                                                         revenue model, and distribution channels.
+| 👨‍🏫 Dr. Gabriel Borlongan                                                                    | For sharing his available information on the status of radiology, finalizing the systems' potential revenue model, and distribution channels.
 | 👨‍🏫 Mr. Kenneth Quijalvo                                                                     | For defining the best protocol to be implemented.
 
 
 ## 🏆 Milestones
 
-1. STELLA.ai was selected as one of the top 10 teams competing for the Hack4Health Hackathon organized by Department of Health, Philippines, partnered with Development Academy of the Philippines on May 15-17, 2024
+1. STELLA.ai was selected as one of the top 10 teams competing in the Hack4Health Hackathon organized by the Department of Health, Philippines, partnered with the Development Academy of the Philippines on May 15-17, 2024
 2. STELLA.ai won as 3rd Place in the Hack4Health Hackathon
+3. Ms. Angel Mutia declared STELLA.ai as a novel solution in its field because there is only (1) to no similar solution that matches STELLA.ai, which is ready for a patent.
+4. STELLA.ai proposed its paper having the status of accepted with minor revisions.
 
-## :writing_hand: Cite Our Project
+## :writing_hand: Cite Our Study
 
 ```bibtex
   @article{article,
