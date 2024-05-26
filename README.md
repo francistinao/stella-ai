@@ -99,7 +99,7 @@ Hemorraghic Stroke Datasets:
 
 1. STELLA.ai was selected as one of the top 10 teams competing in the Hack4Health Hackathon organized by the Department of Health, Philippines, partnered with the Development Academy of the Philippines on May 15-17, 2024
 2. STELLA.ai won as 3rd Place in the Hack4Health Hackathon
-3. Ms. Angel Mutia declared STELLA.ai as a novel solution in its field because there is only (1) to no similar solution that matches STELLA.ai, which is ready for a patent.
+3. Ms. Angel Mutia declared STELLA.ai as a novel solution in its field because there is only (1) to no similar solution that matches STELLA.ai, which is ready for patenting.
 4. STELLA.ai proposed its paper having the status of accepted with minor revisions.
 
 ## :writing_hand: Cite Our Study
