@@ -29,7 +29,9 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
   const openCtScan = (images) => {
     const imageToData = []
     images.map((image) => {
-      const byteString = atob(image.split(',')[1])
+      const imageName = image.split('-file-name-')[1]
+      const byteString = atob(image.split(',')[1].split('-file-name-')[0])
+      console.log(byteString)
       const ab = new ArrayBuffer(byteString.length)
       const ia = new Uint8Array(ab)
       for (let i = 0; i < byteString.length; i++) {
@@ -41,7 +43,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
       //eslint-disable-next-line
       //@ts-ignore
       imageToData.push({
-        imageName: 'CT Scan Slice',
+        imageName: imageName,
         size: blob.size,
         type: blob.type,
         lastModified: '',
@@ -136,7 +138,11 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                 className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-[480px] justify-between`}
               >
                 <div className="flex gap-2 items-center">
-                  <img src={images[key][0]} alt={key} className="w-20 h-20" />
+                  <img
+                    src={images[key][0].split('-file-name')[0]}
+                    alt={key}
+                    className="w-20 h-20"
+                  />
                   <div className="flex flex-col gap-2 items-start">
                     <h1
                       className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}

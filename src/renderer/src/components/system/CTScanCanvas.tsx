@@ -12,6 +12,7 @@ import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
 import { formatJson } from '@/utils/formatJson'
+import { toast, Toaster } from 'sonner'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
@@ -93,7 +94,9 @@ const CTScanCanvas: React.FC = () => {
     try {
       setIsLoading!(true)
       if (!selectedImage) {
+        toast.error('No CT Scan Slice selected!')
         throw new Error('No image selected')
+        return
       }
 
       // Await the resolution of the promise to get the image data
@@ -279,6 +282,7 @@ const CTScanCanvas: React.FC = () => {
         overflow
       }}
     >
+      <Toaster position="bottom-right" />
       {/* Description and segmentate button */}
       <div className="fixed z-30 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
         <div className="flex flex-col gap-1 text-sm text-white">

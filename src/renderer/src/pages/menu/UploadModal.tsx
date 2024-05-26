@@ -150,7 +150,8 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       const tempImages = await Promise.all(
         selectedFiles.map(async (file) => {
           const base64Image = await toBase64File(file)
-          return base64Image as string
+          //-file-name is the flag for splitting
+          return (base64Image + '-file-name-' + file.name) as string
         })
       )
 
