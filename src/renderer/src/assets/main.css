@@ -67,3 +67,48 @@ body {
   background-color: #797979;
   border-radius: 40px;
 }
+
+.lexicalEditor {
+  font-family: 'Segoe UI, sans-serif';
+  text-align: left;
+  font-size: 16px;
+  color: #333333;
+  background-color: #ffffff;
+  border: 1px solid #eaeaea;
+  border-radius: 4px;
+  padding: 8px;
+  margin: 0px;
+  box-shadow: 0 0 0 1px #eaeaea;
+  cursor: text;
+  outline: none;
+  transition: all 0.2s;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+  text-overflow: ellipsis;
+  line-height: 1.5;
+  font-weight: 400;
+  font-style: normal;
+  max-height: 450px;
+  min-height: 400px;
+  overflow-y: auto;
+}
+
+.placeholder {
+  color: #888888;
+  font-size: 16px;
+  font-family: 'Segoe UI, sans-serif';
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-italic {
+  font-style: italic;
+}
+
+.text-underline {
+  text-decoration: underline;
+}

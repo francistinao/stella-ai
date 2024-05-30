@@ -111,7 +111,7 @@ const ImageConfig: React.FC = () => {
 
   return (
     <div
-      className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3 max-h-[300px] overflow-y-auto customScroll`}
+      className={`m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3 max-h-[330px] overflow-y-auto customScroll`}
     >
       <div
         className={`flex gap-4 items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-full py-2 pl-4`}
