@@ -26,24 +26,32 @@ const Sidebar: React.FC<Props> = () => {
               Home
             </h1>
           </div>
-          <div className="px-4">
-            <button
-              onClick={() => setIsUpload(true)}
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-              className={`w-full border rounded-full py-3 text-center flex items-center gap-4 text-xs justify-center ${theme === 'dark' ? 'border-white text-white' : 'border-dark text-dark'}`}
+
+          <button
+            onClick={() => setIsUpload(true)}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            className={`w-full border rounded-full py-3 text-center flex items-center gap-4 text-xs justify-center ${theme === 'dark' ? 'border-white text-white' : 'border-dark text-dark'}`}
+          >
+            <motion.div
+              animate={{
+                rotate: isHovered ? 90 : 0,
+                transition: { duration: 0.3 }
+              }}
             >
-              <motion.div
-                animate={{
-                  rotate: isHovered ? 90 : 0,
-                  transition: { duration: 0.3 }
-                }}
-              >
-                <IoMdAdd size={20} />
-              </motion.div>
-              Upload CT Scan Images
-            </button>
-          </div>
+              <IoMdAdd size={20} />
+            </motion.div>
+            Upload CT Scan Images
+          </button>
+
+          <button
+            className={`${theme === 'dark' ? 'text-white' : 'text-dark'} rounded-md py-2 text-center px-3 font-bold hover:${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'} duration-100`}
+          >
+            STELLAmulator{' '}
+            <span className="relative bottom-4 text-dark bg-light_g rounded-md text-xs px-1 py-1">
+              beta
+            </span>
+          </button>
         </div>
       </div>
     </div>

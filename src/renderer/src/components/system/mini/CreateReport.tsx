@@ -19,6 +19,7 @@ import { useResultStore } from '@/store/result'
 const CreateReport: React.FC = () => {
   const { theme } = useThemeStore()
   const { setIsAddFindings } = useResultStore()
+
   return (
     <div
       className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-lg flex flex-col gap-4 p-3`}
