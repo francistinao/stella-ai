@@ -4,6 +4,7 @@ import { useThemeStore } from '@/store/theme'
 import { IoMdAdd } from 'react-icons/io'
 import { motion } from 'framer-motion'
 import { UploadModal } from '@/pages/menu/menu'
+import { Tooltip } from '@mui/material'
 
 interface Props {
   handleMouseDown: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
@@ -43,15 +44,16 @@ const Sidebar: React.FC<Props> = () => {
             </motion.div>
             Upload CT Scan Images
           </button>
-
-          <button
-            className={`${theme === 'dark' ? 'text-white' : 'text-dark'} rounded-md py-2 text-center px-3 font-bold hover:${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'} duration-100`}
-          >
-            STELLAmulator{' '}
-            <span className="relative bottom-4 text-dark bg-light_g rounded-md text-xs px-1 py-1">
-              beta
-            </span>
-          </button>
+          <Tooltip title="Coming Soon!" placement="right">
+            <button
+              className={`${theme === 'dark' ? 'text-white' : 'text-dark'} rounded-md py-2 text-center px-3 font-bold hover:${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'} duration-100`}
+            >
+              STELLAmulator{' '}
+              <span className="relative bottom-4 text-dark bg-light_g rounded-md text-xs px-1 py-1">
+                beta
+              </span>
+            </button>
+          </Tooltip>
         </div>
       </div>
     </div>

@@ -66,6 +66,7 @@ const Notice: React.FC = () => {
             <button
               onClick={() => {
                 setShowNotice(false)
+                sessionStorage.setItem('isShowAgain', 'false')
               }}
               className={`bg-light_g text-dark py-2 px-4 rounded-md`}
             >
