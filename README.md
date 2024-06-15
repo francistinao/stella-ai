@@ -25,7 +25,7 @@ In this repo, you can:
 
 - [:book: About](#book-about)
 - [:toolbox: Setup Instructions](#toolbox-setup-instructions)
-- [:ledger: Colab Notebooks](#ledger-colab-notebooks)
+- [:ledger: Colab/Jupyter Notebooks](#ledger-colab-notebooks)
 - [:brain: Models](#brain-models)
 - [:scroll: Important References](#scroll-important-references)
 - [:trophy: Milestones](#trophy-acknowledgements)
