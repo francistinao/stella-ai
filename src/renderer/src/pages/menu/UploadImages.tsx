@@ -121,12 +121,12 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
             Files
           </p>
           <p className={`${theme === 'dark' ? 'text-zinc-500' : 'text-dark'} font-normal text-md`}>
-            Recent
+           Recent
           </p>
         </div>
         <div
-          className={`${layout === 'stacked' ? 'flex flex-col gap-4' : 'grid grid-cols-5 gap-8'} max-h-[540px] overflow-y-auto customScroll`}
-        >
+          className={`${layout === 'stacked' ? 'flex flex-col gap-4' : 'grid grid-cols-3 gap-8'} max-h-[540px] overflow-y-auto customScroll`}
+       >
           {Object.keys(images).map((key) => (
             <button
               onClick={() => openCtScan(images[key])}
