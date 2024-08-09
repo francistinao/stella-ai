@@ -3,7 +3,7 @@ import { HashRouter as Router, Routes, Route } from 'react-router-dom'
 import { Menu, System, Preloader } from '@/pages/pages.ts'
 
 function App(): JSX.Element {
-  const [isLoading, setIsLoading] = useState(true) // State to track loading state
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     setTimeout(() => {
