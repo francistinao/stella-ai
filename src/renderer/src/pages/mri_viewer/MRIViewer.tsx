@@ -1,27 +1,28 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect, forwardRef } from 'react'
 import { useTheme } from '@mui/material/styles'
-import Typography from '@mui/material/Typography'
-import Stack from '@mui/material/Stack'
-import LinearProgress from '@mui/material/LinearProgress'
-import Link from '@mui/material/Link'
-import IconButton from '@mui/material/IconButton'
-import ToggleButton from '@mui/material/ToggleButton'
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup'
-import CloseIcon from '@mui/icons-material/Close'
-import RefreshIcon from '@mui/icons-material/Refresh'
-import MenuIcon from '@mui/icons-material/Menu'
-import ContrastIcon from '@mui/icons-material/Contrast'
-import SearchIcon from '@mui/icons-material/Search'
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks'
-import StraightenIcon from '@mui/icons-material/Straighten'
-import CameraswitchIcon from '@mui/icons-material/Cameraswitch'
-import Dialog from '@mui/material/Dialog'
-import AppBar from '@mui/material/AppBar'
-import Slide from '@mui/material/Slide'
-import Toolbar from '@mui/material/Toolbar'
-import TagsTable from './TagsTable'
 import { App, getDwvVersion, decoderScripts } from 'dwv'
+import {
+  Typography,
+  Stack,
+  LinearProgress,
+  Link,
+  IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
+  CloseIcon,
+  RefreshIcon,
+  MenuIcon,
+  ContrastIcon,
+  SearchIcon,
+  LibraryBooksIcon,
+  StraightenIcon,
+  CameraswitchIcon,
+  Dialog,
+  AppBar,
+  Toolbar,
+  Slide
+} from '@mui/material'
 import '@/assets/DwvComponent.css'
 
 decoderScripts.jpeg2000 = `${process.env.PUBLIC_URL}/assets/dwv/decoders/pdfjs/decode-jpeg2000.js`
