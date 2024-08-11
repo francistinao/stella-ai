@@ -36,6 +36,7 @@
     "framer-motion": "^11.1.7",
     "immutable": "^4.3.6",
     "lexical": "^0.15.0",
+    "react-confetti": "^6.1.0",
     "react-draft-wysiwyg": "^1.15.0",
     "react-draggable": "^4.4.6",
     "react-router-dom": "^6.23.0",

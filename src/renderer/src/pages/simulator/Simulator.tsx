@@ -3,10 +3,14 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Navbar, TitleBar } from '@/components/components'
 import SettingsBar from '@/components/system/SettingsBar'
+import { formatJson } from '@/utils/formatJson'
 import Ruler from '@scena/react-ruler'
+import Confetti from 'react-confetti'
 
 import RandomCTScan from '@/components/gamification/RandomCTScan'
 import SidePanel from '@/components/gamification/SidePanel'
+
+import { resizeLesionPoints } from '@/lib/assessment'
 
 import { allImages } from '@/data/ctscans'
 
@@ -112,6 +116,8 @@ const Simulator: React.FC = () => {
   const [random, setRandom] = useState<string | null>(null)
   const [showModal, setShowModal] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(0)
+
+  const [results, setResults] = useState({})
   const rulerRef = useRef<HTMLDivElement>(null)
 
   const getRandomCTScan = (): string => {
@@ -127,12 +133,63 @@ const Simulator: React.FC = () => {
     setShowModal(false)
   }
 
+  const getPrediction = async () => {
+    try {
+      if (!random) return
+
+      const actualImageResponse = await fetch(random)
+      if (!actualImageResponse.ok) {
+        throw new Error('Failed to fetch the image')
+      }
+
+      const actualImageBlob = await actualImageResponse.blob()
+      const imageData = new FormData()
+      imageData.append('file', actualImageBlob)
+
+      const response = await fetch('http://127.0.0.1:8000/', {
+        method: 'POST',
+        body: imageData
+      })
+
+      if (!response.ok) {
+        throw new Error('Error processing the image')
+      }
+
+      const data = await response.json()
+      const predictions = JSON.parse(formatJson(data))
+
+      const fileNameWithExtension = random.split('/').pop()
+      const classifier = fileNameWithExtension?.split('.')[0]
+
+      const isHemorrhagic = classifier!.length > 5 || classifier?.includes('60')
+      const strokeType = isHemorrhagic ? 'Hemorrhagic Stroke' : 'Ischemic Stroke'
+      const strokePrediction = isHemorrhagic ? predictions.hemmoragic : predictions.ischemic
+
+      const newResults = {
+        ...strokePrediction,
+        stroke: strokeType
+      }
+
+      const resizedLesionPoints = resizeLesionPoints(strokeType, newResults?.Lesion_Boundary_Points)
+      setResults({
+        stroke: strokeType,
+        lesionPoints: resizedLesionPoints
+      })
+    } catch (error) {
+      console.error('Error segmenting image:', error)
+    }
+  }
+
   useEffect(() => {
     const randomImage = getRandomCTScan()
     setRandom(randomImage)
 
     openModal()
   }, [])
+
+  useEffect(() => {
+    if (random) getPrediction()
+  }, [random])
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -150,7 +207,7 @@ const Simulator: React.FC = () => {
         <div className="w-14" ref={rulerRef}>
           <Ruler type="vertical" direction="start" />
         </div>
-        <SidePanel />
+        <SidePanel results={results} />
       </div>
 
       {showModal && (
