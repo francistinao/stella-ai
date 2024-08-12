@@ -25,7 +25,7 @@ const steps = [
     highlightArea: { top: 85, left: -273, width: 880, height: 620 }
   },
   {
-    instruction: 'Assess your performance and learn from the results.',
+    instruction: 'Try to guess the Stroke and assess your performance and learn from the results.',
     highlightArea: { top: 90, left: 480, width: 270, height: 610 }
   }
 ]
@@ -63,7 +63,7 @@ const StepModal: React.FC<Props> = ({ steps, currentStep, onClose, setCurrentSte
           pointerEvents: 'auto'
         }}
       >
-        <div className="relative bg-white p-6 rounded-lg shadow-lg">
+        <div className="relative bg-white p-6 rounded-lg shadow-lg z-50">
           <button
             onClick={onClose}
             className="absolute top-2 right-2 text-gray-600 hover:text-gray-900"

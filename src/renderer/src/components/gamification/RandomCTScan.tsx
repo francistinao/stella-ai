@@ -75,12 +75,14 @@ const RandomCTScan: React.FC<Props> = ({ image }) => {
       ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'
       ctx.fill()
 
-      points.forEach((point) => {
-        ctx.beginPath()
-        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
-        ctx.fillStyle = 'red'
-        ctx.fill()
-      })
+      if (points) {
+        points.forEach((point) => {
+          ctx.beginPath()
+          ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
+          ctx.fillStyle = 'red'
+          ctx.fill()
+        })
+      }
     }
   }
 

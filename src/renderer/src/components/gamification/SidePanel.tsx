@@ -14,6 +14,8 @@ import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 
+import { ResultsModal } from '@/components/gamification/index'
+
 const PRED_PASSING = 30
 const PRED_PLOT_PASSING = 50
 
@@ -33,7 +35,7 @@ const SidePanel: React.FC<{
     score_in_plot: 0
   })
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
-  const [strokeType, setStrokeType] = useState('Ischemic Stroke')
+  const [strokeType, setStrokeType] = useState('')
 
   const totalWidth = window.innerWidth
   const totalHeight = window.innerHeight
@@ -51,6 +53,7 @@ const SidePanel: React.FC<{
       {score.score_in_type >= PRED_PASSING && score.score_in_plot >= PRED_PLOT_PASSING && (
         <Confetti width={totalWidth} height={totalHeight} />
       )}
+      <ResultsModal score={score} setScore={setScore} />
       <div className="flex w-full gap-4 items-center">
         <div
           className={`border-2 ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} rounded-full`}
@@ -177,7 +180,7 @@ const SidePanel: React.FC<{
             }
           }}
         >
-          Submit
+          Assess
         </button>
       </div>
     </div>
