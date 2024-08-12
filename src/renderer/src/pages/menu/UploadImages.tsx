@@ -127,42 +127,44 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
         <div
           className={`${layout === 'stacked' ? 'flex flex-col gap-4' : 'grid grid-cols-3 gap-8'} max-h-[540px] overflow-y-auto customScroll`}
         >
-          {Object.keys(images).map((key) => (
-            <button
-              onClick={() => openCtScan(images[key])}
-              onContextMenu={(e) => handleRightClick(e, key)}
-              key={key}
-              className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
-            >
-              <div
-                className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-[480px] justify-between`}
+          {Object.keys(images)
+            .reverse()
+            .map((key) => (
+              <button
+                onClick={() => openCtScan(images[key])}
+                onContextMenu={(e) => handleRightClick(e, key)}
+                key={key}
+                className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
               >
-                <div className="flex gap-2 items-center">
-                  <img
-                    src={images[key][0].split('-file-name')[0]}
-                    alt={key}
-                    className="w-20 h-20"
-                  />
-                  <div className="flex flex-col gap-2 items-start">
-                    <h1
-                      className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}
-                    >
-                      {key}
-                    </h1>
-                    <p className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} text-xs`}>
-                      {images[key].length}{' '}
-                      {images[key].length > 1 ? 'ct scan images' : 'ct scan image'}
-                    </p>
-                  </div>
-                </div>
-                <p
-                  className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-regular text-xs`}
+                <div
+                  className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-[480px] justify-between`}
                 >
-                  {moment(key)}
-                </p>
-              </div>
-            </button>
-          ))}
+                  <div className="flex gap-2 items-center">
+                    <img
+                      src={images[key][0].split('-file-name')[0]}
+                      alt={key}
+                      className="w-20 h-20"
+                    />
+                    <div className="flex flex-col gap-2 items-start">
+                      <h1
+                        className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}
+                      >
+                        {key}
+                      </h1>
+                      <p className={`${theme === 'dark' ? 'text-dirty' : 'text-dark'} text-xs`}>
+                        {images[key].length}{' '}
+                        {images[key].length > 1 ? 'ct scan images' : 'ct scan image'}
+                      </p>
+                    </div>
+                  </div>
+                  <p
+                    className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-regular text-xs`}
+                  >
+                    {moment(key)}
+                  </p>
+                </div>
+              </button>
+            ))}
         </div>
       </div>
       <AnimatePresence>

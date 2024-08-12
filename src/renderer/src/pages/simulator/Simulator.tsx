@@ -25,7 +25,7 @@ const steps = [
     highlightArea: { top: 85, left: -273, width: 880, height: 620 }
   },
   {
-    instruction: 'Try to guess the Stroke and assess your performance and learn from the results.',
+    instruction: 'Assess your performance and learn from the results.',
     highlightArea: { top: 90, left: 480, width: 270, height: 610 }
   }
 ]
