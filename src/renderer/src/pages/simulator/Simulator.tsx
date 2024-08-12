@@ -5,7 +5,6 @@ import { Navbar, TitleBar } from '@/components/components'
 import SettingsBar from '@/components/system/SettingsBar'
 import { formatJson } from '@/utils/formatJson'
 import Ruler from '@scena/react-ruler'
-import Confetti from 'react-confetti'
 
 import RandomCTScan from '@/components/gamification/RandomCTScan'
 import SidePanel from '@/components/gamification/SidePanel'
@@ -13,12 +12,13 @@ import SidePanel from '@/components/gamification/SidePanel'
 import { resizeLesionPoints } from '@/lib/assessment'
 
 import { allImages } from '@/data/ctscans'
+import { toast, Toaster } from 'sonner'
 
 const steps = [
   {
     instruction:
       'Identify the brain lesion and classify the type of stroke from this randomly selected CT Scan.',
-    highlightArea: { top: 215, left: -130, width: 280, height: 280 }
+    highlightArea: { top: 202, left: -130, width: 280, height: 280 }
   },
   {
     instruction: 'Analyze the CT Scan and mark your guess on the canvas.',
@@ -180,9 +180,17 @@ const Simulator: React.FC = () => {
     }
   }
 
+  const generateRandomScan = () => {
+    try {
+      const randomImage = getRandomCTScan()
+      setRandom(randomImage)
+    } catch (err) {
+      toast.error('Error generating random ct scan')
+    }
+  }
+
   useEffect(() => {
-    const randomImage = getRandomCTScan()
-    setRandom(randomImage)
+    generateRandomScan()
 
     openModal()
   }, [])
@@ -193,12 +201,21 @@ const Simulator: React.FC = () => {
 
   return (
     <div className="w-full h-screen flex flex-col">
+      <Toaster position="bottom-right" />
       <Navbar />
       <TitleBar />
       <SettingsBar />
       <div className="flex w-full h-screen pb-4">
         <div className="w-[600px] min-h-screen p-10 flex items-center justify-center">
-          <img src={random!} className="object-contain" draggable={false} />
+          <div className="flex flex-col gap-4">
+            <img src={random!} className="object-contain" draggable={false} />
+            <button
+              onClick={generateRandomScan}
+              className="font-semibold bg-light_g rounded-full text-dark py-2"
+            >
+              Randomize
+            </button>
+          </div>
         </div>
         <div className="w-14" ref={rulerRef}>
           <Ruler type="vertical" direction="start" />

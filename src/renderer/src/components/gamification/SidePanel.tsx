@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react'
@@ -8,6 +9,10 @@ import { useCoordStore } from '@/store/simulations'
 import { motion } from 'framer-motion'
 import { assessPerformance } from '@/lib/assessment'
 import Confetti from 'react-confetti'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 const PRED_PASSING = 30
 const PRED_PLOT_PASSING = 50
@@ -28,9 +33,16 @@ const SidePanel: React.FC<{
     score_in_plot: 0
   })
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
+  const [strokeType, setStrokeType] = useState('Ischemic Stroke')
 
   const totalWidth = window.innerWidth
   const totalHeight = window.innerHeight
+
+  console.log(results)
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setStrokeType(event.target.value)
+  }
 
   return (
     <div
@@ -116,28 +128,56 @@ const SidePanel: React.FC<{
           </div>
         </motion.div>
         <button
-          className="mt-2 bg-light_g text-center text-dark rounded-full py-1 font-semibold"
+          className={`my-4 border ${theme === 'dark' ? 'bg-dark text-white border-zinc-700' : 'bg-white text-dark border-zinc-400'} rounded-md py-2`}
           onClick={() => {
             setCoord([])
           }}
         >
           Reset Points
         </button>
+        <FormControl
+          sx={{ m: 1, minWidth: 120, borderColor: theme === 'dark' ? 'white' : 'black' }}
+        >
+          <InputLabel
+            sx={{
+              color: '#72FC5E'
+            }}
+            id="demo-simple-select-helper-label"
+          >
+            Stroke
+          </InputLabel>
+          <Select
+            labelId="demo-simple-select-helper-label"
+            id="demo-simple-select-helper"
+            value={strokeType}
+            label="Age"
+            onChange={handleChange}
+            sx={{
+              color: '#72FC5E',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#72FC5E'
+              },
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#72FC5E'
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#72FC5E'
+              }
+            }}
+          >
+            <MenuItem value={'Ischemic Stroke'}>Ischemic Stroke</MenuItem>
+            <MenuItem value={'Hemorrhagic Stroke'}>Hemorrhagic Stroke</MenuItem>
+          </Select>
+        </FormControl>
         <button
+          className="font-semibold bg-light_g rounded-full text-dark py-2"
           onClick={() => {
             if (results) {
-              setScore(
-                assessPerformance(
-                  'Hemorrhagic Stroke',
-                  results?.stroke,
-                  results?.lesionPoints,
-                  coord
-                )
-              )
+              setScore(assessPerformance(strokeType, results?.stroke, results?.lesionPoints, coord))
             }
           }}
         >
-          Test
+          Submit
         </button>
       </div>
     </div>
