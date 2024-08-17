@@ -316,7 +316,7 @@ const CTScanCanvas: React.FC = () => {
           backgroundSize: `20px 20px`,
           backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
           transform: `scale(${scale}, ${scale}) translate(${translateX}px, ${translateY}px)`,
-          transformOrigin: '0 0'
+          transformOrigin: 'center'
         }}
         onDragStart={(e) => {
           const preview = document.createElement('div')

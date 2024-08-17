@@ -42,6 +42,16 @@ In classifying strokes, we're utilizing the Hounsfield Scale, a linear transform
 
 ![202405172144-ezgif com-video-to-gif-converter](https://github.com/qarudafxz/stella-ai_frontend/assets/70809588/9da7053f-b5df-4a9b-9328-a1022c9a1fc1)
 
+## What's New? STELLA.ai v1.1
+
+ **STELLAmulator Beta**
+
+![alt text](<2024-08-17 20-42-39 (1).gif>)
+
+STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator) is an advanced tool tailored for Radiologic Technologist students. It offers an interactive and efficient learning experience in stroke identification and classification.
+
+Students are challenged to identify strokes by marking lesions on Brain CT Scans and classifying the stroke type. Their performance is then evaluated by STELLA's AI model, providing feedback on the accuracy of their stroke identification and classification.
+
 ## :toolbox: Setup Instructions
 
 👉 Go to [/src](/src) for detailed instructions on how to setup this project on your machine.
