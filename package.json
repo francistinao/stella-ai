@@ -2,7 +2,7 @@
   "name": "STELLA.ai",
   "version": "1.0.0",
   "description": "STELLA.ai (Stroke Tomography for Enhanced Lesion Learning Analysis) is an intelligent system for automated brain lesion segmentation",
-  "main": "dist/main/index.js",
+  "main": "dist/index.js",
   "author": "example.com",
   "homepage": "https://electron-vite.org",
   "scripts": {
@@ -75,5 +75,8 @@
       "public/**/*",
       "package.json"
     ]
+  },
+  "win": {
+    "icon": "dist/renderer/logo.ico"
   }
 }

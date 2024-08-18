@@ -18,6 +18,7 @@ import { StoredImagesState } from '@/types/global'
 // import { urlBuffer } from '@/utils/urlBuffer'
 import { byteConverter } from '@/utils/byteConverter'
 import placeholder from '@/assets/vector.png'
+import truncateFileName from '@/utils/truncateFileName'
 
 /** 
    * TODO: The images must be in array since the user can upload multiple images
@@ -308,7 +309,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
                           <p
                             className={`${theme === 'dark' ? 'text-dark' : 'text-white'} font-semibold`}
                           >
-                            {image.name}
+                            {truncateFileName(image!.name)}
                           </p>
                           <p
                             className={`${theme === 'dark' ? 'text-dark_g' : 'text-white'} text-xs`}

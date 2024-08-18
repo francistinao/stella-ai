@@ -7,7 +7,7 @@ export default defineConfig({
   main: {
     plugins: [externalizeDepsPlugin()],
     build: {
-      outDir: 'dist/main'
+      outDir: 'dist'
     }
   },
   preload: {
@@ -27,7 +27,9 @@ export default defineConfig({
       outDir: 'dist/renderer',
       rollupOptions: {
         output: {
-          assetFileNames: '[name].[ext]'
+          assetFileNames: '[name].[ext]',
+          chunkFileNames: '[name].js',
+          entryFileNames: '[name].js'
         }
       }
     }

@@ -5,7 +5,7 @@ import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 
 const basePath = is.dev
   ? 'D:/stella_ai_frontend/src/renderer/src/assets'
-  : join(__dirname, '../dist/renderer/assets')
+  : join(__dirname, 'renderer')
 
 function createWindow(): void {
   // Create the browser window.
@@ -23,7 +23,7 @@ function createWindow(): void {
     fullscreenable: true,
     icon: join(basePath, 'logo.png'),
     webPreferences: {
-      preload: join(__dirname, '../dist/preload/index.js'),
+      preload: join(__dirname, 'preload/index.js'),
       sandbox: false
     }
   })
@@ -45,8 +45,8 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(
       is.dev
-        ? 'D:/stella_ai_frontend/src/renderer/index.ts'
-        : join(__dirname, '../dist/renderer/index.js')
+        ? 'D:/stella_ai_frontend/src/renderer/index.html'
+        : join(__dirname, 'renderer/index.html')
     )
   }
 }
