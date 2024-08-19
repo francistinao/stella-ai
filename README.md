@@ -126,5 +126,9 @@ Hemorraghic Stroke Datasets:
 }
 ```
 
+## License
+
+See the [LICENSE](https://github.com/francistinao/stella-ai/blob/main/LICENSE.md) file for licensing information.
+
 <br />
 2024 © Bete & Tin-ao (BSIT) - Caraga State University - College of Computing and Information Sciences. All Rights Reserved.
