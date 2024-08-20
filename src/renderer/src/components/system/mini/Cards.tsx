@@ -8,6 +8,7 @@ import { byteConverter } from '@/utils/byteConverter'
 import { useStoredImages } from '@/store/stored_images'
 import { Tooltip } from '@mui/material'
 import { useResultStore } from '@/store/result'
+import { useToolStore } from '@/store/tool'
 
 interface CardProps {
   sliceNumber: number
@@ -18,10 +19,17 @@ interface CardProps {
 
 const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData }) => {
   const { setSelectedImage, selectedImage } = useStoredImages()
+  const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
+
   const { setResult, result } = useResultStore()
   const [image, setImage] = React.useState('')
 
   const handleSelectImageToView = () => {
+    if (startPoint && endPoint) {
+      setStartPoint(null)
+      setEndPoint(null)
+    }
+
     if (result?.ischemic || result?.hemmoragic) {
       setResult(undefined)
     }

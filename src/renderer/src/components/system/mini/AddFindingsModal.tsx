@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react'
@@ -33,7 +34,7 @@ const AddFindingsModal: React.FC = () => {
   const { theme } = useThemeStore()
   const { isAddFindings, setIsAddFindings } = useResultStore()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editorState, setEditorState] = useState()
+  const [_, setEditorState] = useState()
 
   const onChange = (editorState) => {
     setEditorState(editorState)
@@ -69,6 +70,8 @@ const AddFindingsModal: React.FC = () => {
       return new Paragraph(textContent)
     })
 
+    //eslint-disable-next-line
+    //@ts-ignore
     doc.addSection({
       children: docParagraphs
     })
@@ -105,6 +108,8 @@ const AddFindingsModal: React.FC = () => {
             </div>
             <LexicalComposer initialConfig={initialConfig}>
               <Toolbar />
+              {/* eslint-disable-next-line */}
+              {/* @ts-ignore */}
               <RichTextPlugin contentEditable={<ContentEditable />} />
               <HistoryPlugin />
               <AutoFocusPlugin />

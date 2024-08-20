@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useToolStore } from '@/store/tool'
 import { useResultStore } from '@/store/result'
@@ -20,7 +20,19 @@ const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
   const { setResult, result } = useResultStore()
-  const { boundaryColor, tool_name, is_active, is_draw, setIsDraw, boundarySize } = useToolStore()
+  const {
+    boundaryColor,
+    tool_name,
+    is_active,
+    is_draw,
+    setIsDraw,
+    boundarySize,
+    is_ruler,
+    startPoint,
+    endPoint,
+    setStartPoint,
+    setEndPoint
+  } = useToolStore()
   const { visible } = useVisible()
   const { selectedImage, setIsLoading } = useStoredImages()
   const [image, setImage] = useState('')
@@ -32,7 +44,6 @@ const CTScanCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const boundaryRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
-
   const nameForChecking = selectedImage?.imageName?.split('_')
 
   const [{ clientX, clientY }, setClient] = useState({
@@ -57,8 +68,8 @@ const CTScanCanvas: React.FC = () => {
     if (!canvas) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const x = (e.clientX - rect.left) / scale
+    const y = (e.clientY - rect.top) / scale
 
     const context = canvas.getContext('2d')
     if (context) {
@@ -75,8 +86,8 @@ const CTScanCanvas: React.FC = () => {
     if (!canvas) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = e.clientX - rect.left
-    const y = e.clientY - rect.top
+    const x = (e.clientX - rect.left) / scale
+    const y = (e.clientY - rect.top) / scale
 
     const context = canvas.getContext('2d')
     if (context) {
@@ -88,6 +99,141 @@ const CTScanCanvas: React.FC = () => {
   const handleMouseUp = () => {
     setDrawing(false)
   }
+
+  console.log(startPoint, endPoint)
+
+  //RULER ====================================================================
+
+  const drawLineWithTwoVertices = useCallback(
+    (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+      const pointRadius = 10
+      const lineColor = '#72FC5E'
+      const textOffset = 75
+
+      if (!startPoint && !endPoint) {
+        ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
+      }
+
+      if (!startPoint) {
+        // Plot the first point
+        setStartPoint({ x, y })
+        ctx.beginPath()
+        ctx.arc(x, y, pointRadius, 0, 2 * Math.PI)
+        ctx.fillStyle = lineColor
+        ctx.fill()
+      } else if (!endPoint) {
+        // Plot the second point
+        setEndPoint({ x, y })
+        ctx.beginPath()
+        ctx.arc(x, y, pointRadius, 0, 2 * Math.PI)
+        ctx.fillStyle = lineColor
+        ctx.fill()
+
+        // Draw the line connecting the two points
+        ctx.beginPath()
+        ctx.moveTo(startPoint.x, startPoint.y)
+        ctx.lineTo(x, y)
+        ctx.strokeStyle = lineColor
+        ctx.lineWidth = 5
+        ctx.stroke()
+
+        // Calculate the distance in millimeters
+        const distanceInMillimeters = calculateDistance(startPoint, { x, y })
+
+        // Calculate the midpoint of the line
+        const midX = (startPoint.x + x) / 2
+        const midY = (startPoint.y + y) / 2
+
+        // Calculate the angle of the line
+        const angle = Math.atan2(y - startPoint.y, x - startPoint.x)
+
+        // Calculate the text position offset 20 pixels perpendicular to the line
+        const textX = midX + textOffset * Math.sin(angle)
+        const textY = midY - textOffset * Math.cos(angle)
+
+        ctx.save()
+        ctx.font = '30px Sans-Serif'
+        ctx.fillStyle = '#72FC5E'
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.fillText(`${distanceInMillimeters.toFixed(2)} mm`, textX, textY)
+        ctx.restore()
+
+        console.log(`Distance: ${distanceInMillimeters.toFixed(2)} mm`)
+      } else {
+        // Reset the points and clear the canvas for new points
+        ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
+        setStartPoint({ x, y })
+        setEndPoint(null)
+
+        // Plot the new first point
+        ctx.beginPath()
+        ctx.arc(x, y, pointRadius, 0, 2 * Math.PI)
+        ctx.fill()
+      }
+    },
+    [startPoint, endPoint]
+  )
+
+  const handleCanvasClick = useCallback(
+    (e: MouseEvent) => {
+      if (!canvasRef.current || !is_ruler) {
+        return
+      }
+
+      const rect = canvasRef.current.getBoundingClientRect()
+      if (rect) {
+        const x = (e.clientX - rect.left) / scale
+        const y = (e.clientY - rect.top) / scale
+        const ctx = canvasRef.current.getContext('2d')
+        if (ctx) drawLineWithTwoVertices(ctx, x, y)
+      }
+    },
+    [is_ruler, tool_name, drawLineWithTwoVertices]
+  )
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      canvas.addEventListener('click', handleCanvasClick)
+    }
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener('click', handleCanvasClick)
+      }
+    }
+  }, [handleCanvasClick])
+
+  const calculateDistance = (
+    point1: { x: number; y: number },
+    point2: { x: number; y: number }
+  ) => {
+    const distance = Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2))
+    const pixelsPerMillimeter = 3.779528
+    return distance / pixelsPerMillimeter
+  }
+
+  // Reset function to clear canvas and reset state
+  const resetRulerState = useCallback(() => {
+    const canvas = canvasRef.current
+    if (canvas) {
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+      }
+    }
+    setStartPoint(null)
+    setEndPoint(null)
+  }, [])
+
+  // Handle tool change to reset the ruler state
+  useEffect(() => {
+    if (tool_name !== 'Ruler') {
+      resetRulerState()
+    }
+  }, [tool_name, resetRulerState])
+
+  // ========================================================================
 
   // THE MAIN FUNCTION FOR THE CORE FEATURE
   const handleSegmentate = async () => {
@@ -363,6 +509,13 @@ const CTScanCanvas: React.FC = () => {
             />
           )}
         </div>
+        {/* Ruler */}
+        <canvas
+          ref={canvasRef}
+          width={canvasSize}
+          height={canvasSize}
+          style={{ position: 'absolute', zIndex: 100 }}
+        />
 
         {is_draw && (
           <canvas

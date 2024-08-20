@@ -29,7 +29,9 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     setToolActivity,
     is_active,
     setIsDraw,
-    is_draw
+    is_draw,
+    is_ruler,
+    setIsRuler
   } = useToolStore()
   const { setVisible, visible } = useVisible()
 
@@ -132,7 +134,7 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     {
       tool_id: 4,
       tool_name: 'Ruler',
-      is_active: false,
+      is_ruler: false,
       icon: <BsRulers size={18} />
     }
   ]
@@ -179,6 +181,8 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
                   setToolActivity(!is_active)
                 } else if (tool.tool_name === 'Line' || tool.tool_id === 1) {
                   setIsDraw(!is_draw)
+                } else if (tool.tool_name === 'Ruler' || tool.tool_id === 4) {
+                  setIsRuler(!is_ruler)
                 }
               }}
               key={idx}
