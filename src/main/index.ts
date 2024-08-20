@@ -2,6 +2,7 @@
 import { app, shell, BrowserWindow, ipcMain, globalShortcut } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
+import { spawn } from 'child_process'
 
 const basePath = is.dev
   ? 'D:/stella_ai_frontend/src/renderer/src/assets'
@@ -26,6 +27,24 @@ function createWindow(): void {
       preload: join(__dirname, 'preload/index.js'),
       sandbox: false
     }
+  })
+
+  const backendProcess = spawn('uvicorn', ['main:app', '--reload'], {
+    cwd: 'D:/stella-ai_api_v2',
+    shell: true
+  })
+
+  // Handle backend process events
+  backendProcess.stdout.on('data', (data) => {
+    console.log(`Backend stdout: ${data}`)
+  })
+
+  backendProcess.stderr.on('data', (data) => {
+    console.error(`Backend stderr: ${data}`)
+  })
+
+  backendProcess.on('close', (code) => {
+    console.log(`Backend process exited with code ${code}`)
   })
 
   mainWindow.on('ready-to-show', () => {
