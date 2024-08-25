@@ -51,6 +51,13 @@ STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator
 
 Students are challenged to identify strokes by marking lesions on Brain CT Scans and classifying the stroke type. Their performance is then evaluated by STELLA's AI model, providing feedback on the accuracy of their stroke identification and classification.
 
+## Features Work In Progress
+
+- ML Model Retraining (with higher hyperparameters observed, e.g., epochs, batches, etc.)
+- MRI Viewer (3D Viewer)
+- In-app communication with certified radiologists in the area (via WiFi or SMS)
+- Secure API Requests with Hexadecimal Hashing and Caching to Prevent Endpoint Breaches
+
 ## 📦 Source Repositories:
 
 1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
@@ -68,7 +75,8 @@ Students are challenged to identify strokes by marking lesions on Brain CT Scans
 
 ## :brain: Models
 
-- [work_in_progress](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I)
+- [U-Net](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYhWHL4PVGdeAlmpNcgYR9YtlNXj8dZxUCeg&s)
+- [MaskRCNN]](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYhWHL4PVGdeAlmpNcgYR9YtlNXj8dZxUCeg&s)
 
 ## :scroll: Important References
 
@@ -85,6 +93,20 @@ Ischemic Stroke Datasets:
 }
 
 Hemorraghic Stroke Datasets:
+@article{journalofneurologyresearch2022,
+  title = {Case Report},
+  author = {},
+  journal = {Journal of Neurology Research},
+  volume = {12},
+  number = {3},
+  pages = {128--131},
+  year = {2022},
+  month = {October},
+  issn = {1923-2845 (print), 1923-2853 (online)},
+  url = {https://www.neurores.org},
+  publisher = {Elmer Press Inc},
+  note = {Open Access},
+}
 ```
 
 - Our `📄 Thesis Manuscript` are available on [/doc](https://media.licdn.com/dms/image/C4E12AQE98dfpdYhxZA/article-cover_image-shrink_600_2000/0/1610116669577?e=2147483647&v=beta&t=8DlUsQtrkOc3ihFpCvEsEfboPv-MrW46YmPFwgtpB9I).
@@ -105,7 +127,7 @@ Hemorraghic Stroke Datasets:
 1. STELLA.ai was selected as one of the top 10 teams competing in the Hack4Health Hackathon organized by the Department of Health, Philippines, partnered with the Development Academy of the Philippines on May 15-17, 2024. [check](https://www.facebook.com/photo?fbid=122133789746240452&set=a.122121805382240452)
 2. STELLA.ai won as 3rd Place in the Hack4Health Hackathon. [check](https://www.facebook.com/photo?fbid=122138744636240452&set=pcb.122138745014240452)
 3. STELLA.ai won as 2nd Place in Alliance Medical Innovation Challenge (AMIC) 2024 Hackathon. [check](https://devpost.com/software/stella-ai-rsjn4i)
-4. STELLA.ai made it to the top 10 innovations in BPI-DOST Innovation Awards 2024. [check](https://www.facebook.com/photo/?fbid=497735315967371&set=pcb.497741139300122)
+4. STELLA.ai made it to the top 10 innovations in BEEPEEAI-DEEOWWESTEE IA 2024. [check](https://www.facebook.com/photo/?fbid=497735315967371&set=pcb.497741139300122)
 5. STELLA.ai was selected as part of the top 20 innovations and won as Champion in CSU Innovation Challenge 2024. [check](https://www.facebook.com/photo/?fbid=122160831242151434&set=pcb.122160832712151434)
 
 ## :writing_hand: Cite Our Study
@@ -124,6 +146,12 @@ Hemorraghic Stroke Datasets:
 ## License
 
 See the [LICENSE](https://github.com/francistinao/stella-ai/blob/main/LICENSE.md) file for licensing information.
+
+<br />
+
+## Demo
+
+STELLA v1.1 is available for demonstration. If you wish to try, email @ _francisjtinao@gmail.com_
 
 <br />
 2024 © Bete & Tin-ao (BSIT) - Caraga State University - College of Computing and Information Sciences. All Rights Reserved.
