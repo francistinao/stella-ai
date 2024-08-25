@@ -76,7 +76,7 @@ Students are challenged to identify strokes by marking lesions on Brain CT Scans
 ## :brain: Models
 
 - [U-Net](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYhWHL4PVGdeAlmpNcgYR9YtlNXj8dZxUCeg&s)
-- [MaskRCNN]](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYhWHL4PVGdeAlmpNcgYR9YtlNXj8dZxUCeg&s)
+- [MaskRCNN](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQYhWHL4PVGdeAlmpNcgYR9YtlNXj8dZxUCeg&s)
 
 ## :scroll: Important References
 
