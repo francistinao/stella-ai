@@ -22,3 +22,4 @@ tsconfig.js
 .vscode
 build
 resources
+tsconfig.json

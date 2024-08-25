@@ -1,4 +1,4 @@
-![landing](<Screenshot 2024-04-30 215956.png>)
+![landing](</extra/Screenshot 2024-04-30 215956.png>)
 
 <h3 align="center">🧠 STELLA.ai (Stroke Tomography for Enhanced Lesion Learning Analysis) v1.0 🧠</h3>
 <p align="center">
@@ -45,7 +45,7 @@ In classifying strokes, we're utilizing the Hounsfield Scale, a linear transform
 
  **STELLAmulator Beta**
 
-![alt text](<2024-08-17 20-42-39 (1).gif>)
+![alt text](<extra/2024-08-17 20-42-39 (1).gif>)
 
 STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator) is an advanced tool tailored for Radiologic Technologist students. It offers an interactive and efficient learning experience in stroke identification and classification.
 
