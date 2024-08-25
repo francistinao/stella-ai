@@ -3,3 +3,14 @@ dist
 out
 .DS_Store
 *.log*
+.editorconfig
+.eslintignore
+.eslintrc.cjs
+.prettierignore
+.prettierrc.yaml
+dev-app-update.yml
+electron-builder.yml
+package-lock.json
+tsconfig.node.json
+tsconfig.web.json
+yarn.lock
