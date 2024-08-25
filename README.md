@@ -24,7 +24,6 @@ In this repo, you can:
 ## 📑 Contents
 
 - [:book: About](#book-about)
-- [:toolbox: Setup Instructions](#toolbox-setup-instructions)
 - [:ledger: Colab/Jupyter Notebooks](#ledger-colab-notebooks)
 - [:brain: Models](#brain-models)
 - [:scroll: Important References](#scroll-important-references)
@@ -52,11 +51,7 @@ STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator
 
 Students are challenged to identify strokes by marking lesions on Brain CT Scans and classifying the stroke type. Their performance is then evaluated by STELLA's AI model, providing feedback on the accuracy of their stroke identification and classification.
 
-## :toolbox: Setup Instructions
-
-👉 Go to [/src](/src) for detailed instructions on how to setup this project on your machine.
-
-Source Repositories:
+## 📦 Source Repositories:
 
 1. `🎨` [stella-desktop](https://github.com/qarudafxz/stella-ai_frontend/blob/main/README.md)
 2. `⚡` [stella-api-v1_U-Net_CNN Api - Back End Repo] Not available to public
