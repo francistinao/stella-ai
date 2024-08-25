@@ -147,8 +147,6 @@ Hemorraghic Stroke Datasets:
 
 See the [LICENSE](https://github.com/francistinao/stella-ai/blob/main/LICENSE.md) file for licensing information.
 
-<br />
-
 ## Demo
 
 STELLA v1.1 is available for demonstration. If you wish to try, email @ _francisjtinao@gmail.com_
