@@ -13,6 +13,7 @@ import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
 import { formatJson } from '@/utils/formatJson'
 import { toast, Toaster } from 'sonner'
+import { useCaptureStore } from '@/store/result'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
@@ -45,6 +46,8 @@ const CTScanCanvas: React.FC = () => {
   const boundaryRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
   const nameForChecking = selectedImage?.imageName?.split('_')
+  const captureRef = useRef<HTMLDivElement>(null)
+  const { setIsCapture, isCapture, setCapturedContent } = useCaptureStore()
 
   const [{ clientX, clientY }, setClient] = useState({
     clientX: 0,
@@ -99,8 +102,6 @@ const CTScanCanvas: React.FC = () => {
   const handleMouseUp = () => {
     setDrawing(false)
   }
-
-  console.log(startPoint, endPoint)
 
   //RULER ====================================================================
 
@@ -158,8 +159,6 @@ const CTScanCanvas: React.FC = () => {
         ctx.textBaseline = 'middle'
         ctx.fillText(`${distanceInMillimeters.toFixed(2)} mm`, textX, textY)
         ctx.restore()
-
-        console.log(`Distance: ${distanceInMillimeters.toFixed(2)} mm`)
       } else {
         // Reset the points and clear the canvas for new points
         ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height)
@@ -419,6 +418,14 @@ const CTScanCanvas: React.FC = () => {
     drawPolygon()
   }, [tempBoundPts, boundarySize, boundaryColor, result])
 
+  useEffect(() => {
+    if (isCapture && captureRef.current) {
+      setCapturedContent(captureRef.current)
+      setIsCapture(false)
+      toast.success('Detections successfully added to Report.')
+    }
+  }, [isCapture, setCapturedContent])
+
   return (
     <div
       ref={containerRef}
@@ -453,7 +460,9 @@ const CTScanCanvas: React.FC = () => {
           <h1>Segmentate</h1>
         </button>
       </div>
+      {/* Must capture here */}
       <div
+        ref={captureRef}
         style={{
           border: '2px solid white',
           height: canvasSize,
@@ -550,6 +559,7 @@ const CTScanCanvas: React.FC = () => {
           )}
         </div>
       </div>
+      {/* Until here */}
     </div>
   )
 }

@@ -3,7 +3,7 @@
 import React from 'react'
 import { useThemeStore } from '@/store/theme'
 import { useNavigate } from 'react-router-dom'
-import { useResultStore } from '@/store/result'
+import { useResultStore, useCaptureStore } from '@/store/result'
 import { useStoredImages } from '@/store/stored_images'
 
 const SettingsBar: React.FC = () => {
@@ -11,10 +11,12 @@ const SettingsBar: React.FC = () => {
   const { theme } = useThemeStore()
   const { setResult } = useResultStore()
   const { setSelectedImage } = useStoredImages()
+  const { resetCapturedContent } = useCaptureStore()
 
   const reset = () => {
     setResult(null)
     setSelectedImage!(null)
+    resetCapturedContent()
     navigate('/')
   }
   return (

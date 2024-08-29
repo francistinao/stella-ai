@@ -8,7 +8,7 @@ import { motion } from 'framer-motion'
 import { useStoredImages } from '@/store/stored_images'
 import mascot from '@/assets/mascot.png'
 import mascot_head from '@/assets/logo.png'
-import { useResultStore } from '@/store/result'
+import { useResultStore, useCaptureStore } from '@/store/result'
 
 const Findings: React.FC = () => {
   const { result } = useResultStore()
@@ -16,6 +16,7 @@ const Findings: React.FC = () => {
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
   const { theme } = useThemeStore()
+  const { setIsCapture } = useCaptureStore()
 
   const nameForChecking = selectedImage?.imageName?.split('_')
 
@@ -92,37 +93,53 @@ const Findings: React.FC = () => {
             </div>
           )}
           {!isLoading && (result?.ischemic || result?.hemmoragic) && (
-            <div
-              className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-            >
-              <div className="flex flex-col">
-                <p className="text-md font-regular font-bold">
-                  {nameForChecking && nameForChecking[0]?.length >= 6 ? 'Ischemic' : 'Hemorrhagic'}{' '}
-                  Stroke
-                </p>
-                <p className="text-sm font-regular">
-                  Houndsfield Value:{' '}
-                  <span className="font-bold">
-                    {result?.ischemic?.Mean || result?.hemmoragic?.Mean}
-                  </span>
-                </p>
-              </div>
-              <div className="flex flex-col gap-2">
+            <>
+              <div
+                className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+              >
                 <div className="flex flex-col">
-                  <h1 className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}>
-                    Lesion Area in pixels:
-                  </h1>
-                  <h1
-                    className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
-                  >
-                    {result?.ischemic?.Area || result?.hemmoragic?.Area}px
-                  </h1>
+                  <p className="text-md font-regular font-bold">
+                    {nameForChecking && nameForChecking[0]?.length >= 6
+                      ? 'Ischemic'
+                      : 'Hemorrhagic'}{' '}
+                    Stroke
+                  </p>
+                  <p className="text-sm font-regular">
+                    Houndsfield Value:{' '}
+                    <span className="font-bold">
+                      {result?.ischemic?.Mean || result?.hemmoragic?.Mean}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-col">
+                    <h1
+                      className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}
+                    >
+                      Lesion Area in pixels:
+                    </h1>
+                    <h1
+                      className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
+                    >
+                      {result?.ischemic?.Area || result?.hemmoragic?.Area}px
+                    </h1>
+                  </div>
                 </div>
               </div>
-            </div>
+
+              <button
+                onClick={() => {
+                  setIsCapture(true)
+                }}
+                className="font-semibold text-xs bg-light_g rounded-full text-center py-2 w-full mt-4"
+              >
+                Add detection to findings
+              </button>
+            </>
           )}
         </motion.div>
       </div>
+
       {/* End of stroke findings */}
       {/* Lesion boundary points */}
       <div

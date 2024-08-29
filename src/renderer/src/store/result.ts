@@ -3,6 +3,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable prettier/prettier */
 import { create } from 'zustand'
+import { toPng } from 'html-to-image'
 
 interface ResultProps {
   result: {
@@ -19,6 +20,14 @@ interface ResultProps {
   setIsAddFindings?: (isAddFindings: boolean) => void
 }
 
+interface CaptureState {
+  isCapture: boolean
+  capturedContent: string[]
+  setIsCapture: (boolean) => void
+  setCapturedContent: (content: HTMLElement | null) => void
+  resetCapturedContent: () => void
+}
+
 export const useResultStore = create<ResultProps>((set) => ({
   result: {
     hemmoragic: null,
@@ -32,4 +41,20 @@ export const useResultStore = create<ResultProps>((set) => ({
   setResult: (result: any) => set({ result }),
   isAddFindings: false,
   setIsAddFindings: (isAddFindings: boolean) => set({ isAddFindings })
+}))
+
+export const useCaptureStore = create<CaptureState>((set) => ({
+  isCapture: false,
+  capturedContent: [],
+  setIsCapture: (isCapture) => set({ isCapture }),
+  setCapturedContent: (content) => {
+    if (content) {
+      toPng(content).then((dataUrl) => {
+        set((state) => ({
+          capturedContent: [...state.capturedContent, dataUrl]
+        }))
+      })
+    }
+  },
+  resetCapturedContent: () => set({ capturedContent: [] })
 }))
