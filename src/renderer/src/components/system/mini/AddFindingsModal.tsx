@@ -15,12 +15,25 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 
-import { Document, Packer, Paragraph, Table, TableCell, TableRow, WidthType, ImageRun } from 'docx'
+import {
+  Document,
+  Packer,
+  Paragraph,
+  Table,
+  TableCell,
+  TableRow,
+  WidthType,
+  ImageRun,
+  AlignmentType,
+  BorderStyle,
+  TextRun
+} from 'docx'
 import { saveAs } from 'file-saver'
 
 import { Toolbar } from '@/components/system/mini/index'
 
 import { useCaptureStore } from '@/store/result'
+import { $getRoot } from 'lexical'
 
 const MyOnChangePlugin = ({ onChange }) => {
   const [editor] = useLexicalComposerContext()
@@ -28,15 +41,13 @@ const MyOnChangePlugin = ({ onChange }) => {
   useEffect(() => {
     const updateEditorState = () => {
       editor.getEditorState().read(() => {
-        const editorState = editor.getEditorState()
-        const text = editorState.toString()
-        onChange(text)
+        const root = $getRoot()
+        const plainText = root.getTextContent()
+        onChange(plainText)
       })
     }
 
-    const unregister = editor.registerUpdateListener(updateEditorState)
-
-    return () => unregister()
+    return () => updateEditorState()
   }, [editor, onChange])
 
   return null
@@ -46,14 +57,14 @@ const AddFindingsModal: React.FC = () => {
   const { theme } = useThemeStore()
   const { isAddFindings, setIsAddFindings } = useResultStore()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [editorState, setEditorState] = useState<string | undefined>()
+  const [editorState, setEditorState] = useState('')
   const { capturedContent } = useCaptureStore()
 
-  const onChange = (editorState) => {
-    setEditorState(editorState)
+  const onChange = (text: string) => {
+    setEditorState(text)
   }
 
-  const onError = (error) => {
+  const onError = (error: Error) => {
     console.error(error)
   }
 
@@ -72,32 +83,94 @@ const AddFindingsModal: React.FC = () => {
     onError
   }
 
+  const cropImage = (dataUrl: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const img = new Image()
+      img.src = dataUrl as string
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+
+        canvas.width = img.width
+        canvas.height = img.height
+
+        ctx.drawImage(img, 0, 0)
+
+        const imageData = ctx.getImageData(0, 0, img.width, img.height)
+        const { width, height } = imageData
+
+        let minX = width,
+          minY = height,
+          maxX = 0,
+          maxY = 0
+
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < width; x++) {
+            const alpha = imageData.data[(y * width + x) * 4 + 3]
+            if (alpha > 0) {
+              if (x < minX) minX = x
+              if (x > maxX) maxX = x
+              if (y < minY) minY = y
+              if (y > maxY) maxY = y
+            }
+          }
+        }
+
+        const cropWidth = maxX - minX + 1
+        const cropHeight = maxY - minY + 1
+
+        canvas.width = cropWidth
+        canvas.height = cropHeight
+
+        ctx.drawImage(img, minX, minY, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight)
+
+        resolve(canvas.toDataURL())
+      }
+    })
+  }
+
   const downloadDocx = async () => {
     try {
       const imageRows: TableRow[] = []
       const capturedImages = [...capturedContent]
 
+      const containerWidth = 300
+      const containerHeight = 300
+
       while (capturedImages.length) {
         const rowCells: TableCell[] = []
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
           if (capturedImages.length) {
             const dataUrl = capturedImages.shift()
+            const croppedImageUrl = await cropImage(dataUrl as string)
+
             rowCells.push(
               new TableCell({
                 children: [
                   new Paragraph({
+                    alignment: AlignmentType.CENTER,
+                    spacing: { before: 0, after: 0 },
+                    indent: { left: 0, right: 0 },
                     children: [
                       new ImageRun({
-                        data: dataUrl || '',
+                        data: croppedImageUrl || '',
                         transformation: {
-                          width: 700,
-                          height: 700
+                          width: containerWidth,
+                          height: containerHeight
                         }
                       })
                     ]
                   })
                 ],
-                width: { size: 60, type: WidthType.PERCENTAGE }
+                width: { size: 50, type: WidthType.PERCENTAGE },
+                borders: {
+                  top: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                  bottom: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                  left: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' },
+                  right: { style: BorderStyle.NONE, size: 0, color: 'FFFFFF' }
+                },
+                margins: { top: 0, bottom: 0, left: 0, right: 0 }
               })
             )
           } else {
@@ -111,27 +184,39 @@ const AddFindingsModal: React.FC = () => {
         throw new Error('No image rows were created, check the images array.')
       }
 
-      const doc = new Document({
+      const combinedDoc = new Document({
         sections: [
           {
             children: [
               new Paragraph({
-                text: 'Radiologist Report',
+                text: 'Radiologist Findings',
+                alignment: AlignmentType.CENTER,
                 heading: 'Heading1'
               }),
               new Table({
-                rows: imageRows
+                rows: imageRows,
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                margins: { top: 8, bottom: 8, left: 0, right: 0 },
+                alignment: AlignmentType.CENTER
               }),
               new Paragraph({
-                text: editorState?.toString() || '',
-                spacing: { before: 400, after: 400 }
+                children: [
+                  new TextRun({
+                    text: editorState,
+                    font: {
+                      name: 'Arial'
+                    },
+                    size: 24
+                  })
+                ],
+                alignment: AlignmentType.LEFT
               })
             ]
           }
         ]
       })
 
-      const buffer = await Packer.toBlob(doc)
+      const buffer = await Packer.toBlob(combinedDoc)
       saveAs(
         new Blob([buffer], {
           type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
