@@ -89,7 +89,7 @@ app.whenReady().then(() => {
     app.dock.setIcon(join(basePath, 'logo.png'))
   }
 
-  if (is.dev || !is.dev) {
+  if (!is.dev) {
     app.on('browser-window-focus', function () {
       globalShortcut.register('CommandOrControl+R', () => {
         console.log('CommandOrControl+R is pressed: Shortcut Disabled')

@@ -6,7 +6,7 @@ const TitleBar: React.FC = () => {
   const { theme } = useThemeStore()
   return (
     <div
-      className={`px-10 w-full flex gap-x-2 items-start justify-start border-b ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} text-[10px] p-5 rounded-lg`}
+      className={`px-10 w-full flex gap-x-2 items-start justify-start border-b ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} text-[10px] p-5 `}
     >
       <div className="flex gap-4 items-center">
         <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-bold text-xl`}>

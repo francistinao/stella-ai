@@ -434,6 +434,7 @@ const CTScanCanvas: React.FC = () => {
         height: '100vh',
         overflow
       }}
+      className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}
     >
       <Toaster position="bottom-right" />
       {/* Description and segmentate button */}

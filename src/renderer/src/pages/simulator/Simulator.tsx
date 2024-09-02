@@ -5,6 +5,7 @@ import { Navbar, TitleBar } from '@/components/components'
 import SettingsBar from '@/components/system/SettingsBar'
 import { formatJson } from '@/utils/formatJson'
 import Ruler from '@scena/react-ruler'
+import { useThemeStore } from '@/store/theme'
 
 import RandomCTScan from '@/components/gamification/RandomCTScan'
 import SidePanel from '@/components/gamification/SidePanel'
@@ -116,6 +117,7 @@ const Simulator: React.FC = () => {
   const [random, setRandom] = useState<string | null>(null)
   const [showModal, setShowModal] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(0)
+  const { theme } = useThemeStore()
 
   const [results, setResults] = useState({})
   const rulerRef = useRef<HTMLDivElement>(null)
@@ -205,8 +207,8 @@ const Simulator: React.FC = () => {
       <Navbar />
       <TitleBar />
       <SettingsBar />
-      <div className="flex w-full h-screen pb-4">
-        <div className="w-[600px] min-h-screen p-10 flex items-center justify-center">
+      <div className={`flex w-full h-screen pb-4  ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}>
+        <div className={`w-[600px] min-h-screen p-10 flex items-center justify-center`}>
           <div className="flex flex-col gap-4">
             <img src={random!} className="object-contain" draggable={false} />
             <button
@@ -224,6 +226,8 @@ const Simulator: React.FC = () => {
         <div className="w-14" ref={rulerRef}>
           <Ruler type="vertical" direction="start" />
         </div>
+        {/* eslint-disable-next-line */}
+        {/* @ts-ignore */}
         <SidePanel results={results} />
       </div>
 

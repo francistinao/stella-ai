@@ -22,10 +22,10 @@ const CreateReport: React.FC = () => {
 
   return (
     <div
-      className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-lg flex flex-col gap-4 p-3`}
+      className={`${theme === 'dark' ? 'bg-dark' : 'bg-dirty'} rounded-lg flex flex-col gap-4 p-3`}
     >
       <div
-        className={`rounded-lg w-full px-3 py-1 flex gap-4 items-center ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'}`}
+        className={`rounded-lg w-full px-3 py-1 flex gap-4 items-center ${theme === 'dark' ? 'bg-sys_com' : 'bg-white'}`}
       >
         <div className="h-[20px] w-[5px] bg-light_g" />
         <h1 className={`${theme === 'dark' ? 'text-white' : 'text-dark'} font-bold text-md`}>

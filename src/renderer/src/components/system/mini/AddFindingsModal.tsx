@@ -266,7 +266,7 @@ const AddFindingsModal: React.FC = () => {
                     : 'bg-white text-dark border-dirty'
                 }`}
               >
-                <h1 className="text-center font-bold text-3xl">Detections</h1>
+                <h1 className="text-center font-bold text-3xl">Brain CT Scan Detections</h1>
                 <div className="relative w-full h-full overflow-hidden">
                   <AnimatePresence>
                     {capturedContent.map(
@@ -283,7 +283,7 @@ const AddFindingsModal: React.FC = () => {
                             <img
                               src={content}
                               alt={`Captured image ${idx}`}
-                              className="object-cover w-[1200px] h-[1200px]"
+                              className="object-cover w-[1200px] h-[1200px] rounded-sm"
                             />
                           </motion.div>
                         )

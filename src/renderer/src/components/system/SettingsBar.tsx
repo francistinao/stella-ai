@@ -21,7 +21,7 @@ const SettingsBar: React.FC = () => {
   }
   return (
     <div
-      className={`w-full flex gap-x-2 items-start justify-start border-b ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} text-[10px] p-2 rounded-lg`}
+      className={`px-5 w-full flex gap-x-2 items-start justify-start border-b ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} text-[10px] p-2`}
     >
       <button
         onClick={reset}
@@ -29,11 +29,7 @@ const SettingsBar: React.FC = () => {
       >
         Create New
       </button>
-      <button
-        className={`px-2 py-1 rounded-md ${theme === 'dark' ? 'text-dirty hover:bg-gray_l duration-200' : 'text-dark hover:bg-dirty duration-100'}`}
-      >
-        Edit
-      </button>
+
       <button
         className={`px-2 py-1 rounded-md ${theme === 'dark' ? 'text-dirty hover:bg-gray_l duration-200' : 'text-dark hover:bg-dirty duration-100'}`}
       >

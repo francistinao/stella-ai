@@ -18,7 +18,7 @@ const Steps: React.FC = () => {
     <div className={`${theme === 'dark' ? '' : ''} flex rounded-full`}>
       <img src={vector} alt="CT Scan Vector" className="w-1/3 rounded-l-lg" />
       <div
-        className={`p-2 flex flex-col gap-1 w-2/3 ${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-r-lg`}
+        className={`p-2 flex flex-col gap-1 w-2/3 ${theme === 'dark' ? 'bg-dark' : 'bg-dirty'} rounded-r-lg`}
       >
         <div className="flex gap-1 items-center justify-center">
           {/*  Temporary */}

@@ -5,15 +5,15 @@ import React from 'react'
 import logo from '@/assets/logo.png'
 import { useThemeStore } from '@/store/theme'
 import { Tooltip } from '@chakra-ui/react'
-import { useToolStore } from '@/store/tool'
 import { useToggleSlider } from 'react-toggle-slider'
+import { useVisible } from '@/store/visible'
+import Slider from '@mui/material/Slider'
+import { styled } from '@mui/material/styles'
 import { PiEye, PiEyeClosed } from 'react-icons/pi'
 import { FaRegHandPaper } from 'react-icons/fa'
 import { BsRulers } from 'react-icons/bs'
 import { BiPencil } from 'react-icons/bi'
-import { useVisible } from '@/store/visible'
-import Slider from '@mui/material/Slider'
-import { styled } from '@mui/material/styles'
+import { useToolStore } from '@/store/tool'
 
 interface ToolboxProps {
   observeWidth: number
@@ -99,19 +99,6 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     }
   ]
 
-  const [toggleSlider] = useToggleSlider({
-    barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
-    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
-    barWidth: 80,
-    barHeight: 40,
-    handleSize: 30,
-    handleBorderRadius: 100,
-    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
-    handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
-    transitionDuration: '200ms',
-    active: visible
-  })
-
   const tools = [
     {
       tool_id: 1,
@@ -138,6 +125,19 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
       icon: <BsRulers size={18} />
     }
   ]
+
+  const [toggleSlider] = useToggleSlider({
+    barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
+    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
+    barWidth: 80,
+    barHeight: 40,
+    handleSize: 30,
+    handleBorderRadius: 100,
+    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
+    handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
+    transitionDuration: '200ms',
+    active: visible
+  })
 
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   const handleBoundaryPointsSize = (_event: Event, newValue: number | number[]) => {
@@ -177,12 +177,28 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
             <button
               onClick={() => {
                 setToolName(tool.tool_name)
-                if (tool.tool_name === 'Show CT Scan' || tool.tool_id === 2) {
+
+                //grab
+                if (tool.tool_name.includes('Grab') || tool.tool_id === 3) {
+                  if (is_draw) setIsDraw(false)
+                  if (is_ruler) setIsRuler(false)
+                  setToolName('Grab')
+                  document.body.style.cursor = 'Grab'
+                }
+                //show or hide ct scan
+                if (tool.tool_name.includes('CT Scan') || tool.tool_id === 2) {
                   setToolActivity(!is_active)
-                } else if (tool.tool_name === 'Line' || tool.tool_id === 1) {
+                  document.body.style.cursor = 'default'
+                  // draw
+                } else if (tool.tool_name.includes('Pencil') || tool.tool_id === 1) {
                   setIsDraw(!is_draw)
+                  document.body.style.cursor = 'default'
+                  //ruler
                 } else if (tool.tool_name === 'Ruler' || tool.tool_id === 4) {
+                  setToolName('Ruler')
+                  if (is_draw) setIsDraw(false)
                   setIsRuler(!is_ruler)
+                  document.body.style.cursor = 'crosshair'
                 }
               }}
               key={idx}

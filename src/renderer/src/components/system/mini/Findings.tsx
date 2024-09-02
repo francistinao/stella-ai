@@ -22,7 +22,7 @@ const Findings: React.FC = () => {
 
   return (
     <div
-      className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'} rounded-lg flex flex-col gap-4 p-3`}
+      className={`${theme === 'dark' ? 'bg-dark' : 'bg-[#797979]'} rounded-lg flex flex-col gap-4 p-3`}
     >
       <div
         className={`rounded-full w-full px-3 py-1 flex gap-2 items-center ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'}`}
@@ -34,7 +34,7 @@ const Findings: React.FC = () => {
       </div>
       {/* Stroke findings */}
       <div
-        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} p-4 rounded-lg flex flex-col`}
+        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} p-4 rounded-lg flex flex-col`}
       >
         <div
           className={`pb-2 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}
@@ -131,7 +131,7 @@ const Findings: React.FC = () => {
                 onClick={() => {
                   setIsCapture(true)
                 }}
-                className="font-semibold text-xs bg-light_g rounded-full text-center py-2 w-full mt-4"
+                className={`font-semibold text-xs border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} rounded-full text-center py-2 w-full mt-4`}
               >
                 Add detection to findings
               </button>
@@ -143,7 +143,7 @@ const Findings: React.FC = () => {
       {/* End of stroke findings */}
       {/* Lesion boundary points */}
       <div
-        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} p-4 rounded-lg flex flex-col`}
+        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} p-4 rounded-lg flex flex-col`}
       >
         <div
           className={`pb-2 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}

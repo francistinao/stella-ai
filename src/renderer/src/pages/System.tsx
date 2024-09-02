@@ -74,6 +74,7 @@ const System: React.FC = () => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
+        //explore ct scan
         case 'H':
         case 'h':
           if (tool_name !== '') setToolName('')
@@ -83,6 +84,7 @@ const System: React.FC = () => {
           document.body.style.cursor = 'grab'
           setShowCTScan(true)
           break
+        // toggle ct scan visibility
         case 'C':
         case 'c':
           if (tool_name !== '') setToolName('')
@@ -92,6 +94,7 @@ const System: React.FC = () => {
           setToolActivity(!is_active)
           setShowCTScan(true)
           break
+        // pencil
         case 'P':
         case 'p':
           if (tool_name !== '') setToolName('')
@@ -100,6 +103,7 @@ const System: React.FC = () => {
           setIsDraw(!is_draw)
           document.body.style.cursor = 'default'
           break
+        // reset tools
         case 'Escape':
           if (tool_name !== '') setToolName('')
           setIsDraw(false)
@@ -107,6 +111,7 @@ const System: React.FC = () => {
           document.body.style.cursor = 'default'
           setShowCTScan(true)
           break
+        // ruler
         case 'R':
         case 'r':
           if (tool_name !== '') setToolName('')
