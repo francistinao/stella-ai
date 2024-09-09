@@ -11,13 +11,14 @@ import { useResultStore } from '@/store/result'
 import { useToolStore } from '@/store/tool'
 
 interface CardProps {
+  key: number
   sliceNumber: number
   size: number
   file_name?: string
   imageData: BinaryData
 }
 
-const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData }) => {
+const Cards: React.FC<CardProps> = ({ key, sliceNumber, size, file_name, imageData }) => {
   const { setSelectedImage, selectedImage } = useStoredImages()
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
 
@@ -70,7 +71,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
   const { theme } = useThemeStore()
   return (
     <div
-      className={`border-2 flex flex-col gap-2 rounded-[10px] p-4 ${theme === 'dark' ? 'bg-gray_l border-zinc-700' : 'bg-white border-zinc-300 shadow-lg'} ${selectedImage?.imageName === file_name && 'brightness-150 duration-100'}`}
+      className={`border-2 flex flex-col gap-2 rounded-[10px] p-4 ${theme === 'dark' ? 'bg-gray_l border-zinc-700' : 'bg-white border-zinc-300 shadow-lg'} ${selectedImage?.imageName === file_name && 'brightness-150 duration-100'} ${sliceNumber === 1 && !selectedImage && 'animate-pulse duration-75'}`}
     >
       <div
         className={`flex justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-dirty'} rounded-lg py-2 px-2`}
@@ -82,8 +83,8 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
           <button onClick={handleSelectImageToView}>
             <VscOpenPreview
               size={40}
-              color={`${theme === 'dark' ? '#72FC5E' : '#191919'}`}
-              className={`border rounded-full ${theme === 'dark' ? 'border-light_g' : 'border-dark'} p-2`}
+              color={`${theme === 'dark' ? '#191919' : '#72FC5E'}`}
+              className={`rounded-full ${theme === 'dark' ? 'bg-light_g' : 'bg-dark'} p-2`}
             />
           </button>
         </Tooltip>
