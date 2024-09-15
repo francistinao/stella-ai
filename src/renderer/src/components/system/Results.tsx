@@ -4,6 +4,7 @@ import { useThemeStore } from '@/store/theme'
 
 //Results Components
 import { Steps, Findings, CreateReport } from './mini'
+import LesionVisualizer from './mini/LesionVisualizer'
 
 interface ResultsProps {
   remainingWidth: number
@@ -20,6 +21,7 @@ const Results: React.FC<ResultsProps> = ({ remainingWidth }) => {
         className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} w-full px-3 py-2 rounded-md  flex flex-col gap-4`}
       >
         <Steps />
+        <LesionVisualizer />
         <Findings />
         <CreateReport />
       </div>

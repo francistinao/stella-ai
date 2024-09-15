@@ -87,13 +87,13 @@ const Navbar: React.FC = () => {
           className={`text-md font-bold ${theme === 'light' ? 'text-dark' : 'text-light_g'} duration-150`}
         >
           STELLA.ai{' '}
-          <span className="font-light text-italic">
+          <span className="font-light text-sm text-italic">
             (Stroke Tomography for Enhanced Lesion Learning Analysis) v1.1
           </span>
         </h1>
       </div>
       <div
-        className={`flex gap-4 items-center rounded-full py-2 px-3 ${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'}`}
+        className={`flex gap-4 items-center rounded-full py-[5px] px-3 ${theme === 'dark' ? 'bg-gray_l' : 'bg-dirty'}`}
       >
         {/* STELLA.ai is an undergraduate project
             made by students from Caraga State

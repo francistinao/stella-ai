@@ -14,6 +14,7 @@ import { useVisible } from '@/store/visible'
 import { formatJson } from '@/utils/formatJson'
 import { toast, Toaster } from 'sonner'
 import { useCaptureStore } from '@/store/result'
+import { useCoordsStore } from '@/store/coords'
 
 const canvasSize = window.innerHeight * 2
 const dragInertia = 7
@@ -21,6 +22,7 @@ const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
   const { setResult, result } = useResultStore()
+  const { setLesionData } = useCoordsStore()
   const {
     boundaryColor,
     tool_name,
@@ -287,6 +289,9 @@ const CTScanCanvas: React.FC = () => {
       //eslint-disable-next-line
       //@ts-ignore
       nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic
+
+    //store resultToUse in a state
+    setLesionData(resultToUse)
 
     // Check if resultToUse and relevant properties exist
     if (resultToUse?.Lesion_Boundary_Points?.length > 0) {

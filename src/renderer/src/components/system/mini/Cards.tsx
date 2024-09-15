@@ -11,14 +11,13 @@ import { useResultStore } from '@/store/result'
 import { useToolStore } from '@/store/tool'
 
 interface CardProps {
-  key: number
   sliceNumber: number
   size: number
   file_name?: string
   imageData: BinaryData
 }
 
-const Cards: React.FC<CardProps> = ({ key, sliceNumber, size, file_name, imageData }) => {
+const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData }) => {
   const { setSelectedImage, selectedImage } = useStoredImages()
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
 

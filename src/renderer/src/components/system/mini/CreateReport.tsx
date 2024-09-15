@@ -33,8 +33,8 @@ const CreateReport: React.FC = () => {
         </h1>
       </div>
       <p className={`text-[10px] ${theme === 'dark' ? 'text-white' : 'text-dark'} text-left`}>
-        After retrieving the results from the automated segmentation, you can now create a report or
-        findings based on the segmentation results.
+        After retrieving the results from the automated segmentation, create a report or findings
+        based on the segmentation results.
       </p>
       <button
         onClick={() => setIsAddFindings!(true)}
