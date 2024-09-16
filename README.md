@@ -43,6 +43,27 @@ In classifying strokes, we're utilizing the Hounsfield Scale, a linear transform
 
 ## What's New? STELLA.ai v1.1
 
+ **Lesion 3D Viewer**
+![alt text](<extra/NEW FEAT.gif>)
+
+ **3D Lesion Viewer**
+
+![3D Lesion Viewer](</extra/3d_lesion_viewer.gif>)
+
+STELLA.ai now features an advanced 3D Lesion Viewer, powered by Three.js, which transforms the AI-detected lesions into interactive 3D models. This cutting-edge feature allows for a more comprehensive and intuitive analysis of stroke lesions.
+
+Key features of the 3D Lesion Viewer include:
+
+- **360° Inspection**: Users can rotate and zoom the 3D model, enabling a thorough examination from all angles.
+- **Wireframe View**: Toggle a wireframe overlay to visualize the mesh structure of the lesion.
+- **Axis Visualization**: Clearly marked X, Y, and Z axes help orient the lesion in 3D space.
+- **Lesion Metrics**: 
+  - Total surface area of the lesion is calculated and displayed.
+  - Severity assessment based on the lesion's size and location.
+- **Interactive Controls**: User-friendly interface for manipulating the 3D view and accessing different visualization modes.
+
+This feature significantly enhances the ability of medical professionals to understand the spatial characteristics of stroke lesions, potentially leading to more accurate diagnoses and treatment plans.
+
  **STELLAmulator Beta**
 
 ![alt text](<extra/2024-08-17 20-42-39 (1).gif>)
