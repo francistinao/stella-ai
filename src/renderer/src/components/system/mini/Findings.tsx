@@ -59,7 +59,7 @@ const Findings: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isStrokeFindingsFindingsDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8"
+          className="overflow-hidden pt-2"
         >
           {!isLoading && (!result?.ischemic || !result?.hemmoragic) && (
             <div className="flex flex-col gap-4 justify-center place-items-center">
@@ -168,7 +168,7 @@ const Findings: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8 max-h-[200px] overflow-y-auto customScroll"
+          className="overflow-hidden py-2 max-h-[100px] overflow-y-auto customScroll"
         >
           <div
             className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
