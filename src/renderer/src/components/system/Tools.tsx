@@ -12,13 +12,12 @@ interface ToolsProps {
 const Tools: React.FC<ToolsProps> = ({ observeWidth }) => {
   const { theme } = useThemeStore()
   return (
-    <div className={`flex flex-col ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}>
+    <div className={`flex flex-col pb-10 ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}>
       {/* Stella Toolbox */}
       <div className={`border-b  ${theme === 'dark' ? ' border-zinc-700' : 'border-zinc-500'}`}>
         <Toolbox observeWidth={observeWidth} />
       </div>
       {/* Image Config */}
-
       <ImageConfig />
     </div>
   )

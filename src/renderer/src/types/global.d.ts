@@ -47,4 +47,14 @@ export interface ControlPanelProps {
   crossSectionHeight: number
   setCrossSectionHeight: (value: number) => void
   theme: string
+  showMeasurements: boolean
+  setShowMeasurements: (value: boolean) => void
+  showAxes: boolean
+  setShowAxes: (value: boolean) => void
+  showMeasurements: boolean
+  setShowMeasurements: (value: boolean) => void
+  showAxes: boolean
+  setShowAxes: (value: boolean) => void
+  rotationSpeed: number
+  setRotationSpeed: (value: number) => void
 }

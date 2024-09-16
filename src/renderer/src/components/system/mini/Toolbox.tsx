@@ -78,24 +78,44 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
 
   const colorChoices = [
     {
-      color: '#78b6f2',
-      rgb_val: 'rgb(120, 182, 242, 0.2)'
+      color: '#FF0000',
+      rgb_val: 'rgba(255, 0, 0, 0.6)'
     },
     {
-      color: '#b365e8',
-      rgb_val: 'rgb(179, 101, 232, 0.2)'
+      color: '#FF851B',
+      rgb_val: 'rgba(255, 133, 27, 0.6)'
     },
     {
-      color: '#72e3d1',
-      rgb_val: 'rgb(114, 227, 209, 0.2)'
+      color: '#FFDC00',
+      rgb_val: 'rgba(255, 220, 0, 0.6)'
     },
     {
-      color: '#92ea8e',
-      rgb_val: 'rgb(146, 234, 142, 0.2)'
+      color: '#2ECC40',
+      rgb_val: 'rgba(46, 204, 64, 0.6)'
     },
     {
-      color: '#f2d34c',
-      rgb_val: 'rgb(242, 211, 76, 0.2)'
+      color: '#0074D9',
+      rgb_val: 'rgba(0, 116, 217, 0.6)'
+    },
+    {
+      color: '#B10DC9',
+      rgb_val: 'rgba(177, 13, 201, 0.6)'
+    },
+    {
+      color: '#F012BE',
+      rgb_val: 'rgba(240, 18, 190, 0.6)'
+    },
+    {
+      color: '#01FF70',
+      rgb_val: 'rgba(1, 255, 112, 0.6)'
+    },
+    {
+      color: '#7FDBFF',
+      rgb_val: 'rgba(127, 219, 255, 0.6)'
+    },
+    {
+      color: '#FF4136',
+      rgb_val: 'rgba(255, 65, 54, 0.6)'
     }
   ]
 
