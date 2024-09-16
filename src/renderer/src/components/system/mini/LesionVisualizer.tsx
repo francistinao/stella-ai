@@ -64,17 +64,12 @@ const LesionVisualizer = () => {
         (coord) => new THREE.Vector3(coord[0], -coord[1], 0)
       )
 
-      // Find the bounding box of the points
-      const box = new THREE.Box3().setFromPoints(points)
-      const center = box.getCenter(new THREE.Vector3())
-      const size = box.getSize(new THREE.Vector3())
-
       const curve = new THREE.CatmullRomCurve3(points, true)
       const curvePoints = curve.getPoints(50)
 
       const shape = new THREE.Shape()
-      shape.moveTo(curvePoints[0].x - center.x, curvePoints[0].y - center.y)
-      curvePoints.forEach((point) => shape.lineTo(point.x - center.x, point.y - center.y))
+      shape.moveTo(curvePoints[0].x, curvePoints[0].y)
+      curvePoints.forEach((point) => shape.lineTo(point.x, point.y))
 
       const { width, height } = renderer.getSize(new THREE.Vector2())
 
@@ -88,15 +83,15 @@ const LesionVisualizer = () => {
       infoText.color = theme === 'dark' ? 0xffffff : 0x000000
       infoText.anchorX = 'right'
       infoText.anchorY = 'bottom'
-      infoText.position.set(width / 2 - 10, -height / 2 + 50, 0)
+      infoText.position.set(width / 3 - 10, -height / 2 + 25, 0)
       scene.add(infoText)
 
       const extrudeSettings = {
         steps: 20,
-        depth: Math.min(size.x, size.y) * 0.5,
+        depth: 10,
         bevelEnabled: true,
-        bevelThickness: size.x * 0.05,
-        bevelSize: size.x * 0.05,
+        bevelThickness: 2,
+        bevelSize: 1,
         bevelSegments: 5,
         curveSegments: 50
       }
@@ -151,26 +146,21 @@ const LesionVisualizer = () => {
         )
       }
 
+      const mesh = new THREE.Mesh(geometry, material)
+      scene.add(mesh)
+
+      geometry.center()
+      geometry.computeBoundingSphere()
+
+      if (geometry.boundingSphere) {
+        const center = geometry.boundingSphere.center
+        mesh.position.set(-center.x, -center.y, -center.z)
+      }
+
       const crossSectionPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), crossSectionHeight)
       const crossSectionHelper = new THREE.PlaneHelper(crossSectionPlane, 200, 0x72fc5e)
       scene.add(crossSectionHelper)
       crossSectionHelper.visible = showCrossSection
-
-      const mesh = new THREE.Mesh(geometry, material)
-      mesh.position.set(center.x, center.y, 0)
-      scene.add(mesh)
-
-      const cameraDistance = Math.max(size.x, size.y) * 2
-      camera.position.set(0, 0, cameraDistance)
-      controls.target.set(center.x, center.y, 0)
-      controls.update()
-
-      camera.near = cameraDistance / 100
-      camera.far = cameraDistance * 100
-      camera.updateProjectionMatrix()
-
-      geometry.center()
-      geometry.computeBoundingSphere()
 
       const boundingSphere = geometry.boundingSphere
       if (boundingSphere) {
@@ -254,7 +244,7 @@ const LesionVisualizer = () => {
           initial={{ height: 0 }}
           animate={{ height: toggle ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-2"
+          className="overflow-hidden pt-8"
           style={{ height: '300px' }}
         >
           {hasLesionBoundaryPoints ? (
@@ -340,7 +330,7 @@ const ControlPanel: FC<ControlPanelProps> = ({
   })
   return (
     <div
-      className={`${theme === 'dark' ? 'bg-sys_com text-white' : 'bg-dirty text-dark'} pb-2 rounded-lg mt-4`}
+      className={`${theme === 'dark' ? 'bg-sys_com text-white' : 'bg-dirty text-dark'} px-4 pb-2 rounded-lg mt-4`}
     >
       <div className="mb-2">
         <label className="block text-[10px] mb-1">Opacity: {opacity.toFixed(2)}</label>
