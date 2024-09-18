@@ -13,11 +13,16 @@ import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
-
+import { canvasSize } from './RandomCTScan'
 import { ResultsModal } from '@/components/gamification/index'
 
-const PRED_PASSING = 30
-const PRED_PLOT_PASSING = 50
+const PRED_PASSING = 50
+const PRED_PLOT_PASSING = 30
+
+interface Score {
+  score_in_type: number | null
+  score_in_plot: number | null
+}
 
 const SidePanel: React.FC<{
   results: {
@@ -26,21 +31,21 @@ const SidePanel: React.FC<{
       x: number
       y: number
     }[]
-  }
+  } | null
 }> = ({ results }) => {
   const { theme } = useThemeStore()
-  const { coord, setCoord } = useCoordStore()
-  const [score, setScore] = useState({
-    score_in_type: 0,
-    score_in_plot: 0
+  const { coord, setCoord, resultCoord } = useCoordStore()
+  const [score, setScore] = useState<Score>({
+    score_in_type: null,
+    score_in_plot: null
   })
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
   const [strokeType, setStrokeType] = useState('')
 
+  const hasPredictionPlots = results !== null && resultCoord.length > 0
+
   const totalWidth = window.innerWidth
   const totalHeight = window.innerHeight
-
-  console.log(results)
 
   const handleChange = (event: SelectChangeEvent) => {
     setStrokeType(event.target.value)
@@ -50,10 +55,14 @@ const SidePanel: React.FC<{
     <div
       className={`w-[500px] m-3 rounded-md ${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} flex flex-col gap-4 p-3`}
     >
-      {score.score_in_type >= PRED_PASSING && score.score_in_plot >= PRED_PLOT_PASSING && (
-        <Confetti width={totalWidth} height={totalHeight} />
-      )}
-      <ResultsModal score={score} setScore={setScore} />
+      {(score?.score_in_type ?? 0) >= PRED_PASSING &&
+        (score?.score_in_plot ?? 0) >= PRED_PLOT_PASSING && (
+          <Confetti width={totalWidth} height={totalHeight} />
+        )}
+      <ResultsModal
+        score={score as { score_in_type: number; score_in_plot: number }}
+        setScore={setScore}
+      />
       <div className="flex w-full gap-4 items-center">
         <div
           className={`border-2 ${theme === 'dark' ? 'bg-dark border-gray_l' : 'bg-white border-dirty'} rounded-full`}
@@ -84,8 +93,19 @@ const SidePanel: React.FC<{
       <div
         className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} p-4 rounded-lg flex flex-col`}
       >
+        {!hasPredictionPlots ? (
+          <span className=" text-xs text-red-500 ml-2">
+            AI is getting the prediction, please wait....
+          </span>
+        ) : (
+          <h1
+            className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} text-lg text-center font-semibold`}
+          >
+            Start plotting now!
+          </h1>
+        )}
         <div
-          className={`pb-2 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}
+          className={`py-8 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}
         >
           <div
             className={`${theme === 'dark' ? 'text-light_g ' : 'text-dark'} flex gap-3 items-center`}
@@ -136,7 +156,7 @@ const SidePanel: React.FC<{
             setCoord([])
           }}
         >
-          Reset Points
+          Reset Plots
         </button>
         <FormControl
           sx={{ m: 1, minWidth: 120, borderColor: theme === 'dark' ? 'white' : 'black' }}
@@ -172,11 +192,27 @@ const SidePanel: React.FC<{
             <MenuItem value={'Hemorrhagic Stroke'}>Hemorrhagic Stroke</MenuItem>
           </Select>
         </FormControl>
+
         <button
           className="font-semibold bg-light_g rounded-full text-dark py-2"
           onClick={() => {
-            if (results) {
-              setScore(assessPerformance(strokeType, results?.stroke, results?.lesionPoints, coord))
+            if (results && results.lesionPoints && Array.isArray(results.lesionPoints)) {
+              const transformedCoord = coord.map((point) => [point.x, point.y])
+
+              try {
+                const assessmentResult = assessPerformance(
+                  strokeType,
+                  results.stroke,
+                  results.lesionPoints,
+                  transformedCoord,
+                  canvasSize
+                )
+                setScore(assessmentResult)
+              } catch (error) {
+                console.error('Error in assessPerformance:', error)
+              }
+            } else {
+              console.error('Invalid results or lesionPoints:', results)
             }
           }}
         >

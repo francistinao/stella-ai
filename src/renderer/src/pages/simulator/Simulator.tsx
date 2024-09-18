@@ -14,6 +14,9 @@ import { resizeLesionPoints } from '@/lib/assessment'
 
 import { allImages } from '@/data/ctscans'
 import { toast, Toaster } from 'sonner'
+import { useCoordStore, useToggleResult } from '@/store/simulations'
+import { Coord } from '@/types/global'
+import { canvasSize } from '@/components/gamification/RandomCTScan'
 
 const steps = [
   {
@@ -118,6 +121,8 @@ const Simulator: React.FC = () => {
   const [showModal, setShowModal] = useState<boolean>(false)
   const [currentStep, setCurrentStep] = useState<number>(0)
   const { theme } = useThemeStore()
+  const { setResultCoord } = useCoordStore()
+  const { setToggleResult } = useToggleResult()
 
   const [results, setResults] = useState({})
   const rulerRef = useRef<HTMLDivElement>(null)
@@ -172,11 +177,22 @@ const Simulator: React.FC = () => {
         stroke: strokeType
       }
 
-      const resizedLesionPoints = resizeLesionPoints(strokeType, newResults?.Lesion_Boundary_Points)
+      const resizedLesionPoints = resizeLesionPoints(
+        strokeType,
+        newResults?.Lesion_Boundary_Points,
+        canvasSize
+      )
+
+      const validCoords = resizedLesionPoints.filter(
+        (point): point is Coord => point.x !== null && point.y !== null
+      )
+
       setResults({
         stroke: strokeType,
         lesionPoints: resizedLesionPoints
       })
+
+      setResultCoord(validCoords)
     } catch (error) {
       console.error('Error segmenting image:', error)
     }
@@ -186,6 +202,8 @@ const Simulator: React.FC = () => {
     try {
       const randomImage = getRandomCTScan()
       setRandom(randomImage)
+      setResultCoord([])
+      setToggleResult(false)
     } catch (err) {
       toast.error('Error generating random ct scan')
     }

@@ -5,16 +5,28 @@ interface ResizeProps {
   y: number | null
 }
 
-export const resizeLesionPoints = (type: string, lesions: ResizeProps[]): ResizeProps[] => {
-  // Check if type is valid and assign scaleFactor
+export const resizeLesionPoints = (
+  type: string,
+  lesions: number[][],
+  canvasSize: number
+): ResizeProps[] => {
+  // must check type is valid and assign scaleFactor
   const scaleFactor = type === 'Ischemic Stroke' ? 3.1 : 2.4
-  const newLesions = []
-  // Loop through each lesion
-  lesions.map((lesion) => {
-    //eslint-disable-next-line
-    //@ts-ignore
-    newLesions.push([lesion[0] * scaleFactor, lesion[1] * scaleFactor])
-  })
+
+  // size of image is static based on the image passed on the backend for matching the coordinates' plots
+  const originalSize = 512
+
+  const canvasRatio = canvasSize / originalSize
+
+  // scaling factor and offsets from scaleCoordinates
+  const additionalScaleFactor = 0.3
+  const offsetX = 5
+  const offsetY = 50
+
+  const newLesions = lesions.map((lesion) => ({
+    x: lesion[0] * scaleFactor * canvasRatio * additionalScaleFactor + offsetX,
+    y: lesion[1] * scaleFactor * canvasRatio * additionalScaleFactor + offsetY
+  }))
 
   return newLesions
 }
@@ -27,52 +39,69 @@ export const resizeLesionPoints = (type: string, lesions: ResizeProps[]): Resize
  * @param lesions: Prediction of the model where it is resized
  */
 
-//Needs to improve algorithm
-
 export const assessPerformance = (
   predictionType: string,
   type: string,
-  predictionLesions: ResizeProps[],
-  userLesions: ResizeProps[]
+  predictionLesions: { x: number; y: number }[],
+  userLesions: number[][],
+  canvasSize: number
 ) => {
-  let score = 0
+  console.log('Assessing performance with:', {
+    predictionType,
+    type,
+    predictionLesions,
+    userLesions,
+    canvasSize
+  })
 
-  // Score for type correctness
-  const typeScore = predictionType === type ? 50 : 0
-
-  // Distance Score Calculation
-  let totalDistance = 0
-  let numValidDistances = 0
-
-  // Function to calculate Euclidean distance between two points
-  const calculateDistance = (point1: { x: number; y: number }, point2: number[]) => {
-    return Math.sqrt(Math.pow(point1[1] - point2[0], 2) + Math.pow(point1.y - point2[1], 2))
+  if (!Array.isArray(predictionLesions) || !Array.isArray(userLesions)) {
+    console.error('Invalid input: predictionLesions or userLesions is not an array')
+    return { score_in_type: 0, score_in_plot: 0, total_score: 0 }
   }
 
-  // For each user lesion point, find the closest prediction lesion point
+  // Score for type correctness (50 points)
+  const typeScore = predictionType === type ? 50 : 0
+
+  // Distance Score Calculation (50 points)
+  const maxDistance = canvasSize * 0.1
+  let totalScore = 0
+  const matchedPredictions = new Set()
+
   userLesions.forEach((userPoint) => {
     let minDistance = Infinity
-    predictionLesions.forEach((predictionPoint) => {
-      const distance = calculateDistance(userPoint, predictionPoint)
-      if (distance < minDistance) {
-        minDistance = distance
+    let closestPrediction: number | null = null
+
+    predictionLesions.forEach((predictionPoint, index) => {
+      if (!matchedPredictions.has(index)) {
+        const distance = calculateDistance({ x: userPoint[0], y: userPoint[1] }, predictionPoint)
+        if (distance < minDistance) {
+          minDistance = distance
+          closestPrediction = index
+        }
       }
     })
 
-    if (minDistance !== Infinity) {
-      totalDistance += minDistance
-      numValidDistances++
+    if (closestPrediction !== null) {
+      matchedPredictions.add(closestPrediction)
+      const pointScore = Math.max(0, 50 * (1 - minDistance / maxDistance))
+      totalScore += pointScore
     }
   })
 
-  const distanceScore = numValidDistances > 0 ? totalDistance / numValidDistances : 0
+  const distanceScore = userLesions.length > 0 ? totalScore / userLesions.length : 0
 
-  const distanceWeight = 50
-  score = typeScore + (distanceWeight - distanceScore)
+  const finalScore = typeScore + distanceScore
 
-  if (score < 0) {
-    score = 0
+  return {
+    score_in_type: typeScore,
+    score_in_plot: Math.round(distanceScore),
+    total_score: Math.round(finalScore)
   }
+}
 
-  return { score_in_type: typeScore, score_in_plot: score }
+const calculateDistance = (
+  point1: { x: number; y: number },
+  point2: { x: number; y: number }
+): number => {
+  return Math.sqrt(Math.pow(point1.x - point2.x, 2) + Math.pow(point1.y - point2.y, 2))
 }

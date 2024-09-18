@@ -58,3 +58,8 @@ export interface ControlPanelProps {
   rotationSpeed: number
   setRotationSpeed: (value: number) => void
 }
+
+export interface Coord {
+  x: number
+  y: number
+}

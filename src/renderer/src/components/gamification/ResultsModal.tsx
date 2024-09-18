@@ -1,9 +1,13 @@
 /* eslint-disable prettier/prettier */
-import React, { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useCoordStore } from '@/store/simulations'
 import { useThemeStore } from '@/store/theme'
 import { IoMdClose } from 'react-icons/io'
+import { useToggleResult } from '@/store/simulations'
+import { useToggleSlider } from 'react-toggle-slider'
+
+const PRED_PASSING = 15
+const PRED_PLOT_PASSING = 50
 
 interface Props {
   score: {
@@ -12,27 +16,52 @@ interface Props {
   }
   setScore: Dispatch<
     SetStateAction<{
-      score_in_type: number
-      score_in_plot: number
+      score_in_type: number | null
+      score_in_plot: number | null
     }>
   >
 }
 
 const ResultsModal: React.FC<Props> = ({ score, setScore }) => {
   const { theme } = useThemeStore()
-  const { coord, setCoord } = useCoordStore()
+  const { toggleResult, setToggleResult } = useToggleResult()
 
   const handleResetScore = (): void => {
-    setScore({ score_in_type: 0, score_in_plot: 0 })
-
-    if (coord) {
-      setCoord([])
-    }
+    setScore({ score_in_type: null, score_in_plot: null })
   }
+
+  const motivationalMessage = useMemo(() => {
+    const messages: string[] = []
+    if (score.score_in_type < PRED_PASSING) {
+      messages.push('Keep studying stroke types! Try to identify key characteristics in the image.')
+    }
+    if (score.score_in_plot < PRED_PLOT_PASSING) {
+      messages.push(
+        'Practice your lesion identification. Look for subtle changes in tissue density.'
+      )
+    }
+    if (score.score_in_type >= PRED_PASSING && score.score_in_plot >= PRED_PLOT_PASSING) {
+      return "Great job! You're becoming a stroke detection expert!"
+    }
+    return messages.join(' ') + ' Remember, precision is key in stroke diagnosis!'
+  }, [score])
+
+  const [toggleSlider] = useToggleSlider({
+    barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
+    barBackgroundColorActive: theme === 'dark' ? '#72FC5E' : '#191919',
+    barWidth: 80,
+    barHeight: 40,
+    handleSize: 30,
+    handleBorderRadius: 100,
+    handleBackgroundColor: theme === 'dark' ? '#72FC5E' : '#191919',
+    handleBackgroundColorActive: theme === 'dark' ? '#191919' : '#72FC5E',
+    transitionDuration: '200ms',
+    active: toggleResult
+  })
 
   return (
     <AnimatePresence>
-      {(score?.score_in_type !== 0 || score?.score_in_plot !== 0) && (
+      {(score?.score_in_type !== null || score?.score_in_plot !== null) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
@@ -67,6 +96,26 @@ const ResultsModal: React.FC<Props> = ({ score, setScore }) => {
                 <p className="text-lg font-medium">Stroke Lesion Segmentation Score</p>
                 <p className="text-2xl font-semibold">{score.score_in_plot}</p>
               </div>
+              {/* Add the motivational message */}
+              <div
+                className={`w-full p-4 rounded-lg text-center ${
+                  theme === 'dark' ? 'bg-gray_l text-yellow-400' : 'bg-yellow-50 text-yellow-700'
+                }`}
+              >
+                <p className="text-sm font-medium">{motivationalMessage}</p>
+              </div>
+            </div>
+            <div className="flex place-content-center gap-4 items-center py-2">
+              <button
+                onClick={() => {
+                  setToggleResult(!toggleResult)
+                }}
+              >
+                {toggleSlider}
+              </button>
+              <p className={`text-xs ${theme === 'dark' ? 'text-white' : 'text-dark'} `}>
+                View Prediction Plot
+              </p>
             </div>
           </motion.div>
         </div>

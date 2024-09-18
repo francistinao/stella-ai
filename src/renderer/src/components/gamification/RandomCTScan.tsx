@@ -2,13 +2,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useRef } from 'react'
 import { useThemeStore } from '@/store/theme'
-import { useCoordStore } from '@/store/simulations'
+import { useCoordStore, useToggleResult } from '@/store/simulations'
 
 interface Props {
   image: string
 }
 
-const canvasSize = window.innerHeight * 2
+export const canvasSize = window.innerHeight * 2
 const dragInertia = 7
 const zoomBy = 0.1
 
@@ -17,7 +17,8 @@ const RandomCTScan: React.FC<Props> = ({ image }) => {
   const [scale, setScale] = useState(1)
   const containerRef = useRef<HTMLDivElement>(null)
   const boundaryRef = useRef<HTMLCanvasElement>(null)
-  const { coord, setCoord } = useCoordStore()
+  const { coord, setCoord, resultCoord } = useCoordStore()
+  const { toggleResult } = useToggleResult()
 
   const [{ clientX, clientY }, setClient] = useState({
     clientX: 0,
@@ -54,37 +55,48 @@ const RandomCTScan: React.FC<Props> = ({ image }) => {
       const y = (e.clientY - rect.top) / scale
       const newPoints = [...coord, { x, y }]
       setCoord(newPoints)
-      drawPolygon(newPoints)
+      drawPolygon(newPoints, userColor)
     }
   }
 
-  const drawPolygon = (points: { x: number; y: number }[]) => {
+  const drawPolygon = (points: { x: number; y: number }[], color: string) => {
     const ctx = boundaryRef.current?.getContext('2d')
-    if (ctx) {
-      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-
+    if (ctx && points.length > 0) {
       ctx.beginPath()
       ctx.moveTo(points[0].x, points[0].y)
       points.forEach((point) => ctx.lineTo(point.x, point.y))
       ctx.closePath()
 
-      ctx.lineWidth = 5
-      ctx.strokeStyle = 'red'
+      ctx.lineWidth = 3
+      ctx.strokeStyle = color
       ctx.stroke()
 
-      ctx.fillStyle = 'rgba(255, 0, 0, 0.2)'
+      ctx.fillStyle = `${color}50`
       ctx.fill()
 
-      if (points) {
-        points.forEach((point) => {
-          ctx.beginPath()
-          ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI)
-          ctx.fillStyle = 'red'
-          ctx.fill()
-        })
-      }
+      points.forEach((point) => {
+        ctx.beginPath()
+        ctx.arc(point.x, point.y, 3, 0, 2 * Math.PI)
+        ctx.fillStyle = color
+        ctx.fill()
+      })
     }
   }
+  const userColor = 'red'
+  const predictionColor = 'blue'
+
+  useEffect(() => {
+    const ctx = boundaryRef.current?.getContext('2d')
+    if (ctx) {
+      ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+      if (resultCoord.length > 0 && toggleResult) {
+        drawPolygon(resultCoord, predictionColor)
+      }
+      if (coord.length > 0) {
+        drawPolygon(coord, userColor)
+      }
+    }
+  }, [resultCoord, toggleResult, coord])
 
   useEffect(() => {
     return () => {
