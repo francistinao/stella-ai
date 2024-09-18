@@ -1,12 +1,12 @@
 /* eslint-disable prettier/prettier */
-import React, { Dispatch, SetStateAction, useMemo } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useThemeStore } from '@/store/theme'
 import { IoMdClose } from 'react-icons/io'
 import { useToggleResult } from '@/store/simulations'
 import { useToggleSlider } from 'react-toggle-slider'
 
-const PRED_PASSING = 15
+const PRED_PASSING = 30
 const PRED_PLOT_PASSING = 50
 
 interface Props {
@@ -30,21 +30,38 @@ const ResultsModal: React.FC<Props> = ({ score, setScore }) => {
     setScore({ score_in_type: null, score_in_plot: null })
   }
 
-  const motivationalMessage = useMemo(() => {
-    const messages: string[] = []
-    if (score.score_in_type < PRED_PASSING) {
-      messages.push('Keep studying stroke types! Try to identify key characteristics in the image.')
-    }
-    if (score.score_in_plot < PRED_PLOT_PASSING) {
-      messages.push(
-        'Practice your lesion identification. Look for subtle changes in tissue density.'
-      )
-    }
+  const getMotivationalMessage = (score: {
+    score_in_type: number
+    score_in_plot: number
+  }): { message: string; color: string } => {
     if (score.score_in_type >= PRED_PASSING && score.score_in_plot >= PRED_PLOT_PASSING) {
-      return "Great job! You're becoming a stroke detection expert!"
+      return { message: "Great job! You're becoming a stroke detection expert!", color: 'green' }
     }
-    return messages.join(' ') + ' Remember, precision is key in stroke diagnosis!'
-  }, [score])
+
+    if (score.score_in_type < PRED_PASSING && score.score_in_plot >= PRED_PLOT_PASSING) {
+      return {
+        message: 'Keep studying stroke types! Try to identify key characteristics in the image.',
+        color: 'yellow'
+      }
+    }
+
+    if (score.score_in_plot < PRED_PLOT_PASSING && score.score_in_type >= PRED_PASSING) {
+      return {
+        message: 'Practice your lesion segmentation. Look for subtle changes in tissue density.',
+        color: 'yellow'
+      }
+    }
+
+    if (score.score_in_plot < PRED_PLOT_PASSING && score.score_in_type < PRED_PASSING) {
+      return {
+        message:
+          'One step at a time. Keep studying stroke types! Try to identify key characteristics in the image and practice your lesion segmentation. Look for subtle changes in tissue density.',
+        color: 'red'
+      }
+    }
+
+    return { message: "You're making progress! Keep it up!", color: 'blue' }
+  }
 
   const [toggleSlider] = useToggleSlider({
     barBackgroundColor: theme === 'dark' ? '#191919' : '#72FC5E',
@@ -78,6 +95,27 @@ const ResultsModal: React.FC<Props> = ({ score, setScore }) => {
             >
               <IoMdClose size={24} />
             </button>
+            <h1
+              className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} text-center font-medium text-md`}
+            >
+              Passing Score
+            </h1>
+            <div className="flex justify-between items-center gap-2 py-2">
+              <div
+                className={`w-full text-xs ${theme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-dirty text-dark'} text-center py-2 rounded-md`}
+              >
+                <h1>
+                  Stroke Identification: <span className="font-bold">50</span>
+                </h1>
+              </div>
+              <div
+                className={`w-full text-xs ${theme === 'dark' ? 'bg-zinc-800 text-white' : 'bg-dirty text-dark'} text-center py-2 rounded-md`}
+              >
+                <h1>
+                  Stroke Segmentation: <span className="font-bold">30</span>
+                </h1>
+              </div>
+            </div>
             <h2 className="text-3xl font-bold text-center mb-6">Your Score</h2>
             <div className="flex flex-col items-center space-y-4">
               <div
@@ -96,13 +134,16 @@ const ResultsModal: React.FC<Props> = ({ score, setScore }) => {
                 <p className="text-lg font-medium">Stroke Lesion Segmentation Score</p>
                 <p className="text-2xl font-semibold">{score.score_in_plot}</p>
               </div>
-              {/* Add the motivational message */}
               <div
                 className={`w-full p-4 rounded-lg text-center ${
-                  theme === 'dark' ? 'bg-gray_l text-yellow-400' : 'bg-yellow-50 text-yellow-700'
+                  theme === 'dark' ? 'bg-gray_l ' : 'bg-yellow-50 '
                 }`}
               >
-                <p className="text-sm font-medium">{motivationalMessage}</p>
+                <p
+                  className={`text-sm font-medium text-${getMotivationalMessage(score).color}-400`}
+                >
+                  {getMotivationalMessage(score).message}
+                </p>
               </div>
             </div>
             <div className="flex place-content-center gap-4 items-center py-2">
