@@ -5,7 +5,7 @@ import React, { useState } from 'react'
 import logo from '@/assets/logo.png'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { useThemeStore } from '@/store/theme'
-import { useCoordStore } from '@/store/simulations'
+import { useCoordStore, useGameStore } from '@/store/simulations'
 import { motion } from 'framer-motion'
 import { assessPerformance } from '@/lib/assessment'
 import Confetti from 'react-confetti'
@@ -15,6 +15,7 @@ import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import { canvasSize } from './RandomCTScan'
 import { ResultsModal } from '@/components/gamification/index'
+import Timer from './Timer'
 
 const PRED_PASSING = 50
 const PRED_PLOT_PASSING = 30
@@ -35,6 +36,7 @@ const SidePanel: React.FC<{
 }> = ({ results }) => {
   const { theme } = useThemeStore()
   const { coord, setCoord, resultCoord } = useCoordStore()
+  const { isBlitzMode, setIsBlitzMode, startBlitzMode, setStartBlitzMode } = useGameStore()
   const [score, setScore] = useState<Score>({
     score_in_type: null,
     score_in_plot: null
@@ -81,17 +83,42 @@ const SidePanel: React.FC<{
       <div
         className={`${theme === 'dark' ? 'text-white bg-dark' : 'text-dark bg-white'} p-3 rounded-md text-xs text-left flex flex-col gap-4`}
       >
-        <p>
-          Enhance your skills in stroke identification and classification through interactive
-          assessments powered by STELLA's advanced AI.
-        </p>
-        <p>
-          Plot your predictions on the CT Scan and select the stroke type based on your analysis.
-        </p>
-        <h1 className="font-semibold text-lg">Be precise as possible</h1>
+        {!startBlitzMode ? (
+          <>
+            <p>
+              Enhance your skills in stroke identification and classification through interactive
+              assessments powered by STELLA's advanced AI.
+            </p>
+            <p>
+              Plot your predictions on the CT Scan and select the stroke type based on your
+              analysis.
+            </p>
+            <h1 className="font-semibold text-lg">Be precise as possible</h1>
+          </>
+        ) : (
+          <div className="flex flex-col gap-3 place-content-center place-items-center justify-center">
+            <p className={`${theme == 'dark' ? 'text-white' : 'text-dark'} font-xs text-justify`}>
+              Timer is running, start plotting now!
+            </p>
+            <Timer />
+          </div>
+        )}
+        {/**
+         * 
+         Game mode: Blitz Mode
+         Timer
+         */}
+        {!isBlitzMode && !startBlitzMode && (
+          <button
+            className={`${theme === 'dark' ? 'bg-light_g text-dark' : 'bg-dark text-light_g'} rounded-md w-full py-2 font-semibold`}
+            onClick={() => setIsBlitzMode(true)}
+          >
+            Blitz Mode
+          </button>
+        )}
       </div>
       <div
-        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} p-4 rounded-lg flex flex-col`}
+        className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-white'} py-1 px-4 rounded-lg flex flex-col`}
       >
         {!hasPredictionPlots ? (
           <span className=" text-xs text-red-500 ml-2">
@@ -104,52 +131,56 @@ const SidePanel: React.FC<{
             Start plotting now!
           </h1>
         )}
-        <div
-          className={`py-8 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}
-        >
-          <div
-            className={`${theme === 'dark' ? 'text-light_g ' : 'text-dark'} flex gap-3 items-center`}
-          >
-            <h1 className="font-semibold text-xs">Your Plots</h1>
-          </div>
-          <motion.button
-            initial={{ rotate: 0 }}
-            animate={{ rotate: isLesionBoundaryDrop ? 180 : 0 }}
-            onClick={() => setIsLesionBoundaryDrop(!isLesionBoundaryDrop)}
-          >
-            <MdKeyboardArrowDown
-              size={20}
-              className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-            />
-          </motion.button>
-        </div>
-        <motion.div
-          initial={{ height: 0 }}
-          animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
-          transition={{ duration: 0.3 }}
-          className="overflow-hidden pt-8 max-h-[150px] overflow-y-auto customScroll"
-        >
-          <div
-            className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-          >
-            <div className="grid grid-cols-4 gap-2">
-              {coord?.map((point, idx) => {
-                return (
-                  <div
-                    key={idx}
-                    className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
-                  >
-                    <h1 className="text-xs font-regular">
-                      {/* eslint-disable-next-line */}
-                      {/* @ts-ignore */}
-                      X: {point.x.toFixed(1)}, Y: {point.y.toFixed(1)}
-                    </h1>
-                  </div>
-                )
-              })}
+        {!startBlitzMode && (
+          <>
+            <div
+              className={`py-2 border-b flex justify-between items-center  ${theme === 'dark' ? 'border-gray_l' : 'border-dirty'}`}
+            >
+              <div
+                className={`${theme === 'dark' ? 'text-light_g ' : 'text-dark'} flex gap-3 items-center`}
+              >
+                <h1 className="font-semibold text-xs">Your Plots</h1>
+              </div>
+              <motion.button
+                initial={{ rotate: 0 }}
+                animate={{ rotate: isLesionBoundaryDrop ? 180 : 0 }}
+                onClick={() => setIsLesionBoundaryDrop(!isLesionBoundaryDrop)}
+              >
+                <MdKeyboardArrowDown
+                  size={20}
+                  className={`${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+                />
+              </motion.button>
             </div>
-          </div>
-        </motion.div>
+            <motion.div
+              initial={{ height: 0 }}
+              animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden pt-4 max-h-[150px] overflow-y-auto customScroll"
+            >
+              <div
+                className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+              >
+                <div className="grid grid-cols-4 gap-2">
+                  {coord?.map((point, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
+                      >
+                        <h1 className="text-xs font-regular">
+                          {/* eslint-disable-next-line */}
+                          {/* @ts-ignore */}
+                          X: {point.x.toFixed(1)}, Y: {point.y.toFixed(1)}
+                        </h1>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
         <button
           className={`my-4 border ${theme === 'dark' ? 'bg-dark text-white border-zinc-700' : 'bg-white text-dark border-zinc-400'} rounded-md py-2`}
           onClick={() => {
@@ -208,6 +239,10 @@ const SidePanel: React.FC<{
                   canvasSize
                 )
                 setScore(assessmentResult)
+
+                if (startBlitzMode) {
+                  setStartBlitzMode(false)
+                }
               } catch (error) {
                 console.error('Error in assessPerformance:', error)
               }

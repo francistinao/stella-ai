@@ -17,6 +17,8 @@ import { toast, Toaster } from 'sonner'
 import { useCoordStore, useToggleResult } from '@/store/simulations'
 import { Coord } from '@/types/global'
 import { canvasSize } from '@/components/gamification/RandomCTScan'
+import BlitzModeModal from '@/components/gamification/BlitzModeModal'
+import { useGameStore } from '@/store/simulations'
 
 const steps = [
   {
@@ -123,6 +125,7 @@ const Simulator: React.FC = () => {
   const { theme } = useThemeStore()
   const { setResultCoord } = useCoordStore()
   const { setToggleResult } = useToggleResult()
+  const { startBlitzMode } = useGameStore()
 
   const [results, setResults] = useState({})
   const rulerRef = useRef<HTMLDivElement>(null)
@@ -225,16 +228,19 @@ const Simulator: React.FC = () => {
       <Navbar />
       <TitleBar />
       <SettingsBar />
+      <BlitzModeModal />
       <div className={`flex w-full h-screen pb-4  ${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}>
         <div className={`w-[600px] min-h-screen p-10 flex items-center justify-center`}>
           <div className="flex flex-col gap-4">
             <img src={random!} className="object-contain" draggable={false} />
-            <button
-              onClick={generateRandomScan}
-              className="font-semibold bg-light_g rounded-full text-dark py-2"
-            >
-              Randomize
-            </button>
+            {!startBlitzMode && (
+              <button
+                onClick={generateRandomScan}
+                className="font-semibold bg-light_g rounded-full text-dark py-2"
+              >
+                Randomize
+              </button>
+            )}
           </div>
         </div>
         <div className="w-14" ref={rulerRef}>

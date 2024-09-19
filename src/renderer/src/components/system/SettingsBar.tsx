@@ -5,6 +5,7 @@ import { useThemeStore } from '@/store/theme'
 import { useNavigate } from 'react-router-dom'
 import { useResultStore, useCaptureStore } from '@/store/result'
 import { useStoredImages } from '@/store/stored_images'
+import { useGameStore } from '@/store/simulations'
 
 const SettingsBar: React.FC = () => {
   const navigate = useNavigate()
@@ -12,9 +13,12 @@ const SettingsBar: React.FC = () => {
   const { setResult } = useResultStore()
   const { setSelectedImage } = useStoredImages()
   const { resetCapturedContent } = useCaptureStore()
+  const { setBlitzModeRecord, setStartBlitzMode } = useGameStore()
 
   const reset = () => {
     setResult(null)
+    setBlitzModeRecord(0)
+    setStartBlitzMode(false)
     setSelectedImage!(null)
     resetCapturedContent()
     navigate('/')
