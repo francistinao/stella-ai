@@ -19,6 +19,7 @@ import { StoredImagesState } from '@/types/global'
 import { byteConverter } from '@/utils/byteConverter'
 import placeholder from '@/assets/vector.png'
 import truncateFileName from '@/utils/truncateFileName'
+import * as dicomParser from 'dicom-parser'
 
 /** 
    * TODO: The images must be in array since the user can upload multiple images
@@ -51,7 +52,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [isDragOver, setDragOver] = useState<boolean>(false)
   const fileInput = React.createRef<HTMLInputElement>()
-  const allowedFiles = ['dcm', 'dicom', 'jpg', 'jpeg', 'png']
+  const allowedFiles = ['dcm', 'dicom', 'jpg', 'jpeg', 'png', 'File']
 
   const closeModal = () => {
     setIsUpload(false)
@@ -73,14 +74,19 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     const droppedFiles = Array.from(e.dataTransfer.files)
 
     droppedFiles.forEach((droppedFile: any) => {
-      const fileExtension = droppedFile.name.split('.').pop()?.toLowerCase()
+      //uncomment later
+      //const fileExtension = droppedFile.name.split('.').pop()?.toLowerCase()
 
+      handleFileRead(droppedFile)
+
+      /**
+       * 
       if (allowedFiles.includes(fileExtension as string)) {
-        handleFileRead(droppedFile)
       } else {
         toast.error('Invalid file format. Please upload a DICOM file only.')
         console.error('Invalid file format. Please upload a DICOM file.')
       }
+       */
     })
   }
 
@@ -88,14 +94,18 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     const selectedFiles = Array.from(e.target.files || [])
 
     selectedFiles.forEach((file: File) => {
-      const fileExtension = file.name.split('.').pop()?.toLowerCase()
+      //const fileExtension = file.name.split('.').pop()?.toLowerCase()
 
+      handleFileRead(file)
+      /**
+       * 
+       * 
       if (allowedFiles.includes(fileExtension as string)) {
-        handleFileRead(file)
       } else {
         toast.error('Invalid file format. Please upload a DICOM file only.')
         console.error('Invalid file format. Please upload a DICOM file.')
       }
+       */
     })
   }
 
@@ -130,13 +140,37 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   }
 
   const handleUploadImage = async () => {
+    setIsImageUploadLoading(true)
+
     try {
       if (selectedFiles.length === 0) {
         toast.error('Please upload CT Scans images before uploading.')
         return
       }
 
-      setIsImageUploadLoading(true)
+      const processedImages = await Promise.all(
+        selectedFiles.map(async (file) => {
+          const fileExtension = file.name.split('.').pop()?.toLowerCase()
+          if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') {
+            try {
+              const pngData = await convertDicomToPng(file)
+              return { name: file.name, data: pngData[0] }
+            } catch (error) {
+              console.error('Error converting DICOM file:', error)
+              return null
+            }
+          } else {
+            const base64Image = await toBase64File(file)
+            return { name: file.name, data: base64Image as string }
+          }
+        })
+      )
+
+      const validImages = processedImages.filter(
+        (img): img is { name: string; data: string } => img !== null
+      )
+
+      console.log(validImages)
 
       const dateAndTime = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -148,18 +182,10 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
         second: '2-digit'
       })
 
-      const tempImages = await Promise.all(
-        selectedFiles.map(async (file) => {
-          const base64Image = await toBase64File(file)
-          //-file-name is the flag for splitting
-          return (base64Image + '-file-name-' + file.name) as string
-        })
-      )
-
       const storedImagesJSON = localStorage.getItem('images')
       const storedImages = storedImagesJSON ? JSON.parse(storedImagesJSON) : {}
 
-      storedImages[dateAndTime] = tempImages
+      storedImages[dateAndTime] = validImages.map((img) => `${img.data}-file-name-${img.name}`)
       localStorage.setItem('images', JSON.stringify(storedImages))
 
       setTimeout(() => {
@@ -167,6 +193,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       }, 5000)
     } catch (err) {
       console.error(err)
+      setIsImageUploadLoading(false)
       toast.error('Failed to upload the image. Please try again.')
     }
   }
@@ -189,6 +216,136 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     //eslint-disable-next-line
     //@ts-ignore
     setImages!(filesArray)
+  }
+
+  const convertDicomToPng = async (file: File): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        if (e.target?.result instanceof ArrayBuffer) {
+          try {
+            const byteArray = new Uint8Array(e.target.result)
+
+            // Check if the file starts with the DICOM magic number
+            if (
+              byteArray[128] !== 68 ||
+              byteArray[129] !== 73 ||
+              byteArray[130] !== 67 ||
+              byteArray[131] !== 77
+            ) {
+              throw new Error('Not a valid DICOM file: missing DICOM prefix')
+            }
+
+            console.log('File size:', byteArray.length, 'bytes')
+            const dataSet = dicomParser.parseDicom(byteArray)
+
+            console.log('DICOM tags found:', Object.keys(dataSet.elements).length)
+
+            const width = dataSet.uint16('x00280011')
+            const height = dataSet.uint16('x00280010')
+            const pixelDataElement = dataSet.elements.x7fe00010 as dicomParser.Element
+
+            if (!width || !height) {
+              throw new Error('Invalid DICOM: missing width or height')
+            }
+
+            console.log('Image dimensions:', width, 'x', height)
+
+            if (!pixelDataElement) {
+              throw new Error('Invalid DICOM: missing pixel data element')
+            }
+
+            console.log('Pixel data length:', pixelDataElement.length)
+
+            let pixels: Uint16Array
+            //eslint-disable-next-line
+            //@ts-ignore
+            if (pixelDataElement.encapsulated) {
+              console.log('Pixel data is encapsulated')
+              throw new Error('Encapsulated pixel data is not supported in this implementation')
+            } else {
+              console.log('Pixel data is not encapsulated')
+              if (pixelDataElement.length !== width * height * 2) {
+                throw new Error(
+                  `Invalid DICOM: unexpected pixel data length. Expected ${width * height * 2}, got ${pixelDataElement.length}`
+                )
+              }
+              pixels = new Uint16Array(width * height)
+              for (let i = 0; i < pixels.length; i++) {
+                // Read 16-bit pixel value directly from byteArray
+                pixels[i] =
+                  (byteArray[pixelDataElement.dataOffset + i * 2 + 1] << 8) |
+                  byteArray[pixelDataElement.dataOffset + i * 2]
+              }
+            }
+
+            const pngImages: string[] = []
+            const canvas = document.createElement('canvas')
+            canvas.width = width
+            canvas.height = height
+            const ctx = canvas.getContext('2d')
+            if (!ctx) {
+              throw new Error('Failed to get canvas context')
+            }
+
+            const imageData = ctx.createImageData(width, height)
+            let min = Infinity
+            let max = -Infinity
+            for (let i = 0; i < pixels.length; i++) {
+              min = Math.min(min, pixels[i])
+              max = Math.max(max, pixels[i])
+            }
+            const range = max - min
+            for (let i = 0; i < pixels.length; i++) {
+              //white to black
+              const value = Math.round(((pixels[i] - min) / range) * 255)
+              //black to white
+              //const value = 255 - Math.round(((pixels[i] - min) / range) * 255)
+              const index = i * 4
+              imageData.data[index] = value
+              imageData.data[index + 1] = value
+              imageData.data[index + 2] = value
+              imageData.data[index + 3] = 255
+            }
+
+            ctx.putImageData(imageData, 0, 0)
+
+            // Create a new canvas with the correct color space
+            const pngCanvas = document.createElement('canvas')
+            pngCanvas.width = width
+            pngCanvas.height = height
+            const pngCtx = pngCanvas.getContext('2d')
+            if (!pngCtx) {
+              throw new Error('Failed to get PNG canvas context')
+            }
+
+            // Draw the grayscale image onto the PNG canvas
+            pngCtx.drawImage(canvas, 0, 0)
+
+            let dataUrl
+            try {
+              dataUrl = pngCanvas.toDataURL('image/png')
+              if (!dataUrl.startsWith('data:image/png')) {
+                throw new Error('Failed to encode as PNG')
+              }
+            } catch (error) {
+              console.error('Error encoding image:', error)
+              throw error
+            }
+            pngImages.push(dataUrl)
+
+            resolve(pngImages)
+          } catch (error) {
+            console.error('DICOM parsing error:', error)
+            reject(error)
+          }
+        } else {
+          reject(new Error('Failed to read file as ArrayBuffer'))
+        }
+      }
+      reader.onerror = (error) => reject(error)
+      reader.readAsArrayBuffer(file)
+    })
   }
 
   useEffect(() => {
@@ -259,6 +416,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
                     className="opacity-0 text-xs pointer-events-none"
                     id="file"
                     onChange={handleFileInputChange}
+                    multiple
                   />
                   <div className="flex flex-col gap-1 justify-center">
                     <p className={`${theme === 'dark' ? 'text-dark_g' : 'text-white'} text-xs`}>

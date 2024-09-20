@@ -29,8 +29,8 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
   const openCtScan = (images) => {
     const imageToData = []
     images.map((image) => {
-      const imageName = image.split('-file-name-')[1]
-      const byteString = atob(image.split(',')[1].split('-file-name-')[0])
+      const imageName = image?.split('-file-name-')[1]
+      const byteString = atob(image?.split(',')[1]?.split('-file-name-')[0])
       console.log(byteString)
       const ab = new ArrayBuffer(byteString.length)
       const ia = new Uint8Array(ab)
@@ -141,7 +141,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                 >
                   <div className="flex gap-2 items-center">
                     <img
-                      src={images[key][0].split('-file-name')[0]}
+                      src={images[key][0]?.split('-file-name')[0]}
                       alt={key}
                       className="w-20 h-20"
                     />
