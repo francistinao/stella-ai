@@ -31,7 +31,6 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
     images.map((image) => {
       const imageName = image?.split('-file-name-')[1]
       const byteString = atob(image?.split(',')[1]?.split('-file-name-')[0])
-      console.log(byteString)
       const ab = new ArrayBuffer(byteString.length)
       const ia = new Uint8Array(ab)
       for (let i = 0; i < byteString.length; i++) {

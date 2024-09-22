@@ -50,14 +50,10 @@ export const useGameStore = create(
       blitzModeRecord: 0,
       setIsBlitzMode: (isBlitzMode) => set({ isBlitzMode }),
       setStartBlitzMode: (startBlitzMode) => {
-        console.log('Setting startBlitzMode:', startBlitzMode)
         set({ startBlitzMode })
-        console.log('After setting, startBlitzMode is:', get().startBlitzMode)
       },
       setBlitzModeRecord: (record) => {
-        console.log('Setting blitzModeRecord in store:', record)
         set({ blitzModeRecord: record })
-        console.log('After setting, blitzModeRecord is:', get().blitzModeRecord)
       },
       debugStore: () => {
         console.log('Current store state:', get())

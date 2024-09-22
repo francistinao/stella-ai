@@ -140,13 +140,13 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   }
 
   const handleUploadImage = async () => {
-    setIsImageUploadLoading(true)
-
     try {
       if (selectedFiles.length === 0) {
         toast.error('Please upload CT Scans images before uploading.')
         return
       }
+
+      setIsImageUploadLoading(true)
 
       const processedImages = await Promise.all(
         selectedFiles.map(async (file) => {
@@ -169,8 +169,6 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       const validImages = processedImages.filter(
         (img): img is { name: string; data: string } => img !== null
       )
-
-      console.log(validImages)
 
       const dateAndTime = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
@@ -226,117 +224,60 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
           try {
             const byteArray = new Uint8Array(e.target.result)
 
-            // Check if the file starts with the DICOM magic number
-            if (
-              byteArray[128] !== 68 ||
-              byteArray[129] !== 73 ||
-              byteArray[130] !== 67 ||
-              byteArray[131] !== 77
-            ) {
-              throw new Error('Not a valid DICOM file: missing DICOM prefix')
-            }
-
-            console.log('File size:', byteArray.length, 'bytes')
-            const dataSet = dicomParser.parseDicom(byteArray)
-
-            console.log('DICOM tags found:', Object.keys(dataSet.elements).length)
-
-            const width = dataSet.uint16('x00280011')
-            const height = dataSet.uint16('x00280010')
-            const pixelDataElement = dataSet.elements.x7fe00010 as dicomParser.Element
-
-            if (!width || !height) {
-              throw new Error('Invalid DICOM: missing width or height')
-            }
-
-            console.log('Image dimensions:', width, 'x', height)
-
-            if (!pixelDataElement) {
-              throw new Error('Invalid DICOM: missing pixel data element')
-            }
-
-            console.log('Pixel data length:', pixelDataElement.length)
-
-            let pixels: Uint16Array
-            //eslint-disable-next-line
-            //@ts-ignore
-            if (pixelDataElement.encapsulated) {
-              console.log('Pixel data is encapsulated')
-              throw new Error('Encapsulated pixel data is not supported in this implementation')
-            } else {
-              console.log('Pixel data is not encapsulated')
-              if (pixelDataElement.length !== width * height * 2) {
-                throw new Error(
-                  `Invalid DICOM: unexpected pixel data length. Expected ${width * height * 2}, got ${pixelDataElement.length}`
-                )
-              }
-              pixels = new Uint16Array(width * height)
-              for (let i = 0; i < pixels.length; i++) {
-                // Read 16-bit pixel value directly from byteArray
-                pixels[i] =
-                  (byteArray[pixelDataElement.dataOffset + i * 2 + 1] << 8) |
-                  byteArray[pixelDataElement.dataOffset + i * 2]
+            let jpegStartIndex = -1
+            for (let i = 0; i < byteArray.length - 1; i++) {
+              if (byteArray[i] === 0xff && byteArray[i + 1] === 0xd8) {
+                jpegStartIndex = i
+                break
               }
             }
 
-            const pngImages: string[] = []
-            const canvas = document.createElement('canvas')
-            canvas.width = width
-            canvas.height = height
-            const ctx = canvas.getContext('2d')
-            if (!ctx) {
-              throw new Error('Failed to get canvas context')
+            if (jpegStartIndex === -1) {
+              throw new Error('JPEG start marker not found in file')
             }
 
-            const imageData = ctx.createImageData(width, height)
-            let min = Infinity
-            let max = -Infinity
-            for (let i = 0; i < pixels.length; i++) {
-              min = Math.min(min, pixels[i])
-              max = Math.max(max, pixels[i])
-            }
-            const range = max - min
-            for (let i = 0; i < pixels.length; i++) {
-              //white to black
-              const value = Math.round(((pixels[i] - min) / range) * 255)
-              //black to white
-              //const value = 255 - Math.round(((pixels[i] - min) / range) * 255)
-              const index = i * 4
-              imageData.data[index] = value
-              imageData.data[index + 1] = value
-              imageData.data[index + 2] = value
-              imageData.data[index + 3] = 255
-            }
-
-            ctx.putImageData(imageData, 0, 0)
-
-            // Create a new canvas with the correct color space
-            const pngCanvas = document.createElement('canvas')
-            pngCanvas.width = width
-            pngCanvas.height = height
-            const pngCtx = pngCanvas.getContext('2d')
-            if (!pngCtx) {
-              throw new Error('Failed to get PNG canvas context')
-            }
-
-            // Draw the grayscale image onto the PNG canvas
-            pngCtx.drawImage(canvas, 0, 0)
-
-            let dataUrl
-            try {
-              dataUrl = pngCanvas.toDataURL('image/png')
-              if (!dataUrl.startsWith('data:image/png')) {
-                throw new Error('Failed to encode as PNG')
+            let jpegEndIndex = -1
+            for (let i = jpegStartIndex; i < byteArray.length - 1; i++) {
+              if (byteArray[i] === 0xff && byteArray[i + 1] === 0xd9) {
+                jpegEndIndex = i + 2
+                break
               }
-            } catch (error) {
-              console.error('Error encoding image:', error)
-              throw error
             }
-            pngImages.push(dataUrl)
 
-            resolve(pngImages)
+            if (jpegEndIndex === -1) {
+              throw new Error('JPEG end marker not found in file')
+            }
+
+            const jpegData = byteArray.slice(jpegStartIndex, jpegEndIndex)
+            const blob = new Blob([jpegData], { type: 'image/jpeg' })
+
+            const url = URL.createObjectURL(blob)
+
+            const img = new Image()
+            img.onload = () => {
+              const canvas = document.createElement('canvas')
+              canvas.width = img.width
+              canvas.height = img.height
+              const ctx = canvas.getContext('2d')
+              if (!ctx) {
+                throw new Error('Failed to get canvas context')
+              }
+
+              ctx.drawImage(img, 0, 0)
+
+              const dataUrl = canvas.toDataURL('image/png')
+
+              URL.revokeObjectURL(url)
+
+              resolve([dataUrl])
+            }
+            img.onerror = () => {
+              URL.revokeObjectURL(url)
+              reject(new Error('Failed to load image data'))
+            }
+            img.src = url
           } catch (error) {
-            console.error('DICOM parsing error:', error)
+            console.error('DICOM processing error:', error)
             reject(error)
           }
         } else {
@@ -349,21 +290,60 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   }
 
   useEffect(() => {
-    //eslint-disable-next-line
-    //@ts-ignore
-    const filesArray: StoredImagesState[] = selectedFiles.map((file: File) => ({
-      imageName: file.name,
-      size: file.size,
-      type: file.type,
-      lastModified: file.lastModified,
-      lastModifiedDate: file.lastModified,
-      path: file.path,
-      imageData: file.arrayBuffer(),
-      imageTimeframe: ''
-    }))
-    //eslint-disable-next-line
-    //@ts-ignore
-    setImages!(filesArray)
+    const processFiles = async () => {
+      //eslint-disable-next-line
+      //@ts-ignore
+      const filesArray: (StoredImagesState | null)[] = await Promise.all(
+        selectedFiles.map(async (file: File) => {
+          const fileExtension = file.name.split('.').pop()?.toLowerCase()
+          if (fileExtension === 'dcm' || fileExtension === 'dicom') {
+            try {
+              const base64Data = await convertDicomToPng(file)
+              const binaryString = atob(base64Data[0].split(',')[1])
+              const len = binaryString.length
+              const bytes = new Uint8Array(len)
+              for (let i = 0; i < len; i++) {
+                bytes[i] = binaryString.charCodeAt(i)
+              }
+              return {
+                name: file.name,
+                imageName: file.name,
+                size: file.size,
+                type: 'image/png',
+                lastModified: file.lastModified,
+                lastModifiedDate: new Date(file.lastModified),
+                path: file.path || '',
+                imageData: bytes.buffer,
+                imageTimeframe: ''
+              }
+            } catch (error) {
+              console.error('Error converting DICOM file:', error)
+              return null
+            }
+          } else {
+            const arrayBuffer = await file.arrayBuffer()
+            return {
+              name: file.name,
+              imageName: file.name,
+              size: file.size,
+              type: file.type,
+              lastModified: file.lastModified,
+              lastModifiedDate: new Date(file.lastModified),
+              path: file.path || '',
+              imageData: arrayBuffer,
+              imageTimeframe: ''
+            }
+          }
+        })
+      )
+
+      const validFiles = filesArray.filter(
+        (file): file is StoredImagesState => file !== null && 'name' in file
+      )
+      setImages!(validFiles.map((file) => ({ ...file, name: file.path?.split('/').pop() || '' })))
+    }
+
+    processFiles()
   }, [selectedFiles, setImages])
 
   return (
