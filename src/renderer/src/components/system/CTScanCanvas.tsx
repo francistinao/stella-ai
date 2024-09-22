@@ -246,7 +246,6 @@ const CTScanCanvas: React.FC = () => {
         return
       }
 
-      // Await the resolution of the promise to get the image data
       const imageDataArrayBuffer = await selectedImage.imageData
 
       if (!imageDataArrayBuffer) {
@@ -254,9 +253,11 @@ const CTScanCanvas: React.FC = () => {
       }
 
       const imageData = new FormData()
-      imageData.append('file', new Blob([imageDataArrayBuffer])) // Wrap ArrayBuffer in Blob before appending
+      imageData.append('file', new Blob([imageDataArrayBuffer]))
 
-      const response = await fetch('http://127.0.0.1:8000/', {
+      // "http://127.0.0.1:8000" -> old api (mask-rcnn)
+      // "http://127.0.0.1:8000/detect" -> new api (u-net)
+      const response = await fetch('http://127.0.0.1:8000', {
         method: 'POST',
         body: imageData
       })
@@ -266,7 +267,9 @@ const CTScanCanvas: React.FC = () => {
       if (!response.ok) {
         throw new Error('Error processing the image')
       }
+      //setResult(JSON.parse(data))
       setResult(JSON.parse(formatJson(data)))
+      //console.log(result)
     } catch (error) {
       console.error('Error segmentating image:', error)
     } finally {
@@ -281,7 +284,6 @@ const CTScanCanvas: React.FC = () => {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    // Clear the canvas
     ctx.clearRect(0, 0, canvasSize, canvasSize)
 
     // Determine which result to use based on nameForChecking
