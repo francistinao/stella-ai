@@ -21,7 +21,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
   const { setSelectedImage, selectedImage } = useStoredImages()
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
 
-  const { setResult, result } = useResultStore()
+  const { setNewResult } = useResultStore()
   const [image, setImage] = React.useState('')
 
   const handleSelectImageToView = () => {
@@ -30,9 +30,14 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
       setEndPoint(null)
     }
 
-    if (result?.ischemic || result?.hemmoragic) {
-      setResult(undefined)
-    }
+    setNewResult!({
+      stroke_type: '',
+      lesion_boundary_points: {
+        Area: 0,
+        Mean: 0,
+        Lesion_Boundary_Points: []
+      }
+    })
 
     setSelectedImage!({
       imageName: file_name,

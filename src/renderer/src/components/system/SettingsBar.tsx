@@ -10,13 +10,14 @@ import { useGameStore } from '@/store/simulations'
 const SettingsBar: React.FC = () => {
   const navigate = useNavigate()
   const { theme } = useThemeStore()
-  const { setResult } = useResultStore()
+  const { setResult, setNewResult } = useResultStore()
   const { setSelectedImage } = useStoredImages()
   const { resetCapturedContent } = useCaptureStore()
   const { setBlitzModeRecord, setStartBlitzMode } = useGameStore()
 
   const reset = () => {
     setResult(null)
+    setNewResult(null)
     setBlitzModeRecord(0)
     setStartBlitzMode(false)
     setSelectedImage!(null)

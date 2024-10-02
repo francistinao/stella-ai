@@ -11,7 +11,7 @@ import { useStoredImages } from '@/store/stored_images'
 import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
-import { formatJson } from '@/utils/formatJson'
+//import { formatJson } from '@/utils/formatJson'
 import { toast, Toaster } from 'sonner'
 import { useCaptureStore } from '@/store/result'
 import { useCoordsStore } from '@/store/coords'
@@ -21,7 +21,7 @@ const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { setResult, result } = useResultStore()
+  const { result, setNewResult, newResult } = useResultStore()
   const { setLesionData } = useCoordsStore()
   const {
     boundaryColor,
@@ -47,7 +47,6 @@ const CTScanCanvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const boundaryRef = useRef<HTMLCanvasElement>(null)
   const [drawing, setDrawing] = useState(false)
-  const nameForChecking = selectedImage?.imageName?.split('_')
   const captureRef = useRef<HTMLDivElement>(null)
   const { setIsCapture, isCapture, setCapturedContent } = useCaptureStore()
 
@@ -255,9 +254,9 @@ const CTScanCanvas: React.FC = () => {
       const imageData = new FormData()
       imageData.append('file', new Blob([imageDataArrayBuffer]))
 
-      // "http://127.0.0.1:8000" -> old api (mask-rcnn)
+      // "http://127.0.0.1:8000" -> old api (rcnn)
       // "http://127.0.0.1:8000/detect" -> new api (u-net)
-      const response = await fetch('http://127.0.0.1:8000', {
+      const response = await fetch('http://127.0.0.1:8000/detect', {
         method: 'POST',
         body: imageData
       })
@@ -267,9 +266,21 @@ const CTScanCanvas: React.FC = () => {
       if (!response.ok) {
         throw new Error('Error processing the image')
       }
+      //for mask RCNN
       //setResult(JSON.parse(data))
-      setResult(JSON.parse(formatJson(data)))
-      //console.log(result)
+      // setResult(JSON.parse(formatJson(data)))
+      //for unet ========================================================
+      const parsedData = {
+        stroke_type: data.stroke_type,
+        lesion_boundary_points: {
+          Area: data.lesion_boundary_points.Area,
+          Mean: data.lesion_boundary_points.Mean,
+          Lesion_Boundary_Points: JSON.parse(data.lesion_boundary_points.Lesion_Boundary_Points)
+        }
+      }
+
+      setNewResult!(parsedData)
+      console.log(newResult)
     } catch (error) {
       console.error('Error segmentating image:', error)
     } finally {
@@ -277,7 +288,8 @@ const CTScanCanvas: React.FC = () => {
     }
   }
 
-  const drawPolygon = () => {
+  //DRAW POLYGON FOR U-NET
+  const drawPolygon = useCallback(() => {
     const canvas = boundaryRef.current
     if (!canvas) return
 
@@ -286,39 +298,30 @@ const CTScanCanvas: React.FC = () => {
 
     ctx.clearRect(0, 0, canvasSize, canvasSize)
 
-    // Determine which result to use based on nameForChecking
-    const resultToUse =
-      //eslint-disable-next-line
-      //@ts-ignore
-      nameForChecking && nameForChecking[0]?.length >= 6 ? result?.ischemic : result?.hemmoragic
+    // Add this null check
+    if (!newResult || !newResult.lesion_boundary_points) return
 
-    //store resultToUse in a state
-    setLesionData(resultToUse)
+    setLesionData({
+      Mean: newResult.lesion_boundary_points.Mean,
+      Area: newResult.lesion_boundary_points.Area,
+      Lesion_Boundary_Points: newResult.lesion_boundary_points.Lesion_Boundary_Points
+    })
 
-    // Check if resultToUse and relevant properties exist
-    if (resultToUse?.Lesion_Boundary_Points?.length > 0) {
+    if (newResult.lesion_boundary_points?.Lesion_Boundary_Points?.length > 0) {
+      const scaleFactor = 6.6
+
       // Draw lines between boundary points
       ctx.strokeStyle = boundaryColor?.color as string
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.moveTo(
-        //ischemic original: 3.1
-        //hemorrhagic origina: 2.4
-        //eslint-disable-next-line
-        //@ts-ignore
-        resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-        //eslint-disable-next-line
-        //@ts-ignore
-        resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
+        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
       )
-      for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+      for (let i = 1; i < newResult.lesion_boundary_points.Lesion_Boundary_Points.length; i++) {
         ctx.lineTo(
-          //eslint-disable-next-line
-          //@ts-ignore
-          resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-          //eslint-disable-next-line
-          //@ts-ignore
-          resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
+          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
         )
       }
       ctx.closePath()
@@ -326,48 +329,29 @@ const CTScanCanvas: React.FC = () => {
 
       // Draw boundary points
       ctx.fillStyle = boundaryColor?.color as string
-      for (let i = 0; i < resultToUse.Lesion_Boundary_Points.length; i++) {
-        const [x, y] = resultToUse.Lesion_Boundary_Points[i]
+      for (const [x, y] of newResult.lesion_boundary_points.Lesion_Boundary_Points) {
         ctx.beginPath()
-        ctx.arc(
-          //eslint-disable-next-line
-          //@ts-ignore
-          x * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-          //eslint-disable-next-line
-          //@ts-ignore
-          y * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-          boundarySize!,
-          0,
-          Math.PI * 2
-        )
+        ctx.arc(x * scaleFactor, y * scaleFactor, boundarySize!, 0, Math.PI * 2)
         ctx.fill()
       }
 
       // Fill polygon area
-      ctx.fillStyle = boundaryColor?.rgb_val as string // 20% opacity
+      ctx.fillStyle = boundaryColor?.rgb_val as string
       ctx.beginPath()
       ctx.moveTo(
-        //eslint-disable-next-line
-        //@ts-ignore
-        resultToUse.Lesion_Boundary_Points[0][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-        //eslint-disable-next-line
-        //@ts-ignore
-        resultToUse.Lesion_Boundary_Points[0][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
+        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
       )
-      for (let i = 1; i < resultToUse.Lesion_Boundary_Points.length; i++) {
+      for (let i = 1; i < newResult.lesion_boundary_points.Lesion_Boundary_Points.length; i++) {
         ctx.lineTo(
-          //eslint-disable-next-line
-          //@ts-ignore
-          resultToUse.Lesion_Boundary_Points[i][0] * (resultToUse === result?.ischemic ? 3.1 : 2.4),
-          //eslint-disable-next-line
-          //@ts-ignore
-          resultToUse.Lesion_Boundary_Points[i][1] * (resultToUse === result?.ischemic ? 3.1 : 2.4)
+          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
+          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
         )
       }
       ctx.closePath()
       ctx.fill()
     }
-  }
+  }, [newResult, boundaryColor, boundarySize, canvasSize, setLesionData])
 
   useEffect(() => {
     const { innerHeight, innerWidth } = window
@@ -424,6 +408,10 @@ const CTScanCanvas: React.FC = () => {
   useEffect(() => {
     drawPolygon()
   }, [tempBoundPts, boundarySize, boundaryColor, result])
+
+  useEffect(() => {
+    drawPolygon()
+  }, [newResult, drawPolygon])
 
   useEffect(() => {
     if (isCapture && captureRef.current) {

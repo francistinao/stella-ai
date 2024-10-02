@@ -10,7 +10,10 @@ interface LesionBoundaryPoint {
 interface LesionData {
   Mean: number
   Area: number
-  Lesion_Boundary_Points: LesionBoundaryPoint[]
+  //mask RCNN
+  //Lesion_Boundary_Points: LesionBoundaryPoint[]
+  //unet
+  Lesion_Boundary_Points: [number, number][]
 }
 
 interface Props {

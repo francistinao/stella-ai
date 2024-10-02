@@ -11,14 +11,12 @@ import mascot_head from '@/assets/logo.png'
 import { useResultStore, useCaptureStore } from '@/store/result'
 
 const Findings: React.FC = () => {
-  const { result } = useResultStore()
-  const { isLoading, selectedImage } = useStoredImages()
+  const { newResult } = useResultStore()
+  const { isLoading } = useStoredImages()
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
   const { theme } = useThemeStore()
   const { setIsCapture } = useCaptureStore()
-
-  const nameForChecking = selectedImage?.imageName?.split('_')
 
   return (
     <div
@@ -61,7 +59,7 @@ const Findings: React.FC = () => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-2"
         >
-          {!isLoading && (!result?.ischemic || !result?.hemmoragic) && (
+          {!isLoading && !newResult?.stroke_type && (
             <div className="flex flex-col gap-4 justify-center place-items-center">
               <motion.img
                 animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
@@ -92,50 +90,62 @@ const Findings: React.FC = () => {
               </h1>
             </div>
           )}
-          {!isLoading && (result?.ischemic || result?.hemmoragic) && (
-            <>
-              <div
-                className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
-              >
-                <div className="flex flex-col">
-                  <p className="text-md font-regular font-bold">
-                    {nameForChecking && nameForChecking[0]?.length >= 6
-                      ? 'Ischemic'
-                      : 'Hemorrhagic'}{' '}
-                    Stroke
-                  </p>
-                  <p className="text-sm font-regular">
-                    Houndsfield Value:{' '}
-                    <span className="font-bold">
-                      {result?.ischemic?.Mean || result?.hemmoragic?.Mean}
-                    </span>
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
+
+          {!isLoading ? (
+            typeof newResult?.stroke_type === 'string' &&
+            newResult.stroke_type !== '' &&
+            (newResult.stroke_type === 'Ischemic Stroke' ||
+              newResult.stroke_type === 'Hemorrhagic Stroke' ||
+              newResult.stroke_type !== 'No relevant strokes detected') ? (
+              <>
+                <div
+                  className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+                >
                   <div className="flex flex-col">
-                    <h1
-                      className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}
-                    >
-                      Lesion Area in pixels:
-                    </h1>
-                    <h1
-                      className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
-                    >
-                      {result?.ischemic?.Area || result?.hemmoragic?.Area}px
-                    </h1>
+                    <p className="text-lg font-bold">{newResult.stroke_type}</p>
+                    <p className="text-[10px] font-regular">
+                      Houndsfield Value:{' '}
+                      <span className="font-bold">{newResult?.lesion_boundary_points.Mean}</span>
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex flex-col">
+                      <h1
+                        className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}
+                      >
+                        Lesion Area in pixels
+                      </h1>
+                      <h1
+                        className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
+                      >
+                        {newResult?.lesion_boundary_points?.Area}
+                      </h1>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <button
-                onClick={() => {
-                  setIsCapture(true)
-                }}
-                className={`font-semibold text-xs border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} rounded-full text-center py-2 w-full mt-4`}
-              >
-                Add detection to findings
-              </button>
-            </>
+                <button
+                  onClick={() => {
+                    setIsCapture(true)
+                  }}
+                  className={`font-semibold text-xs border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} rounded-full text-center py-2 w-full mt-4`}
+                >
+                  Add detection to findings
+                </button>
+              </>
+            ) : (
+              <>
+                <div
+                  className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+                >
+                  <div className="flex flex-col">
+                    <p className="text-lg font-bold">{newResult?.stroke_type}</p>
+                  </div>
+                </div>
+              </>
+            )
+          ) : (
+            <></>
           )}
         </motion.div>
       </div>
@@ -175,31 +185,16 @@ const Findings: React.FC = () => {
           >
             {/* map the temp boundary points  */}
             <div className="grid grid-cols-4 gap-2">
-              {nameForChecking && nameForChecking[0]?.length >= 6
-                ? result?.ischemic?.Lesion_Boundary_Points &&
-                  result?.ischemic?.Lesion_Boundary_Points?.map((point, idx) => (
-                    <div
-                      key={idx}
-                      className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
-                    >
-                      <h1 className="text-xs font-regular">
-                        {/* eslint-disable-next-line */}
-                        {/* @ts-ignore */}
-                        X: {point[0]}, Y: {point[1]}
-                      </h1>
-                    </div>
-                  ))
-                : result?.hemmoragic?.Lesion_Boundary_Points &&
-                  result?.hemmoragic?.Lesion_Boundary_Points?.map((point, idx) => (
-                    <div
-                      key={idx}
-                      className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
-                    >
-                      <h1 className="text-xs font-regular">
-                        X: {point[0]}, Y: {point[1]}
-                      </h1>
-                    </div>
-                  ))}
+              {newResult?.lesion_boundary_points?.Lesion_Boundary_Points?.map((point, idx) => (
+                <div
+                  key={idx}
+                  className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
+                >
+                  <h1 className="text-xs font-regular">
+                    X: {point[0]}, Y: {point[1]}
+                  </h1>
+                </div>
+              ))}
             </div>
           </div>
         </motion.div>
