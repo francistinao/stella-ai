@@ -36,6 +36,15 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
         Area: 0,
         Mean: 0,
         Lesion_Boundary_Points: []
+      },
+      classification: {
+        confidence: 0,
+        density_value: 0,
+        houndsfield_unit: [],
+        type: {
+          category: '',
+          type: ''
+        }
       }
     })
 

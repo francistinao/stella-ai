@@ -22,7 +22,7 @@ const Results: React.FC<ResultsProps> = ({ remainingWidth }) => {
       >
         <Steps />
         <LesionVisualizer />
-        <Findings />
+        <Findings width={remainingWidth} />
         <CreateReport />
       </div>
     </div>

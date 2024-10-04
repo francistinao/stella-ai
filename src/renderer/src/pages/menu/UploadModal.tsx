@@ -15,29 +15,9 @@ import { ChangeEvent } from 'react'
 import { LoadingModal } from '@/components/system/mini'
 import { useLoadingImage, useStoredImages } from '@/store/stored_images'
 import { StoredImagesState } from '@/types/global'
-// import { urlBuffer } from '@/utils/urlBuffer'
 import { byteConverter } from '@/utils/byteConverter'
 import placeholder from '@/assets/vector.png'
 import truncateFileName from '@/utils/truncateFileName'
-import * as dicomParser from 'dicom-parser'
-
-/** 
-   * TODO: The images must be in array since the user can upload multiple images
-   * 
-   * @param isUpload, setIsUpload
-   * 
-   * Once the user uploads the images, the images will be stored in the array, and convert it into an array objects
-   * followed by these properties:
-   * 
-   *   imageName: string
-       imageData: BinaryData
-      imageTimeframe: string
-      setImageName: (imageName: string) => void
-      setImage: (imageData: BinaryData) => void
-  *  
-    After that, the images will be persisted in the local storage, and the user can view the images in the dashboard.
-  * @returns UploadModal
-  */
 
 interface UploadModalProps {
   isUpload: boolean
@@ -52,7 +32,6 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [isDragOver, setDragOver] = useState<boolean>(false)
   const fileInput = React.createRef<HTMLInputElement>()
-  const allowedFiles = ['dcm', 'dicom', 'jpg', 'jpeg', 'png', 'File']
 
   const closeModal = () => {
     setIsUpload(false)

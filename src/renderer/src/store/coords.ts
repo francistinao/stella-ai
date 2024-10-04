@@ -2,11 +2,6 @@
 /* eslint-disable prettier/prettier */
 import { create } from 'zustand'
 
-interface LesionBoundaryPoint {
-  x: number
-  y: number
-}
-
 interface LesionData {
   Mean: number
   Area: number

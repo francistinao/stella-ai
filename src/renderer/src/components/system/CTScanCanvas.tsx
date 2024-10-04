@@ -272,6 +272,15 @@ const CTScanCanvas: React.FC = () => {
       //for unet ========================================================
       const parsedData = {
         stroke_type: data.stroke_type,
+        classification: {
+          confidence: data.classification.confidence,
+          density_value: data.classification.density_value,
+          houndsfield_unit: data.classification.houndsfield_unit,
+          type: {
+            category: data.classification.type.category,
+            type: data.classification.type.type
+          }
+        },
         lesion_boundary_points: {
           Area: data.lesion_boundary_points.Area,
           Mean: data.lesion_boundary_points.Mean,
@@ -306,6 +315,8 @@ const CTScanCanvas: React.FC = () => {
       Area: newResult.lesion_boundary_points.Area,
       Lesion_Boundary_Points: newResult.lesion_boundary_points.Lesion_Boundary_Points
     })
+
+    console.log(newResult.lesion_boundary_points.Lesion_Boundary_Points)
 
     if (newResult.lesion_boundary_points?.Lesion_Boundary_Points?.length > 0) {
       const scaleFactor = 6.6
@@ -410,6 +421,7 @@ const CTScanCanvas: React.FC = () => {
   }, [tempBoundPts, boundarySize, boundaryColor, result])
 
   useEffect(() => {
+    console.log(newResult)
     drawPolygon()
   }, [newResult, drawPolygon])
 

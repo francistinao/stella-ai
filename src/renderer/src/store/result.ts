@@ -17,6 +17,15 @@ interface ResultProps {
       Lesion_Boundary_Points: [number, number][]
       Mean: number
     }
+    classification: {
+      confidence: number
+      density_value: number
+      houndsfield_unit: Array<number>
+      type: {
+        category: string
+        type: string
+      }
+    }
     stroke_type: ''
   }
   isLoading: boolean | undefined
@@ -48,6 +57,15 @@ export const useResultStore = create<ResultProps>((set) => ({
       Area: 0,
       Lesion_Boundary_Points: [],
       Mean: 0
+    },
+    classification: {
+      confidence: 0,
+      density_value: 0,
+      houndsfield_unit: [],
+      type: {
+        category: '',
+        type: ''
+      }
     },
     stroke_type: ''
   },

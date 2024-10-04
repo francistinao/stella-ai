@@ -30,7 +30,7 @@ const System: React.FC = () => {
   const rulerRef = useRef<HTMLDivElement>(null)
 
   const minWidth = 290
-  const maxWidth = 750
+  const maxWidth = 1200
 
   const handleToolsMouseDown = useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

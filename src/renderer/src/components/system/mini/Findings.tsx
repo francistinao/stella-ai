@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable-next-line */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useThemeStore } from '@/store/theme'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import logo from '@/assets/logo.png'
@@ -9,14 +9,137 @@ import { useStoredImages } from '@/store/stored_images'
 import mascot from '@/assets/mascot.png'
 import mascot_head from '@/assets/logo.png'
 import { useResultStore, useCaptureStore } from '@/store/result'
+import { Chart, registerables } from 'chart.js'
 
-const Findings: React.FC = () => {
+Chart.register(...registerables)
+
+const Findings: React.FC<{ width: number }> = ({ width }) => {
   const { newResult } = useResultStore()
   const { isLoading } = useStoredImages()
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
   const { theme } = useThemeStore()
   const { setIsCapture } = useCaptureStore()
+  const [barThickness, setBarThickness] = useState(10)
+  const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null)
+
+  const calculateBarThickness = (width: number): number => {
+    if (width == 600) {
+      return 15
+    } else if (width > 600 && width < 1200) {
+      return 20
+    } else {
+      return 25
+    }
+  }
+
+  useEffect(() => {
+    const newBarThickness = calculateBarThickness(width)
+    setBarThickness(newBarThickness)
+  }, [width])
+
+  useEffect(() => {
+    const ctx = document.getElementById('houndsfieldHistogram') as HTMLCanvasElement
+    const houndsfieldData = newResult?.classification?.houndsfield_unit || []
+
+    const filteredData = houndsfieldData.filter((value) => value >= 0 && value <= 100)
+    const mean =
+      filteredData.length > 0
+        ? filteredData.reduce((sum, value) => sum + value, 0) / filteredData.length
+        : 0
+
+    const histogramData = {
+      labels: Array.from({ length: 50 }, (_, i) => `${i * 2}-${i * 2 + 2}`).filter((_, i) => {
+        const count = filteredData.filter((value) => value >= i * 2 && value < (i + 1) * 2).length
+        return count > 0
+      }),
+      datasets: [
+        {
+          label: 'Hounsfield Units',
+          data: Array(50)
+            .fill(0)
+            .map(
+              (_, i) => filteredData.filter((value) => value >= i * 2 && value < (i + 1) * 2).length
+            )
+            .filter((count) => count > 0),
+          backgroundColor: '#72FC5E',
+          barThickness: barThickness
+        }
+      ]
+    }
+
+    const histogramChart = new Chart(ctx, {
+      type: 'bar',
+      data: histogramData,
+      options: {
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+        onClick: (event) => {
+          const activePoints = histogramChart.getElementsAtEventForMode(
+            event as unknown as Event,
+            'nearest',
+            { intersect: true },
+            true
+          )
+          if (activePoints.length) {
+            const index = activePoints[0].index
+            setSelectedBarIndex(index)
+          } else {
+            setSelectedBarIndex(null)
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Frequency'
+            }
+          },
+          x: {
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Hounsfield Units'
+            },
+            stacked: false
+          }
+        },
+        plugins: {
+          annotations: {
+            line1: {
+              type: 'line',
+              yMin: 0,
+              yMax: Math.max(...histogramData.datasets[0].data),
+              xMin: mean < 2 ? 0 : Math.floor(mean / 2),
+              xMax: mean < 2 ? 0 : Math.floor(mean / 2),
+              borderColor: 'red',
+              borderWidth: 2,
+              label: {
+                content: `Mean: ${mean.toFixed(2)}`,
+                enabled: true,
+                position: 'top',
+                color: 'red'
+              }
+            }
+          }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } as any
+      }
+    })
+
+    if (selectedBarIndex !== null) {
+      histogramChart.data.datasets[0].data = histogramData.datasets[0].data.map((value, index) =>
+        index === selectedBarIndex ? value : 0
+      )
+    } else {
+      histogramChart.data.datasets[0].data = histogramData.datasets[0].data
+    }
+    histogramChart.update()
+
+    return () => {
+      histogramChart.destroy()
+    }
+  }, [newResult, width, selectedBarIndex])
 
   return (
     <div
@@ -99,19 +222,24 @@ const Findings: React.FC = () => {
               newResult.stroke_type !== 'No relevant strokes detected') ? (
               <>
                 <div
-                  className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
+                  className={`w-full items-start grid grid-cols-2 gap-x-2 gap-y-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
                 >
-                  <div className="flex flex-col">
-                    <p className="text-lg font-bold">{newResult.stroke_type}</p>
-                    <p className="text-[10px] font-regular">
-                      Houndsfield Value:{' '}
-                      <span className="font-bold">{newResult?.lesion_boundary_points.Mean}</span>
+                  <div className="col-span-1 flex flex-col">
+                    <p className="text-[15px] font-bold text-light_g">{newResult?.stroke_type}</p>
+                    <p className="text-[9px] font-semibold">
+                      {newResult?.classification?.type?.type}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <div className="flex flex-col">
+                  <div className="col-span-1 flex flex-col">
+                    <p className="text-[12px] text-light_g font-semibold">
+                      Houndsfield Unit:{' '}
+                      <span className="font-bold">
+                        {newResult?.classification?.density_value?.toFixed(2)}
+                      </span>
+                    </p>
+                    <p className="font-bold">
                       <h1
-                        className={`text-[10px] ${theme === 'dark' ? 'text-light_g' : 'text-dark'}`}
+                        className={`text-[10px] ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
                       >
                         Lesion Area in pixels
                       </h1>
@@ -120,10 +248,22 @@ const Findings: React.FC = () => {
                       >
                         {newResult?.lesion_boundary_points?.Area}
                       </h1>
-                    </div>
+                    </p>
+                  </div>
+                  <div className="cols-span-2 w-full flex items-start justify-between gap-12">
+                    <p
+                      className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
+                    >
+                      Lesion Mean {newResult?.lesion_boundary_points?.Mean}
+                    </p>
+                    <p
+                      className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
+                    >
+                      Confidence: {newResult?.classification?.confidence?.toFixed(2)}%
+                    </p>
                   </div>
                 </div>
-
+                <div className="w-full"></div>
                 <button
                   onClick={() => {
                     setIsCapture(true)
@@ -151,7 +291,7 @@ const Findings: React.FC = () => {
       </div>
 
       {/* End of stroke findings */}
-      {/* Lesion boundary points */}
+      {/* Houndsfield Scale Unit Distribution */}
       <div
         className={`${theme === 'dark' ? 'bg-sys_com' : 'bg-dirty'} p-4 rounded-lg flex flex-col`}
       >
@@ -161,7 +301,7 @@ const Findings: React.FC = () => {
           <div
             className={`${theme === 'dark' ? 'text-light_g ' : 'text-dark'} flex gap-3 items-center`}
           >
-            <h1 className="font-semibold text-xs">Lesion Boundary Points</h1>
+            <h1 className="font-semibold text-xs">Houndsfield Scale Unit Distribution</h1>
           </div>
           <motion.button
             initial={{ rotate: 0 }}
@@ -178,23 +318,13 @@ const Findings: React.FC = () => {
           initial={{ height: 0 }}
           animate={{ height: isLesionBoundaryDrop ? 'auto' : 0 }}
           transition={{ duration: 0.3 }}
-          className="overflow-hidden py-2 max-h-[100px] overflow-y-auto customScroll"
+          className="overflow-hidden py-2 max-h-[300px] overflow-y-auto customScroll"
         >
           <div
             className={`w-full flex flex-col gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
           >
-            {/* map the temp boundary points  */}
-            <div className="grid grid-cols-4 gap-2">
-              {newResult?.lesion_boundary_points?.Lesion_Boundary_Points?.map((point, idx) => (
-                <div
-                  key={idx}
-                  className={`justify-between items-center ${theme === 'dark' ? 'bg-dark' : 'bg-white'} p-2 rounded-lg`}
-                >
-                  <h1 className="text-xs font-regular">
-                    X: {point[0]}, Y: {point[1]}
-                  </h1>
-                </div>
-              ))}
+            <div className="chart-container">
+              <canvas id="houndsfieldHistogram"></canvas>
             </div>
           </div>
         </motion.div>
