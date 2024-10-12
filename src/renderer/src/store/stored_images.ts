@@ -10,6 +10,7 @@ interface LoadingImage {
 }
 
 interface StoredImagesState {
+  image_id: number | null
   imageName?: string
   name: string
   size: number
@@ -41,6 +42,7 @@ export const useLoadingImage = create<LoadingImage>((set) => ({
 }))
 
 export const useStoredImages = create<StoredImagesState>((set) => ({
+  image_id: null,
   name: '',
   size: 0,
   type: '',

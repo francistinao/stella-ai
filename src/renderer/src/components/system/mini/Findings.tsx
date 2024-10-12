@@ -14,7 +14,7 @@ import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
 
 const Findings: React.FC<{ width: number }> = ({ width }) => {
-  const { newResult } = useResultStore()
+  const { resultToDisplay } = useResultStore()
   const { isLoading } = useStoredImages()
   const [isStrokeFindingsFindingsDrop, setIsStrokeFindingsDrop] = useState(true)
   const [isLesionBoundaryDrop, setIsLesionBoundaryDrop] = useState(false)
@@ -40,7 +40,7 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
 
   useEffect(() => {
     const ctx = document.getElementById('houndsfieldHistogram') as HTMLCanvasElement
-    const houndsfieldData = newResult?.classification?.houndsfield_unit || []
+    const houndsfieldData = resultToDisplay?.classification?.houndsfield_unit || []
 
     const filteredData = houndsfieldData.filter((value) => value >= 0 && value <= 100)
     const mean =
@@ -139,7 +139,7 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
     return () => {
       histogramChart.destroy()
     }
-  }, [newResult, width, selectedBarIndex])
+  }, [resultToDisplay, width, selectedBarIndex])
 
   return (
     <div
@@ -182,7 +182,7 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
           transition={{ duration: 0.3 }}
           className="overflow-hidden pt-2"
         >
-          {!isLoading && !newResult?.stroke_type && (
+          {!isLoading && !resultToDisplay?.stroke_type && (
             <div className="flex flex-col gap-4 justify-center place-items-center">
               <motion.img
                 animate={{ y: [-10, 10, -10], transition: { duration: 1.5, repeat: Infinity } }}
@@ -215,26 +215,28 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
           )}
 
           {!isLoading ? (
-            typeof newResult?.stroke_type === 'string' &&
-            newResult.stroke_type !== '' &&
-            (newResult.stroke_type === 'Ischemic Stroke' ||
-              newResult.stroke_type === 'Hemorrhagic Stroke' ||
-              newResult.stroke_type !== 'No relevant strokes detected') ? (
+            typeof resultToDisplay?.stroke_type === 'string' &&
+            resultToDisplay.stroke_type !== '' &&
+            (resultToDisplay.stroke_type === 'Ischemic Stroke' ||
+              resultToDisplay.stroke_type === 'Hemorrhagic Stroke' ||
+              resultToDisplay.stroke_type !== 'No relevant strokes detected') ? (
               <>
                 <div
                   className={`w-full items-start grid grid-cols-2 gap-x-2 gap-y-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
                 >
                   <div className="col-span-1 flex flex-col">
-                    <p className="text-[15px] font-bold text-light_g">{newResult?.stroke_type}</p>
+                    <p className="text-[15px] font-bold text-light_g">
+                      {resultToDisplay?.stroke_type}
+                    </p>
                     <p className="text-[9px] font-semibold">
-                      {newResult?.classification?.type?.type}
+                      {resultToDisplay?.classification?.type?.type}
                     </p>
                   </div>
                   <div className="col-span-1 flex flex-col">
                     <p className="text-[12px] text-light_g font-semibold">
                       Houndsfield Unit:{' '}
                       <span className="font-bold">
-                        {newResult?.classification?.density_value?.toFixed(2)}
+                        {resultToDisplay?.classification?.density_value?.toFixed(2)}
                       </span>
                     </p>
                     <p className="font-bold">
@@ -246,7 +248,7 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
                       <h1
                         className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
                       >
-                        {newResult?.lesion_boundary_points?.Area}
+                        {resultToDisplay?.lesion_boundary_points?.Area}
                       </h1>
                     </p>
                   </div>
@@ -254,12 +256,12 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
                     <p
                       className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
                     >
-                      Lesion Mean {newResult?.lesion_boundary_points?.Mean}
+                      Lesion Mean {resultToDisplay?.lesion_boundary_points?.Mean}
                     </p>
                     <p
                       className={`text-[12px] ${theme === 'dark' ? 'text-white' : 'text-dark'} font-semibold`}
                     >
-                      Confidence: {newResult?.classification?.confidence?.toFixed(2)}%
+                      Confidence: {resultToDisplay?.classification?.confidence?.toFixed(2)}%
                     </p>
                   </div>
                 </div>
@@ -279,7 +281,7 @@ const Findings: React.FC<{ width: number }> = ({ width }) => {
                   className={`flex items-center gap-4 ${theme === 'dark' ? 'text-white' : 'text-dark'}`}
                 >
                   <div className="flex flex-col">
-                    <p className="text-lg font-bold">{newResult?.stroke_type}</p>
+                    <p className="text-lg font-bold">{resultToDisplay?.stroke_type}</p>
                   </div>
                 </div>
               </>

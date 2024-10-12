@@ -5,13 +5,38 @@
 import { create } from 'zustand'
 import { toPng } from 'html-to-image'
 
+interface ClassificationType {
+  category: string
+  type: string
+}
+
+interface Classification {
+  confidence: number
+  density_value: number
+  houndsfield_unit: Array<number>
+  type: ClassificationType
+}
+
+interface LesionBoundaryPoints {
+  Area: number
+  Lesion_Boundary_Points: [number, number][]
+  Mean: number
+}
+
+interface SliceResult {
+  slice_index: number
+  stroke_type: string
+  classification: Classification
+  lesion_boundary_points: LesionBoundaryPoints
+}
+
 interface ResultProps {
   result: {
     ischemic: any
     hemmoragic: any
     error: any
   }
-  newResult: {
+  resultToDisplay: {
     lesion_boundary_points: {
       Area: number
       Lesion_Boundary_Points: [number, number][]
@@ -28,6 +53,7 @@ interface ResultProps {
     }
     stroke_type: ''
   }
+  newResult: SliceResult[]
   isLoading: boolean | undefined
   setIsLoading: (isLoading: boolean) => void
   isError: boolean
@@ -36,6 +62,7 @@ interface ResultProps {
   isAddFindings?: boolean
   setIsAddFindings?: (isAddFindings: boolean) => void
   setNewResult: (newResult: any) => void
+  setResultToDisplay: (resultToDisplay: any) => void
 }
 
 interface CaptureState {
@@ -52,7 +79,7 @@ export const useResultStore = create<ResultProps>((set) => ({
     ischemic: null,
     error: null
   },
-  newResult: {
+  resultToDisplay: {
     lesion_boundary_points: {
       Area: 0,
       Lesion_Boundary_Points: [],
@@ -69,6 +96,7 @@ export const useResultStore = create<ResultProps>((set) => ({
     },
     stroke_type: ''
   },
+  newResult: [],
   isLoading: false,
   setIsLoading: (isLoading: boolean) => set({ isLoading }),
   isError: false,
@@ -76,7 +104,8 @@ export const useResultStore = create<ResultProps>((set) => ({
   setResult: (result: any) => set({ result }),
   isAddFindings: false,
   setIsAddFindings: (isAddFindings: boolean) => set({ isAddFindings }),
-  setNewResult: (newResult: any) => set({ newResult })
+  setNewResult: (newResult: any) => set({ newResult }),
+  setResultToDisplay: (resultToDisplay: any) => set({ resultToDisplay })
 }))
 
 export const useCaptureStore = create<CaptureState>((set) => ({

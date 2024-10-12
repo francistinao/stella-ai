@@ -18,6 +18,7 @@ import { StoredImagesState } from '@/types/global'
 import { byteConverter } from '@/utils/byteConverter'
 import placeholder from '@/assets/vector.png'
 import truncateFileName from '@/utils/truncateFileName'
+import dicomParser from 'dicom-parser'
 
 interface UploadModalProps {
   isUpload: boolean
@@ -93,7 +94,8 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
 
     //eslint-disable-next-line
     //@ts-ignore
-    const filesArray: StoredImagesState[] = Array.from(selectedFiles).map((file: File) => ({
+    const filesArray: StoredImagesState[] = Array.from(selectedFiles).map((file: File, idx) => ({
+      image_id: idx,
       imageName: file.name,
       size: file.size,
       type: file.type,
@@ -128,28 +130,31 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       setIsImageUploadLoading(true)
 
       const processedImages = await Promise.all(
-        selectedFiles.map(async (file) => {
+        selectedFiles.map(async (file, idx) => {
           const fileExtension = file.name.split('.').pop()?.toLowerCase()
+          let imageData
+
           if (fileExtension !== 'jpg' && fileExtension !== 'jpeg' && fileExtension !== 'png') {
             try {
-              const pngData = await convertDicomToPng(file)
-              return { name: file.name, data: pngData[0] }
+              const pngData = await convertDicom(file)
+              imageData = pngData[0]
             } catch (error) {
               console.error('Error converting DICOM file:', error)
               return null
             }
           } else {
-            const base64Image = await toBase64File(file)
-            return { name: file.name, data: base64Image as string }
+            imageData = await toBase64File(file)
           }
+
+          return { image_id: idx, name: file.name, data: imageData }
         })
       )
 
       const validImages = processedImages.filter(
-        (img): img is { name: string; data: string } => img !== null
+        (img): img is { image_id: number; name: string; data: string } => img !== null
       )
 
-      const dateAndTime = new Date().toLocaleDateString('en-US', {
+      const dateAndTime = new Date().toLocaleString('en-US', {
         weekday: 'long',
         year: 'numeric',
         month: 'long',
@@ -162,7 +167,12 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       const storedImagesJSON = localStorage.getItem('images')
       const storedImages = storedImagesJSON ? JSON.parse(storedImagesJSON) : {}
 
-      storedImages[dateAndTime] = validImages.map((img) => `${img.data}-file-name-${img.name}`)
+      storedImages[dateAndTime] = validImages.map((img) => ({
+        image_id: img.image_id,
+        name: img.name,
+        data: img.data
+      }))
+
       localStorage.setItem('images', JSON.stringify(storedImages))
 
       setTimeout(() => {
@@ -180,7 +190,8 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     setSelectedFiles(newFiles)
     //eslint-disable-next-line
     //@ts-ignore
-    const filesArray: StoredImagesState[] = newFiles.map((file: File) => ({
+    const filesArray: StoredImagesState[] = newFiles.map((file: File, idx) => ({
+      image_id: idx,
       imageName: file.name,
       size: file.size,
       type: file.type,
@@ -195,7 +206,126 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
     setImages!(filesArray)
   }
 
-  const convertDicomToPng = async (file: File): Promise<string[]> => {
+  const convertDicom = async (file: File): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = async (e) => {
+        if (e.target?.result instanceof ArrayBuffer) {
+          const byteArray = new Uint8Array(e.target.result)
+
+          try {
+            const dataSet = dicomParser.parseDicom(byteArray)
+            const transferSyntaxUID = dataSet.string('x00020010')
+            const isCompressed = ![
+              '1.2.840.10008.1.2',
+              '1.2.840.10008.1.2.1',
+              '1.2.840.10008.1.2.2'
+            ].includes(transferSyntaxUID as string)
+
+            // compressed DICOM P10 FILE
+            if (isCompressed) {
+              setSelectedFiles((prevFiles) =>
+                prevFiles.filter(
+                  (file) => file.name !== selectedFiles[selectedFiles.length - 1].name
+                )
+              )
+              toast.error('Cannot handle compressed DICOM P10 File. Please decompress it first.')
+              throw new Error('Cannot handle compress DICOM P10 file')
+              return
+            } else {
+              //uncompressed DICOM image
+              const pixelDataElement = dataSet.elements.x7fe00010
+              if (!pixelDataElement) {
+                throw new Error('Pixel data not found in the file.')
+              }
+
+              const rows = dataSet.uint16('x00280010')
+              const cols = dataSet.uint16('x00280011')
+              const pixelRepresentation = dataSet.uint16('x00280103') || 0
+
+              if (typeof rows !== 'number' || typeof cols !== 'number') {
+                throw new Error('Rows and columns must be defined.')
+              }
+
+              const pixelData = new Uint8Array(
+                dataSet.byteArray.buffer,
+                pixelDataElement.dataOffset,
+                pixelDataElement.length
+              )
+
+              const windowCenter = dataSet.intString('x00281050')
+              const windowWidth = dataSet.intString('x00281051')
+
+              const canvasImageData = new Uint8Array(rows * cols * 4)
+
+              for (let i = 0; i < rows * cols; i++) {
+                let value
+                if (pixelRepresentation === 0) {
+                  value = pixelData[i * 2] | (pixelData[i * 2 + 1] << 8)
+                } else {
+                  value = pixelData[i * 2] | (pixelData[i * 2 + 1] << 8)
+                }
+
+                let pixelValueNormalized
+                if (windowCenter !== undefined && windowWidth !== undefined) {
+                  const wc =
+                    typeof windowCenter === 'string' ? parseInt(windowCenter, 10) : windowCenter
+                  const ww =
+                    typeof windowWidth === 'string' ? parseInt(windowWidth, 10) : windowWidth
+
+                  const min = wc - ww / 2
+                  const max = wc + ww / 2
+                  pixelValueNormalized = ((value - min) / (max - min)) * 255
+                } else {
+                  const minPixelValue = Math.min(...pixelData)
+                  const maxPixelValue = Math.max(...pixelData)
+                  pixelValueNormalized =
+                    ((value - minPixelValue) / (maxPixelValue - minPixelValue)) * 255
+                }
+
+                pixelValueNormalized = Math.max(0, Math.min(255, pixelValueNormalized))
+
+                const idx = i * 4
+                canvasImageData[idx] = pixelValueNormalized
+                canvasImageData[idx + 1] = pixelValueNormalized
+                canvasImageData[idx + 2] = pixelValueNormalized
+                canvasImageData[idx + 3] = 255
+              }
+
+              const canvas = document.createElement('canvas')
+              canvas.width = cols
+              canvas.height = rows
+              const ctx = canvas.getContext('2d')
+              if (ctx) {
+                const imageData = ctx.createImageData(cols, rows)
+                imageData.data.set(canvasImageData)
+                ctx.putImageData(imageData, 0, 0)
+
+                const base64Jpeg = canvas.toDataURL('image/jpeg', 1.0)
+                resolve([base64Jpeg])
+              } else {
+                throw new Error('Could not create 2D context for JPEG encoding.')
+              }
+            }
+          } catch (error) {
+            console.error('DICOM conversion error:', error)
+            reject(error)
+          }
+        } else {
+          reject(new Error('Failed to read file as ArrayBuffer.'))
+        }
+      }
+
+      reader.onerror = (error) => reject(error)
+      reader.readAsArrayBuffer(file)
+    })
+  }
+
+  /**
+    
+
+  const convertDicom = async (file: File): Promise<string[]> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.onload = async (e) => {
@@ -267,6 +397,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       reader.readAsArrayBuffer(file)
     })
   }
+   */
 
   useEffect(() => {
     const processFiles = async () => {
@@ -277,7 +408,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
           const fileExtension = file.name.split('.').pop()?.toLowerCase()
           if (fileExtension === 'dcm' || fileExtension === 'dicom') {
             try {
-              const base64Data = await convertDicomToPng(file)
+              const base64Data = await convertDicom(file)
               const binaryString = atob(base64Data[0].split(',')[1])
               const len = binaryString.length
               const bytes = new Uint8Array(len)
@@ -319,7 +450,13 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
       const validFiles = filesArray.filter(
         (file): file is StoredImagesState => file !== null && 'name' in file
       )
-      setImages!(validFiles.map((file) => ({ ...file, name: file.path?.split('/').pop() || '' })))
+      setImages!(
+        validFiles.map((file, idx) => ({
+          ...file,
+          image_id: idx,
+          name: file.path?.split('/').pop() || ''
+        }))
+      )
     }
 
     processFiles()
@@ -343,7 +480,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
               type: 'spring',
               ease: [0, 0.71, 0.2, 0]
             }}
-            className={`p-10 flex flex-col gap-4 absolute z-10 left-62 top-42 bg-blend-overlay shadow-2xl rounded-lg border ${theme === 'dark' ? 'bg-white text-dark border-dirty' : 'bg-dark text-white border-zinc-500'}`}
+            className={`p-10 flex flex-col gap-2 absolute z-10 left-62 top-42 bg-blend-overlay shadow-2xl rounded-lg border ${theme === 'dark' ? 'bg-white text-dark border-dirty' : 'bg-dark text-white border-zinc-500'}`}
           >
             <div className="flex justify-between gap-96 items-center">
               <h1 className="text-2xl font-bold text-dark_g">Upload CT Scan</h1>
@@ -355,6 +492,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
               Upload raw CT Scan Images with{' '}
               <span className="font-bold italic">DICOM, JPG, or PNG</span> format
             </p>
+            <span className="text-sm">DICOM must be in P10 format and must not be compressed.</span>
             <div className="my-5 grid grid-cols-8 gap-8 items-start">
               <div
                 className={`col-span-4 relative text-center w-full ${isDragOver ? 'dragover' : ''}`}

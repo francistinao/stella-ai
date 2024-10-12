@@ -9,9 +9,10 @@ import { useStoredImages } from '@/store/stored_images'
 import { Tooltip } from '@mui/material'
 import { useResultStore } from '@/store/result'
 import { useToolStore } from '@/store/tool'
+import truncateFileName from '@/utils/truncateFileName'
 
 interface CardProps {
-  sliceNumber: number
+  sliceNumber: number | null
   size: number
   file_name?: string
   imageData: BinaryData
@@ -21,34 +22,21 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
   const { setSelectedImage, selectedImage } = useStoredImages()
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
 
-  const { setNewResult } = useResultStore()
+  const { newResult, setResultToDisplay, resultToDisplay } = useResultStore()
   const [image, setImage] = React.useState('')
 
-  const handleSelectImageToView = () => {
+  const handleSelectImageToView = (sliceNumber: number) => {
     if (startPoint && endPoint) {
       setStartPoint(null)
       setEndPoint(null)
     }
 
-    setNewResult!({
-      stroke_type: '',
-      lesion_boundary_points: {
-        Area: 0,
-        Mean: 0,
-        Lesion_Boundary_Points: []
-      },
-      classification: {
-        confidence: 0,
-        density_value: 0,
-        houndsfield_unit: [],
-        type: {
-          category: '',
-          type: ''
-        }
-      }
-    })
+    console.log(resultToDisplay)
+
+    setResultToDisplay(newResult.find((result) => result.slice_index === sliceNumber))
 
     setSelectedImage!({
+      image_id: sliceNumber,
       imageName: file_name,
       imageData,
       size,
@@ -93,7 +81,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
           Slice {sliceNumber}
         </h1>
         <Tooltip title="Inspect CT Scan" placement="right">
-          <button onClick={handleSelectImageToView}>
+          <button onClick={() => handleSelectImageToView(sliceNumber as number)}>
             <VscOpenPreview
               size={40}
               color={`${theme === 'dark' ? '#191919' : '#72FC5E'}`}
@@ -112,7 +100,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
         <p
           className={`${theme === 'dark' ? 'text-gray-400' : 'text-dark '} font-regular text-[10px]`}
         >
-          {file_name}
+          {truncateFileName!(file_name as string)}
         </p>
       </div>
     </div>

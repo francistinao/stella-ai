@@ -2,13 +2,14 @@
 /* eslint-disable prettier/prettier */
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Navbar } from '@/components/components'
-import { useToolStore } from '@/store/tool'
+import { useToolStore, useSliderStore } from '@/store/tool'
 import Resizer from '@/components/Resizer'
-import { CTScanCanvas, Results, Slider, Tools } from '@/components/system'
-import { motion } from 'framer-motion'
+import { CTScanCanvas, Results, Slider, Tools, NoStrokeSlider } from '@/components/system'
+import { AnimatePresence, motion } from 'framer-motion'
 import Ruler from '@scena/react-ruler'
 import { AddFindingsModal } from '@/components/system/mini/index'
 import SettingsBar from '@/components/system/SettingsBar'
+import { useResultStore } from '@/store/result'
 
 const System: React.FC = () => {
   const {
@@ -28,6 +29,8 @@ const System: React.FC = () => {
   const [_, setIsResizingTools] = useState(false)
   const [showCTScan, setShowCTScan] = useState(true) // State for CT Scan visibility
   const rulerRef = useRef<HTMLDivElement>(null)
+  const { newResult } = useResultStore()
+  const { toggleVisibilityFirst, toggleVisibilitySecond } = useSliderStore()
 
   const minWidth = 290
   const maxWidth = 1200
@@ -139,10 +142,41 @@ const System: React.FC = () => {
       <SettingsBar />
       <AddFindingsModal />
       <div className="pb-4 flex w-full h-screen">
-        <motion.div style={{ width: sliderWidth }} transition={{ duration: 0.1 }}>
-          <Slider />
-        </motion.div>
-        <motion.div style={{ width: toolsWidth }} transition={{ duration: 0.1 }}>
+        <AnimatePresence>
+          {newResult && newResult.length !== 0 && toggleVisibilityFirst && (
+            <motion.div
+              animate={{
+                x: toggleVisibilityFirst ? 0 : -1000
+              }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{
+                duration: 0.2954,
+                ease: [0.42, 0, 0.58, 1]
+              }}
+              style={{ width: sliderWidth }}
+            >
+              <NoStrokeSlider />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <AnimatePresence>
+          {newResult && newResult.length !== 0 && toggleVisibilitySecond && (
+            <motion.div
+              animate={{
+                x: toggleVisibilitySecond ? 0 : -1000
+              }}
+              exit={{ x: 100, opacity: 0 }}
+              transition={{
+                duration: 0.2954,
+                ease: [0.42, 0, 0.58, 1]
+              }}
+              style={{ width: sliderWidth }}
+            >
+              <Slider />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <motion.div style={{ width: toolsWidth }} transition={{ duration: 0.2954 }}>
           <Tools observeWidth={toolsWidth} />
         </motion.div>
         <Resizer handleMouseDown={handleToolsMouseDown} />

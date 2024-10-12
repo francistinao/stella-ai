@@ -26,23 +26,25 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
 
   const remainingWidth = `calc(100vw - ${sidebarWidth}px)`
 
-  const openCtScan = (images) => {
+  const openCtScan = (imageData) => {
     const imageToData = []
-    images.map((image) => {
-      const imageName = image?.split('-file-name-')[1]
-      const byteString = atob(image?.split(',')[1]?.split('-file-name-')[0])
-      const ab = new ArrayBuffer(byteString.length)
-      const ia = new Uint8Array(ab)
-      for (let i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i)
-      }
 
-      const blob = new Blob([ab], { type: 'image/jpeg' })
+    imageData.forEach((image) => {
+      const byteString = image.data.split(',')[1]
+      const ab = new Uint8Array(
+        atob(byteString)
+          .split('')
+          .map((char) => char.charCodeAt(0))
+      )
+      const blob = new Blob([ab], {
+        type: image.name.endsWith('.png') ? 'image/png' : 'image/jpeg'
+      })
       const url = URL.createObjectURL(blob)
       //eslint-disable-next-line
       //@ts-ignore
       imageToData.push({
-        imageName: imageName,
+        image_id: image.image_id,
+        imageName: image.name,
         size: blob.size,
         type: blob.type,
         lastModified: '',
@@ -52,6 +54,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
         imageTimeframe: ''
       })
     })
+
     setImages!(imageToData)
     navigate('/system')
   }
@@ -130,7 +133,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
             .reverse()
             .map((key) => (
               <button
-                onClick={() => openCtScan(images[key])}
+                onClick={() => openCtScan(images[key])} // Pass the array of images directly
                 onContextMenu={(e) => handleRightClick(e, key)}
                 key={key}
                 className={`${layout === 'stacked' ? 'flex gap-4 items-center border-b pb-4' : 'flex flex-col gap-2'}`}
@@ -139,11 +142,7 @@ const UploadImages: React.FC<Props> = ({ sidebarWidth }) => {
                   className={`${layout === 'grid' ? 'flex flex-col' : 'flex gap-16'} items-center w-[480px] justify-between`}
                 >
                   <div className="flex gap-2 items-center">
-                    <img
-                      src={images[key][0]?.split('-file-name')[0]}
-                      alt={key}
-                      className="w-20 h-20"
-                    />
+                    <img src={images[key][0].data} alt={key} className="w-20 h-20" />
                     <div className="flex flex-col gap-2 items-start">
                       <h1
                         className={`${theme === 'dark' ? 'text-white' : 'text-dark'} text-left font-regular text-sm`}

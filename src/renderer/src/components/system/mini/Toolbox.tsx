@@ -13,7 +13,7 @@ import { PiEye, PiEyeClosed } from 'react-icons/pi'
 import { FaRegHandPaper } from 'react-icons/fa'
 import { BsRulers } from 'react-icons/bs'
 import { BiPencil } from 'react-icons/bi'
-import { useToolStore } from '@/store/tool'
+import { useToolStore, useSliderStore } from '@/store/tool'
 
 interface ToolboxProps {
   observeWidth: number
@@ -33,6 +33,12 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
     is_ruler,
     setIsRuler
   } = useToolStore()
+  const {
+    toggleVisibilityFirst,
+    toggleVisibilitySecond,
+    setToggleVisibilityFirst,
+    setToggleVisibilitySecond
+  } = useSliderStore()
   const { setVisible, visible } = useVisible()
 
   const { theme } = useThemeStore()
@@ -181,6 +187,20 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
             STELLA.ai Toolbox
           </h1>
         </div>
+      </div>
+      <div className="mt-2 flex gap-4 items-center justify-between text-[8px]">
+        <button
+          onClick={() => setToggleVisibilityFirst(!toggleVisibilityFirst)}
+          className={`border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} px-2 py-1 rounded-md`}
+        >
+          {toggleVisibilityFirst ? 'Close No Stroke Slider' : 'Open No Stroke Slider'}
+        </button>
+        <button
+          onClick={() => setToggleVisibilitySecond(!toggleVisibilitySecond)}
+          className={`border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} px-2 py-1 rounded-md`}
+        >
+          {toggleVisibilitySecond ? 'Close Stroke Slider' : 'Open Stroke Slider'}
+        </button>
       </div>
       {/* Tools */}
       <div

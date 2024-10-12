@@ -21,7 +21,7 @@ const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { result, setNewResult, newResult } = useResultStore()
+  const { newResult, setNewResult, resultToDisplay } = useResultStore()
   const { setLesionData } = useCoordsStore()
   const {
     boundaryColor,
@@ -37,7 +37,7 @@ const CTScanCanvas: React.FC = () => {
     setEndPoint
   } = useToolStore()
   const { visible } = useVisible()
-  const { selectedImage, setIsLoading } = useStoredImages()
+  const { images, selectedImage, setIsLoading } = useStoredImages()
   const [image, setImage] = useState('')
   const [scale, setScale] = useState(1)
   const [isHover, setIsHover] = useState(false)
@@ -239,26 +239,40 @@ const CTScanCanvas: React.FC = () => {
   const handleSegmentate = async () => {
     try {
       setIsLoading!(true)
+
+      /**
+       * 
+
       if (!selectedImage) {
         toast.error('No CT Scan Slice selected!')
         throw new Error('No image selected')
         return
       }
+       */
 
-      const imageDataArrayBuffer = await selectedImage.imageData
+      //const imageDataArrayBuffer = await selectedImage.imageData
 
-      if (!imageDataArrayBuffer) {
+      /**if (!imageDataArrayBuffer) {
         throw new Error('Failed to get image data')
-      }
+      }*/
 
-      const imageData = new FormData()
-      imageData.append('file', new Blob([imageDataArrayBuffer]))
+      const formData = new FormData()
+
+      //imageData.append('file', new Blob([imageDataArrayBuffer]))
+      images!.forEach((image) => {
+        const imageDataArrayBuffer = image.imageData
+        if (imageDataArrayBuffer) {
+          // Convert ArrayBuffer to Blob
+          const blob = new Blob([imageDataArrayBuffer], { type: 'image/png' })
+          formData.append('files', blob, `slice_${image.image_id}.png`)
+        }
+      })
 
       // "http://127.0.0.1:8000" -> old api (rcnn)
       // "http://127.0.0.1:8000/detect" -> new api (u-net)
-      const response = await fetch('http://127.0.0.1:8000/detect', {
+      const response = await fetch('http://127.0.0.1:8000/v2/detect', {
         method: 'POST',
-        body: imageData
+        body: formData
       })
 
       const data = await response.json()
@@ -270,26 +284,31 @@ const CTScanCanvas: React.FC = () => {
       //setResult(JSON.parse(data))
       // setResult(JSON.parse(formatJson(data)))
       //for unet ========================================================
-      const parsedData = {
-        stroke_type: data.stroke_type,
+      // Parse each slice result and format the data according to the updated store structure
+      const parsedData = data?.stroke_detected?.map((slice) => ({
+        slice_index: slice.slice_index,
+        stroke_type: slice.findings.stroke_type,
         classification: {
-          confidence: data.classification.confidence,
-          density_value: data.classification.density_value,
-          houndsfield_unit: data.classification.houndsfield_unit,
+          confidence: slice.findings.classification.confidence,
+          density_value: slice.findings.classification.density_value,
+          houndsfield_unit: slice.findings.classification.houndsfield_unit,
           type: {
-            category: data.classification.type.category,
-            type: data.classification.type.type
+            category: slice.findings.classification.type.category,
+            type: slice.findings.classification.type.type
           }
         },
         lesion_boundary_points: {
-          Area: data.lesion_boundary_points.Area,
-          Mean: data.lesion_boundary_points.Mean,
-          Lesion_Boundary_Points: JSON.parse(data.lesion_boundary_points.Lesion_Boundary_Points)
+          Area: slice.findings.lesion_boundary_points.Area,
+          Mean: slice.findings.lesion_boundary_points.Mean,
+          Lesion_Boundary_Points: JSON.parse(
+            slice.findings.lesion_boundary_points.Lesion_Boundary_Points
+          )
         }
-      }
+      }))
 
+      // Update the newResult state with the parsed data
       setNewResult!(parsedData)
-      console.log(newResult)
+      console.log('Segmentated Result:', parsedData)
     } catch (error) {
       console.error('Error segmentating image:', error)
     } finally {
@@ -308,17 +327,17 @@ const CTScanCanvas: React.FC = () => {
     ctx.clearRect(0, 0, canvasSize, canvasSize)
 
     // Add this null check
-    if (!newResult || !newResult.lesion_boundary_points) return
+    if (!resultToDisplay || !resultToDisplay.lesion_boundary_points) return
 
     setLesionData({
-      Mean: newResult.lesion_boundary_points.Mean,
-      Area: newResult.lesion_boundary_points.Area,
-      Lesion_Boundary_Points: newResult.lesion_boundary_points.Lesion_Boundary_Points
+      Mean: resultToDisplay.lesion_boundary_points.Mean,
+      Area: resultToDisplay.lesion_boundary_points.Area,
+      Lesion_Boundary_Points: resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points
     })
 
-    console.log(newResult.lesion_boundary_points.Lesion_Boundary_Points)
+    console.log(resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points)
 
-    if (newResult.lesion_boundary_points?.Lesion_Boundary_Points?.length > 0) {
+    if (resultToDisplay.lesion_boundary_points?.Lesion_Boundary_Points?.length > 0) {
       const scaleFactor = 6.6
 
       // Draw lines between boundary points
@@ -326,13 +345,17 @@ const CTScanCanvas: React.FC = () => {
       ctx.lineWidth = 2
       ctx.beginPath()
       ctx.moveTo(
-        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
-        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
+        resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
+        resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
       )
-      for (let i = 1; i < newResult.lesion_boundary_points.Lesion_Boundary_Points.length; i++) {
+      for (
+        let i = 1;
+        i < resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points.length;
+        i++
+      ) {
         ctx.lineTo(
-          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
-          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
+          resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
+          resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
         )
       }
       ctx.closePath()
@@ -340,7 +363,7 @@ const CTScanCanvas: React.FC = () => {
 
       // Draw boundary points
       ctx.fillStyle = boundaryColor?.color as string
-      for (const [x, y] of newResult.lesion_boundary_points.Lesion_Boundary_Points) {
+      for (const [x, y] of resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points) {
         ctx.beginPath()
         ctx.arc(x * scaleFactor, y * scaleFactor, boundarySize!, 0, Math.PI * 2)
         ctx.fill()
@@ -350,19 +373,23 @@ const CTScanCanvas: React.FC = () => {
       ctx.fillStyle = boundaryColor?.rgb_val as string
       ctx.beginPath()
       ctx.moveTo(
-        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
-        newResult.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
+        resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[0][0] * scaleFactor,
+        resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[0][1] * scaleFactor
       )
-      for (let i = 1; i < newResult.lesion_boundary_points.Lesion_Boundary_Points.length; i++) {
+      for (
+        let i = 1;
+        i < resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points.length;
+        i++
+      ) {
         ctx.lineTo(
-          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
-          newResult.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
+          resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[i][0] * scaleFactor,
+          resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points[i][1] * scaleFactor
         )
       }
       ctx.closePath()
       ctx.fill()
     }
-  }, [newResult, boundaryColor, boundarySize, canvasSize, setLesionData])
+  }, [resultToDisplay, boundaryColor, boundarySize, canvasSize, setLesionData])
 
   useEffect(() => {
     const { innerHeight, innerWidth } = window
@@ -418,12 +445,11 @@ const CTScanCanvas: React.FC = () => {
 
   useEffect(() => {
     drawPolygon()
-  }, [tempBoundPts, boundarySize, boundaryColor, result])
+  }, [tempBoundPts, boundarySize, boundaryColor, resultToDisplay])
 
   useEffect(() => {
-    console.log(newResult)
     drawPolygon()
-  }, [newResult, drawPolygon])
+  }, [resultToDisplay, drawPolygon])
 
   useEffect(() => {
     if (isCapture && captureRef.current) {
@@ -561,7 +587,7 @@ const CTScanCanvas: React.FC = () => {
               <h1
                 className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-bold text-[150px] text-center`}
               >
-                Select CT Scan Image
+                {newResult?.length !== 0 ? 'Inspect CT Scan' : 'Click Segmentate to Detect'}
               </h1>
             </div>
           )}

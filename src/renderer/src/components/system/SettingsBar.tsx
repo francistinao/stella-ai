@@ -6,18 +6,23 @@ import { useNavigate } from 'react-router-dom'
 import { useResultStore, useCaptureStore } from '@/store/result'
 import { useStoredImages } from '@/store/stored_images'
 import { useGameStore } from '@/store/simulations'
+import { useSliderStore } from '@/store/tool'
 
 const SettingsBar: React.FC = () => {
   const navigate = useNavigate()
   const { theme } = useThemeStore()
-  const { setResult, setNewResult } = useResultStore()
+  const { setResult, setNewResult, setResultToDisplay } = useResultStore()
   const { setSelectedImage } = useStoredImages()
   const { resetCapturedContent } = useCaptureStore()
   const { setBlitzModeRecord, setStartBlitzMode } = useGameStore()
+  const { setToggleVisibilityFirst, setToggleVisibilitySecond } = useSliderStore()
 
   const reset = () => {
     setResult(null)
     setNewResult(null)
+    setToggleVisibilityFirst(false)
+    setToggleVisibilitySecond(true)
+    setResultToDisplay(null)
     setBlitzModeRecord(0)
     setStartBlitzMode(false)
     setSelectedImage!(null)

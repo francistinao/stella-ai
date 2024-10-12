@@ -33,6 +33,13 @@ interface ToolProps {
   setEndPoint: (endPoint: { x: number; y: number } | null) => void
 }
 
+interface SliderProps {
+  toggleVisibilityFirst: boolean
+  toggleVisibilitySecond: boolean
+  setToggleVisibilityFirst: (toggleVisibility: boolean) => void
+  setToggleVisibilitySecond: (toggleVisibility: boolean) => void
+}
+
 interface ImageConfigProps {
   contrastLevel: number
   highlightsAmount: number
@@ -43,6 +50,13 @@ interface ImageConfigProps {
   setSepia: (sepia: number) => void
   setIsInvert: (is_invert: number) => void
 }
+
+export const useSliderStore = create<SliderProps>((set) => ({
+  toggleVisibilityFirst: false,
+  toggleVisibilitySecond: true,
+  setToggleVisibilityFirst: (toggleVisibilityFirst: boolean) => set({ toggleVisibilityFirst }),
+  setToggleVisibilitySecond: (toggleVisibilitySecond: boolean) => set({ toggleVisibilitySecond })
+}))
 
 export const useToolStore = create<ToolProps>((set) => ({
   tool_name: '',

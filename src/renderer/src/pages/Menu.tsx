@@ -40,6 +40,8 @@ const Menu: React.FC = () => {
   useEffect(() => {
     const isShowAgain = sessionStorage.getItem('isShowAgain')
 
+    document.body.style.cursor = 'default'
+
     if (!isShowAgain) {
       sessionStorage.setItem('isShowAgain', 'true')
     } else if (isShowAgain === 'true') {
