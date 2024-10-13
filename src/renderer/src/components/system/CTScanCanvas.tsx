@@ -21,7 +21,7 @@ const dragInertia = 7
 const zoomBy = 0.1
 
 const CTScanCanvas: React.FC = () => {
-  const { newResult, setNewResult, resultToDisplay } = useResultStore()
+  const { newResult, setNewResult, resultToDisplay, setResultToDisplay } = useResultStore()
   const { setLesionData } = useCoordsStore()
   const {
     boundaryColor,
@@ -37,7 +37,7 @@ const CTScanCanvas: React.FC = () => {
     setEndPoint
   } = useToolStore()
   const { visible } = useVisible()
-  const { images, selectedImage, setIsLoading } = useStoredImages()
+  const { images, selectedImage, setIsLoading, setSelectedImage } = useStoredImages()
   const [image, setImage] = useState('')
   const [scale, setScale] = useState(1)
   const [isHover, setIsHover] = useState(false)
@@ -308,7 +308,6 @@ const CTScanCanvas: React.FC = () => {
 
       // Update the newResult state with the parsed data
       setNewResult!(parsedData)
-      console.log('Segmentated Result:', parsedData)
     } catch (error) {
       console.error('Error segmentating image:', error)
     } finally {
@@ -334,8 +333,6 @@ const CTScanCanvas: React.FC = () => {
       Area: resultToDisplay.lesion_boundary_points.Area,
       Lesion_Boundary_Points: resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points
     })
-
-    console.log(resultToDisplay.lesion_boundary_points.Lesion_Boundary_Points)
 
     if (resultToDisplay.lesion_boundary_points?.Lesion_Boundary_Points?.length > 0) {
       const scaleFactor = 6.6
@@ -370,6 +367,9 @@ const CTScanCanvas: React.FC = () => {
       }
 
       // Fill polygon area
+      //temporary comment this code
+      /**
+       * 
       ctx.fillStyle = boundaryColor?.rgb_val as string
       ctx.beginPath()
       ctx.moveTo(
@@ -388,6 +388,8 @@ const CTScanCanvas: React.FC = () => {
       }
       ctx.closePath()
       ctx.fill()
+       * 
+       */
     }
   }, [resultToDisplay, boundaryColor, boundarySize, canvasSize, setLesionData])
 
@@ -459,6 +461,57 @@ const CTScanCanvas: React.FC = () => {
     }
   }, [isCapture, setCapturedContent])
 
+  const resultIds = new Set(newResult.map((result) => result.slice_index))
+  const filteredImages = images?.filter((image) => resultIds.has(image.image_id as number))
+
+  const imageMap = new Map(images?.map((image) => [image.image_id, image]))
+
+  let debounceTimeout
+  const debounce = (fn, delay) => {
+    clearTimeout(debounceTimeout)
+    debounceTimeout = setTimeout(fn, delay)
+  }
+
+  const toggleObserveImages = (e) => {
+    if (!selectedImage || !filteredImages) return
+
+    let currentSliceIndex = selectedImage.image_id
+    const imagesLength = filteredImages.length
+
+    const isScrollingUp = e.deltaY < 0
+    console.log('Scroll Direction:', isScrollingUp ? 'Up' : 'Down')
+
+    if (isScrollingUp) {
+      currentSliceIndex! += 1
+      if (currentSliceIndex! >= imagesLength) {
+        currentSliceIndex = 0
+      }
+    } else {
+      currentSliceIndex! -= 1
+      if (currentSliceIndex! < 0) {
+        currentSliceIndex = imagesLength - 1
+      }
+    }
+
+    const newSelectedImage = imageMap.get(currentSliceIndex)
+    if (newSelectedImage) {
+      debounce(() => {
+        setResultToDisplay(newResult.find((result) => result.slice_index === currentSliceIndex))
+        setSelectedImage!({
+          image_id: newSelectedImage.image_id,
+          imageName: newSelectedImage.imageName,
+          imageData: newSelectedImage.imageData,
+          size: newSelectedImage.size,
+          type: 'image/jpeg',
+          lastModified: Date.now(),
+          lastModifiedDate: new Date(),
+          imageTimeframe: '2021-09-01',
+          name: newSelectedImage.name
+        })
+      }, 10)
+    }
+  }
+
   return (
     <div
       ref={containerRef}
@@ -473,6 +526,7 @@ const CTScanCanvas: React.FC = () => {
       {/* Description and segmentate button */}
       <div className="fixed z-30 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
         <div className="flex flex-col gap-1 text-sm text-white">
+          <h1>Slice No. {selectedImage?.image_id}</h1>
           <h1>Description: Brain CT Scan</h1>
           <h1>Image: 1/1</h1>
           <h1>Size {byteConverter(selectedImage?.size ?? 0)}</h1>
@@ -526,15 +580,19 @@ const CTScanCanvas: React.FC = () => {
         }}
         draggable
         onWheel={(e) => {
-          if (e.deltaY > 0) {
-            if (scale === 1) {
-              setOverflow('hidden')
+          if (e.shiftKey) toggleObserveImages(e)
+
+          if (!e.shiftKey) {
+            if (e.deltaY > 0) {
+              if (scale === 1) {
+                setOverflow('hidden')
+              }
+              if (scale > -1) {
+                setScale(Math.max(scale - zoomBy, 0.4))
+              }
+            } else {
+              setScale(scale + zoomBy)
             }
-            if (scale > -1) {
-              setScale(Math.max(scale - zoomBy, 0.4))
-            }
-          } else {
-            setScale(scale + zoomBy)
           }
         }}
       >

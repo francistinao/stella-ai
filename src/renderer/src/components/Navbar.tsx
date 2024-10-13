@@ -88,7 +88,7 @@ const Navbar: React.FC = () => {
         >
           STELLA.ai{' '}
           <span className="font-light text-sm text-italic">
-            (Stroke Tomography for Enhanced Lesion Learning Analysis) v1.1
+            (Stroke Tomography for Enhanced Lesion Learning Analysis) v1.2
           </span>
         </h1>
       </div>

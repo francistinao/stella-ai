@@ -20,9 +20,8 @@ const NoStrokeSlider: React.FC = () => {
     day: 'numeric'
   })
 
-  const filteredImages = images?.filter((image) => {
-    return newResult.some((result) => result.slice_index !== image.image_id)
-  })
+  const resultIds = new Set(newResult.map((result) => result.slice_index))
+  const filteredImages = images?.filter((image) => !resultIds.has(image.image_id as number))
 
   return (
     <div
@@ -45,7 +44,8 @@ const NoStrokeSlider: React.FC = () => {
       <div
         className={`mt-2 flex justify-center gap-4 items-center font-semibold py-2 rounded-md w-full text-center text-sm border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'}`}
       >
-        No Stroke Slices
+        No Stroke Slices {Math.max(filteredImages?.length ?? 1, 0)} /
+        {Math.max(images?.length ?? 1, 0)}
       </div>
       <div
         style={{ maxHeight: maxHeight }}

@@ -590,7 +590,7 @@ const UploadModal: React.FC<UploadModalProps> = ({ isUpload, setIsUpload }) => {
                   className={`flex justify-center gap-4 items-center bg-light text-dark font-semibold py-2 rounded-full w-full text-center text-sm ${selectedFiles && 'relative top-5'}`}
                 >
                   <HiCubeTransparent size={24} className="rotate-45" />
-                  Segmentate
+                  Upload Slices
                 </button>
               </div>
             </div>

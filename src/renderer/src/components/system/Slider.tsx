@@ -21,13 +21,7 @@ const Slider: React.FC = () => {
   const { newResult } = useResultStore()
 
   const resultIds = new Set(newResult.map((result) => result.slice_index))
-  // Filter images based on the Set of slice_index
   const filteredImages = images?.filter((image) => resultIds.has(image.image_id as number))
-
-  // Debugging Logs
-  console.log('Result IDs:', Array.from(resultIds)) // Log the resultIds
-  console.log('Images:', images) // Log all images
-  console.log('Filtered Images:', filteredImages) // Log filtered images
 
   console.log(resultIds)
   return (
@@ -51,7 +45,8 @@ const Slider: React.FC = () => {
       <div
         className={`mt-2 flex justify-center gap-4 items-center font-semibold py-2 rounded-md w-full text-center text-sm border-2 ${theme === 'dark' ? 'bg-light_g text-dark border-green-700' : 'bg-white border-zinc-300 text-black'}`}
       >
-        Slices with Stroke
+        Slices with Stroke: {Math.max(newResult?.length ?? 1, 0)} /
+        {Math.max(images?.length ?? 1, 0)}
       </div>
       <div
         style={{ maxHeight: maxHeight }}

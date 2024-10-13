@@ -146,12 +146,11 @@ const System: React.FC = () => {
           {newResult && newResult.length !== 0 && toggleVisibilityFirst && (
             <motion.div
               animate={{
-                x: toggleVisibilityFirst ? 0 : -1000
+                x: toggleVisibilityFirst && 0
               }}
-              exit={{ x: 100, opacity: 0 }}
+              exit={{ x: -1000, opacity: 0 }}
               transition={{
-                duration: 0.2954,
-                ease: [0.42, 0, 0.58, 1]
+                duration: 0.2
               }}
               style={{ width: sliderWidth }}
             >
@@ -163,12 +162,11 @@ const System: React.FC = () => {
           {newResult && newResult.length !== 0 && toggleVisibilitySecond && (
             <motion.div
               animate={{
-                x: toggleVisibilitySecond ? 0 : -1000
+                x: toggleVisibilitySecond && 0
               }}
-              exit={{ x: 100, opacity: 0 }}
+              exit={{ x: -1000, opacity: 0 }}
               transition={{
-                duration: 0.2954,
-                ease: [0.42, 0, 0.58, 1]
+                duration: 0.2
               }}
               style={{ width: sliderWidth }}
             >

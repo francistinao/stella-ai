@@ -188,18 +188,18 @@ const Toolbox: React.FC<ToolboxProps> = ({ observeWidth }) => {
           </h1>
         </div>
       </div>
-      <div className="mt-2 flex gap-4 items-center justify-between text-[8px]">
+      <div className="mt-2 flex items-center gap-2 text-[8px]">
         <button
           onClick={() => setToggleVisibilityFirst(!toggleVisibilityFirst)}
-          className={`border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} px-2 py-1 rounded-md`}
+          className={`w-full border-2 font-semibold ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} px-2 py-1 rounded-md`}
         >
-          {toggleVisibilityFirst ? 'Close No Stroke Slider' : 'Open No Stroke Slider'}
+          {toggleVisibilityFirst ? 'Hide No Stroke Slices' : 'Show No Stroke Slices'}
         </button>
         <button
           onClick={() => setToggleVisibilitySecond(!toggleVisibilitySecond)}
-          className={`border-2 ${theme === 'dark' ? 'bg-gray_l text-white border-zinc-700' : 'bg-white border-zinc-300 text-black'} px-2 py-1 rounded-md`}
+          className={`w-full border-2 font-semibold ${theme === 'dark' ? 'bg-light_g text-dark border-green-600' : 'bg-gray_l text-white border-zinc-700'} px-2 py-1 rounded-md`}
         >
-          {toggleVisibilitySecond ? 'Close Stroke Slider' : 'Open Stroke Slider'}
+          {toggleVisibilitySecond ? 'Hide Strokes Slices' : 'Show Strokes Slices'}
         </button>
       </div>
       {/* Tools */}

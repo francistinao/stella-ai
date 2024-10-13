@@ -22,7 +22,7 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
   const { setSelectedImage, selectedImage } = useStoredImages()
   const { startPoint, endPoint, setStartPoint, setEndPoint } = useToolStore()
 
-  const { newResult, setResultToDisplay, resultToDisplay } = useResultStore()
+  const { newResult, setResultToDisplay } = useResultStore()
   const [image, setImage] = React.useState('')
 
   const handleSelectImageToView = (sliceNumber: number) => {
@@ -30,8 +30,6 @@ const Cards: React.FC<CardProps> = ({ sliceNumber, size, file_name, imageData })
       setStartPoint(null)
       setEndPoint(null)
     }
-
-    console.log(resultToDisplay)
 
     setResultToDisplay(newResult.find((result) => result.slice_index === sliceNumber))
 

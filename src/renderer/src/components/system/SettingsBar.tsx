@@ -19,10 +19,10 @@ const SettingsBar: React.FC = () => {
 
   const reset = () => {
     setResult(null)
-    setNewResult(null)
+    setNewResult([])
     setToggleVisibilityFirst(false)
     setToggleVisibilitySecond(true)
-    setResultToDisplay(null)
+    setResultToDisplay({})
     setBlitzModeRecord(0)
     setStartBlitzMode(false)
     setSelectedImage!(null)
