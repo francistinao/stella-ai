@@ -55,6 +55,13 @@ body {
   background-color: #191919;
 }
 
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
 .customScroll::-webkit-scrollbar {
   width: 10px;
 }
