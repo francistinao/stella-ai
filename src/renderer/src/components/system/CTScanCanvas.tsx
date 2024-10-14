@@ -11,7 +11,6 @@ import { useStoredImages } from '@/store/stored_images'
 import { byteConverter } from '@/utils/byteConverter'
 import { tempBoundPts } from '@/data/tempBoundPts'
 import { useVisible } from '@/store/visible'
-//import { formatJson } from '@/utils/formatJson'
 import { toast, Toaster } from 'sonner'
 import { useCaptureStore } from '@/store/result'
 import { useCoordsStore } from '@/store/coords'
@@ -49,13 +48,11 @@ const CTScanCanvas: React.FC = () => {
   const [drawing, setDrawing] = useState(false)
   const captureRef = useRef<HTMLDivElement>(null)
   const { setIsCapture, isCapture, setCapturedContent } = useCaptureStore()
-
+  const [overflow, setOverflow] = useState<string>('scroll')
   const [{ clientX, clientY }, setClient] = useState({
     clientX: 0,
     clientY: 0
   })
-
-  const [overflow, setOverflow] = useState<string>('scroll')
 
   const imageStyle = {
     filter: `contrast(${contrastLevel}) brightness(${highlightsAmount}) sepia(${sepia}) invert(${is_invert})`
@@ -463,14 +460,41 @@ const CTScanCanvas: React.FC = () => {
 
   const resultIds = new Set(newResult.map((result) => result.slice_index))
   const filteredImages = images?.filter((image) => resultIds.has(image.image_id as number))
-
   const imageMap = new Map(images?.map((image) => [image.image_id, image]))
 
-  let debounceTimeout
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
   const debounce = (fn, delay) => {
-    clearTimeout(debounceTimeout)
-    debounceTimeout = setTimeout(fn, delay)
+    return (...args) => {
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current)
+      }
+      debounceTimeoutRef.current = setTimeout(() => fn(...args), delay)
+    }
   }
+  const debouncedUpdate = debounce((currentSliceIndex) => {
+    const newSelectedImage = imageMap.get(currentSliceIndex)
+    if (newSelectedImage) {
+      setResultToDisplay(newResult.find((result) => result.slice_index === currentSliceIndex))
+      setSelectedImage!({
+        image_id: newSelectedImage.image_id,
+        imageName: newSelectedImage.imageName,
+        imageData: newSelectedImage.imageData,
+        size: newSelectedImage.size,
+        type: 'image/jpeg',
+        lastModified: Date.now(),
+        lastModifiedDate: new Date(),
+        imageTimeframe: '2021-09-01',
+        name: newSelectedImage.name
+      })
+    }
+  }, 10)
+
+  useEffect(() => {
+    return () => {
+      clearTimeout(debounceTimeoutRef.current)
+    }
+  }, [])
 
   const toggleObserveImages = (e) => {
     if (!selectedImage || !filteredImages) return
@@ -479,7 +503,6 @@ const CTScanCanvas: React.FC = () => {
     const imagesLength = filteredImages.length
 
     const isScrollingUp = e.deltaY < 0
-    console.log('Scroll Direction:', isScrollingUp ? 'Up' : 'Down')
 
     if (isScrollingUp) {
       currentSliceIndex! += 1
@@ -493,23 +516,7 @@ const CTScanCanvas: React.FC = () => {
       }
     }
 
-    const newSelectedImage = imageMap.get(currentSliceIndex)
-    if (newSelectedImage) {
-      debounce(() => {
-        setResultToDisplay(newResult.find((result) => result.slice_index === currentSliceIndex))
-        setSelectedImage!({
-          image_id: newSelectedImage.image_id,
-          imageName: newSelectedImage.imageName,
-          imageData: newSelectedImage.imageData,
-          size: newSelectedImage.size,
-          type: 'image/jpeg',
-          lastModified: Date.now(),
-          lastModifiedDate: new Date(),
-          imageTimeframe: '2021-09-01',
-          name: newSelectedImage.name
-        })
-      }, 10)
-    }
+    debouncedUpdate(currentSliceIndex)
   }
 
   return (
@@ -522,134 +529,143 @@ const CTScanCanvas: React.FC = () => {
       }}
       className={`${theme === 'dark' ? 'bg-dark' : 'bg-white'}`}
     >
-      <Toaster position="bottom-right" />
-      {/* Description and segmentate button */}
-      <div className="fixed z-30 flex justify-between items-start w-[480px] bottom-6 right-[400px]">
-        <div className="flex flex-col gap-1 text-sm text-white">
-          <h1>Slice No. {selectedImage?.image_id}</h1>
-          <h1>Description: Brain CT Scan</h1>
-          <h1>Image: 1/1</h1>
-          <h1>Size {byteConverter(selectedImage?.size ?? 0)}</h1>
-        </div>
-        <button
-          // main button for segmentate
-          onClick={handleSegmentate}
-          onMouseEnter={() => setIsHover(true)}
-          onMouseLeave={() => setIsHover(false)}
-          className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black"
-        >
-          <motion.div
-            initial={{ rotate: 0 }}
-            animate={{ rotate: isHover ? 360 : 0 }}
-            transition={{ duration: 1, ease: 'linear' }}
+      {/**Container */}
+      <div className="flex flex-col w-full">
+        <>
+          <Toaster position="bottom-right" />
+          <div
+            ref={captureRef}
+            style={{
+              border: '2px solid white',
+              height: canvasSize,
+              width: canvasSize,
+              backgroundColor: theme === 'dark' ? '#191919' : '#DAD6D6',
+              backgroundSize: `20px 20px`,
+              backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+              transform: `scale(${scale}, ${scale}) translate(${translateX}px, ${translateY}px)`,
+              transformOrigin: 'center'
+            }}
+            onDragStart={(e) => {
+              const preview = document.createElement('div')
+              preview.style.display = 'none'
+              e.dataTransfer.setDragImage(preview, 0, 0)
+
+              setClient({ clientX: e.clientX, clientY: e.clientY })
+            }}
+            //Need to cache the last position of the mouse once the Grab tool is not active
+            //to prevent the canvas from jumping to the last position of the mouse
+            onDrag={(e) => {
+              if (e.clientX && e.clientY && tool_name === 'Grab') {
+                const deltaX = (clientX - e.clientX) / dragInertia
+                const deltaY = (clientY - e.clientY) / dragInertia
+
+                containerRef?.current?.scrollBy(deltaX, deltaY)
+              }
+            }}
+            draggable
+            onWheel={(e) => {
+              if (e.shiftKey) toggleObserveImages(e)
+
+              if (!e.shiftKey) {
+                if (e.deltaY > 0) {
+                  if (scale === 1) {
+                    setOverflow('hidden')
+                  }
+                  if (scale > -1) {
+                    setScale(Math.max(scale - zoomBy, 0.4))
+                  }
+                } else {
+                  setScale(scale + zoomBy)
+                }
+              }
+            }}
           >
-            <HiMiniCubeTransparent size={20} />
-          </motion.div>
-          <h1>Segmentate</h1>
-        </button>
-      </div>
-      {/* Must capture here */}
-      <div
-        ref={captureRef}
-        style={{
-          border: '2px solid white',
-          height: canvasSize,
-          width: canvasSize,
-          backgroundColor: theme === 'dark' ? '#191919' : '#DAD6D6',
-          backgroundSize: `20px 20px`,
-          backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-          transform: `scale(${scale}, ${scale}) translate(${translateX}px, ${translateY}px)`,
-          transformOrigin: 'center'
-        }}
-        onDragStart={(e) => {
-          const preview = document.createElement('div')
-          preview.style.display = 'none'
-          e.dataTransfer.setDragImage(preview, 0, 0)
-
-          setClient({ clientX: e.clientX, clientY: e.clientY })
-        }}
-        //Need to cache the last position of the mouse once the Grab tool is not active
-        //to prevent the canvas from jumping to the last position of the mouse
-        onDrag={(e) => {
-          if (e.clientX && e.clientY && tool_name === 'Grab') {
-            const deltaX = (clientX - e.clientX) / dragInertia
-            const deltaY = (clientY - e.clientY) / dragInertia
-
-            containerRef?.current?.scrollBy(deltaX, deltaY)
-          }
-        }}
-        draggable
-        onWheel={(e) => {
-          if (e.shiftKey) toggleObserveImages(e)
-
-          if (!e.shiftKey) {
-            if (e.deltaY > 0) {
-              if (scale === 1) {
-                setOverflow('hidden')
-              }
-              if (scale > -1) {
-                setScale(Math.max(scale - zoomBy, 0.4))
-              }
-            } else {
-              setScale(scale + zoomBy)
-            }
-          }
-        }}
-      >
-        {/* Change this later with the actual boundery point */}
-        <div className={`${!visible && 'hidden'}`}>
-          {boundaryRef && (
+            {/* Change this later with the actual boundery point */}
+            <div className={`${!visible && 'hidden'}`}>
+              {boundaryRef && (
+                <canvas
+                  ref={boundaryRef}
+                  width={canvasSize}
+                  height={canvasSize}
+                  style={{ position: 'absolute', zIndex: 100 }}
+                  onMouseDown={handleMouseDown}
+                  onMouseMove={handleMouseMove}
+                  onMouseUp={handleMouseUp}
+                />
+              )}
+            </div>
+            {/* Ruler */}
             <canvas
-              ref={boundaryRef}
+              ref={canvasRef}
               width={canvasSize}
               height={canvasSize}
               style={{ position: 'absolute', zIndex: 100 }}
-              onMouseDown={handleMouseDown}
-              onMouseMove={handleMouseMove}
-              onMouseUp={handleMouseUp}
             />
-          )}
-        </div>
-        {/* Ruler */}
-        <canvas
-          ref={canvasRef}
-          width={canvasSize}
-          height={canvasSize}
-          style={{ position: 'absolute', zIndex: 100 }}
-        />
 
-        {is_draw && (
-          <canvas
-            ref={canvasRef}
-            width={canvasSize}
-            height={canvasSize}
-            style={{ position: 'absolute', zIndex: 100 }}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-          />
-        )}
-        <div
-          className={`flex flex-col w-full h-full place-items-center justify-center -z-10 ${!is_active && 'hidden'}`}
-        >
-          {image ? (
-            <img
-              src={image}
-              alt="CT Scan"
-              className="w-full h-full"
-              draggable={false}
-              style={imageStyle}
-            />
-          ) : (
-            <div className="">
-              <h1
-                className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-bold text-[150px] text-center`}
-              >
-                {newResult?.length !== 0 ? 'Inspect CT Scan' : 'Click Segmentate to Detect'}
-              </h1>
+            {is_draw && (
+              <canvas
+                ref={canvasRef}
+                width={canvasSize}
+                height={canvasSize}
+                style={{ position: 'absolute', zIndex: 100 }}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+              />
+            )}
+            <div
+              className={`flex flex-col w-full h-full place-items-center justify-center -z-10 ${!is_active && 'hidden'}`}
+            >
+              {image ? (
+                <img
+                  src={image}
+                  alt="CT Scan"
+                  className="w-full h-full"
+                  draggable={false}
+                  style={imageStyle}
+                />
+              ) : (
+                <div className="">
+                  <h1
+                    className={`${theme === 'dark' ? 'text-light_g' : 'text-dark'} font-bold text-[150px] text-center`}
+                  >
+                    {newResult?.length !== 0
+                      ? 'Inspect CT Scan Slice'
+                      : 'Click Segmentate to Detect Stroke'}
+                  </h1>
+                </div>
+              )}
             </div>
-          )}
+          </div>
+        </>
+        {/* Description and segmentate button */}
+        <div className="fixed bottom-0 m-10 z-30 ">
+          <div className="flex flex-col gap-3 text-sm text-white">
+            <div className="flex flex-col gap-1">
+              <h1>Slice No. {selectedImage?.image_id}</h1>
+              <h1>Description: Brain CT Scan</h1>
+              <h1>Image: 1/1</h1>
+              <h1>Size {byteConverter(selectedImage?.size ?? 0)}</h1>
+            </div>
+            <button
+              // main button for segmentate
+              onClick={handleSegmentate}
+              onMouseEnter={() => setIsHover(true)}
+              onMouseLeave={() => setIsHover(false)}
+              className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black"
+            >
+              <motion.div
+                initial={{ rotate: 0 }}
+                animate={{ rotate: isHover ? 360 : 0 }}
+                transition={{ duration: 1, ease: 'linear' }}
+              >
+                <HiMiniCubeTransparent size={20} />
+              </motion.div>
+              <h1>Segmentate</h1>
+            </button>
+          </div>
         </div>
+        {/* Must capture here */}
       </div>
       {/* Until here */}
     </div>
