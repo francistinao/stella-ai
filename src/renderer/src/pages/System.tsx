@@ -145,12 +145,14 @@ const System: React.FC = () => {
         <AnimatePresence>
           {newResult && newResult.length !== 0 && toggleVisibilityFirst && (
             <motion.div
+              initial={{ x: -1000, opacity: 0 }}
               animate={{
-                x: toggleVisibilityFirst && 0
+                x: toggleVisibilityFirst ? 0 : -1000,
+                opacity: toggleVisibilityFirst ? 1 : 0
               }}
               exit={{ x: -1000, opacity: 0 }}
               transition={{
-                duration: 0.2
+                duration: 0.3
               }}
               style={{ width: sliderWidth }}
             >
@@ -161,12 +163,14 @@ const System: React.FC = () => {
         <AnimatePresence>
           {newResult && newResult.length !== 0 && toggleVisibilitySecond && (
             <motion.div
+              initial={{ x: -1000, opacity: 0 }}
               animate={{
-                x: toggleVisibilitySecond && 0
+                x: toggleVisibilitySecond ? 0 : -1000,
+                opacity: toggleVisibilitySecond ? 1 : 0
               }}
               exit={{ x: -1000, opacity: 0 }}
               transition={{
-                duration: 0.2
+                duration: 0.3
               }}
               style={{ width: sliderWidth }}
             >

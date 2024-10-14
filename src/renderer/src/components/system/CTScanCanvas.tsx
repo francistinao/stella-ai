@@ -652,7 +652,7 @@ const CTScanCanvas: React.FC = () => {
               onClick={handleSegmentate}
               onMouseEnter={() => setIsHover(true)}
               onMouseLeave={() => setIsHover(false)}
-              className="bg-light_g rounded-full py-1 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black"
+              className="bg-light_g border-[3.5px] border-green-700 rounded-full py-2 text-center font-semibold flex gap-3 items-center text-dark px-8 text-sm shadow-black"
             >
               <motion.div
                 initial={{ rotate: 0 }}
