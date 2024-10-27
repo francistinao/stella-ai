@@ -150,6 +150,7 @@ Hemorraghic Stroke Datasets:
 3. STELLA.ai won as 2nd Place in Alliance Medical Innovation Challenge (AMIC) 2024 Hackathon. [check](https://devpost.com/software/stella-ai-rsjn4i)
 4. STELLA.ai made it to the top 10 innovations in BEEPEEAI-DEEOWWESTEE IA 2024. [check](https://www.facebook.com/photo/?fbid=497735315967371&set=pcb.497741139300122)
 5. STELLA.ai was selected as part of the top 20 innovations and won as Champion in CSU Innovation Challenge 2024. [check](https://www.facebook.com/photo/?fbid=122160831242151434&set=pcb.122160832712151434)
+6. STELLA.ai won as Champion in DICT's Philippine Start Up Challenge 9 2024 Regional Pitching Competition. [check](https://www.facebook.com/DICTCaraga/posts/pfbid0xTuX66U8Dm3Xi4wVN37QdRtABYQYw77T1kD59s9MXGCCUJBB8BNLpnMZvjJRTA3ql)
 
 ## :writing_hand: Cite Our Study
 
