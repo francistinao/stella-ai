@@ -152,6 +152,7 @@ Hemorraghic Stroke Datasets:
 5. STELLA.ai was selected as part of the top 20 innovations and won as Champion in CSU Innovation Challenge 2024. [check](https://www.facebook.com/photo/?fbid=122160831242151434&set=pcb.122160832712151434)
 6. STELLA.ai won as Champion in DICT's Philippine Start Up Challenge 9 2024 Regional Pitching Competition. [check](https://www.facebook.com/DICTCaraga/posts/pfbid0xTuX66U8Dm3Xi4wVN37QdRtABYQYw77T1kD59s9MXGCCUJBB8BNLpnMZvjJRTA3ql)
 7. STELLA.ai was selected as part of the top 10 finalists for the NSTW Startup Jam Pitching Competition 2024. [check](https://www.facebook.com/photo/?fbid=551904894462081&set=a.112464658406109)
+8. STELLA.ai bagged 3rd place in DICT's National Philippine Startup Challenge 9 2024. [check](https://www.facebook.com/DICTCaraga/posts/pfbid09GMopX4z7o7Z3CA3ZZk3CVq8mt3EL7a46L6Ejg5ZT4WuCMXjtJrKSWiwQ6LwVxaql)
 
 ## :writing_hand: Cite Our Study
 
