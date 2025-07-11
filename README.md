@@ -28,12 +28,14 @@ In this repo, you can:
 ## 📑 Contents
 
 - [:book: About](#book-about)
+- [:paperclip: Publication Acceptance](#trophy-acknowledgements)
 - [:ledger: Colab/Jupyter Notebooks](#ledger-colab-notebooks)
 - [:brain: Models](#brain-models)
 - [:scroll: Important References](#scroll-important-references)
 - [:trophy: Milestones](#trophy-acknowledgements)
 - [:trophy: Acknowledgements](#trophy-acknowledgements)
 - [:writing_hand: Cite our Study](#writing_hand-cite-our-project)
+
 
 ## :book: About
 
@@ -75,6 +77,29 @@ This feature significantly enhances the ability of medical professionals to unde
 STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator) is an advanced tool tailored for Radiologic Technologist students. It offers an interactive and efficient learning experience in stroke identification and classification.
 
 Students are challenged to identify strokes by marking lesions on Brain CT Scans and classifying the stroke type. Their performance is then evaluated by STELLA's AI model, providing feedback on the accuracy of their stroke identification and classification.
+
+## Publication Acceptance 
+
+## :paperclip: Publication Acceptance
+
+We honored to share that our research work under **STELLA.ai** has been recognized internationally for its innovation and contribution to the field of computer vision in stroke detection. Our papers underwent rigorous peer review and have been **accepted for presentation at two prestigious conferences** this 2025. These acceptances validate the potential impact of our system in advancing medical imaging technologies and enhancing clinical decision support.
+
+The details of our accepted publications are as follows:
+
+- **IEICES 2025 – International Exchange and Innovation Conference on Engineering & Sciences**
+  - 📍 *Kyushu University, Fukuoka, Japan*
+  - 🗓 *October 30-31, 2025*
+  - **Paper Title:** Stroke Tomography for Enhanced Lesion Learning Analysis (STELLA.ai) Using Computer Vision
+  - ![IEICES Acceptance Letter](</extra/ieces.png>)
+
+- **IEEE AMCAI 2025 – 2nd Afro-Mediterranean Conference on Artificial Intelligence**
+  - 📍 *Valenciennes, France*
+  - 🗓 *October 14-16, 2025*
+  - **Paper Title:** Artificial Intelligence (AI)-Driven Brain CT Scan Analysis Tool for Stroke Detection Using U-Net Architecture
+  - ![AMCAI Acceptance Letter](</extra/ieee.png>)
+
+These milestones mark a significant step forward for our team, reinforcing our commitment to developing accessible, AI-driven healthcare solutions that can save lives.
+
 
 ## Features Work In Progress
 
