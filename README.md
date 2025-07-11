@@ -78,8 +78,6 @@ STELLAmulator (Stroke Tomography for Enhanced Lesion Learning Analysis Simulator
 
 Students are challenged to identify strokes by marking lesions on Brain CT Scans and classifying the stroke type. Their performance is then evaluated by STELLA's AI model, providing feedback on the accuracy of their stroke identification and classification.
 
-## Publication Acceptance 
-
 ## :paperclip: Publication Acceptance
 
 We honored to share that our research work under **STELLA.ai** has been recognized internationally for its innovation and contribution to the field of computer vision in stroke detection. Our papers underwent rigorous peer review and have been **accepted for presentation at two prestigious conferences** this 2025. These acceptances validate the potential impact of our system in advancing medical imaging technologies and enhancing clinical decision support.
